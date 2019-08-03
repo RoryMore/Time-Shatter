@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 1208500372}
   - component: {fileID: 1208500371}
   - component: {fileID: 1208500377}
+  - component: {fileID: 1208500379}
   m_Layer: 0
   m_Name: MeleeEnemy
   m_TagString: Untagged
@@ -279,6 +280,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94f6618a0da65fa45b24d5105d5d8422, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  nav: {fileID: 0}
 --- !u!114 &1208500372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,6 +299,12 @@ MonoBehaviour:
   sinkSpeed: 2.5
   scoreValue: 10
   deathClip: {fileID: 0}
+  anim: {fileID: 0}
+  enemyAudio: {fileID: 0}
+  hitParticles: {fileID: 0}
+  capsuleCollider: {fileID: 0}
+  isDead: 0
+  isSinking: 0
 --- !u!65 &1208500373
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -403,6 +412,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.5, y: 1.5, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1208500379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208500370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5968332c6e9e5e46a58e50a9942e732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 100
+  currentHealth: 0
+  deathClip: {fileID: 0}
 --- !u!1 &1220689007
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,6 +719,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingHealth: 100
   currentHealth: 0
+  timeLeftUntilAction: 6
+  playerTakingAction: 0
 --- !u!1 &1859374624
 GameObject:
   m_ObjectHideFlags: 0
