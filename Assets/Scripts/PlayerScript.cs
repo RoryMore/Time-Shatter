@@ -24,10 +24,12 @@ public class PlayerScript : MonoBehaviour
     private bool running = false;
 
     private NavMeshAgent navmeshAgent;
+    private Transform self;
     // Start is called before the first frame update
     void Start()
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
+        self = GetComponentInParent<Transform>();
     }
 
     void Awake()
@@ -41,7 +43,9 @@ public class PlayerScript : MonoBehaviour
     void FixedUpdate()
     {
         CheckDamage();
-        Movement();
+        //Movement();
+        //NetherSwap();
+        
         CountdownToTurn();
        
 
@@ -75,10 +79,25 @@ public class PlayerScript : MonoBehaviour
         print("Were gonna pretend you did something!");
         navmeshAgent.enabled = true;
 
-        //Once the function is  complete reset the bool and timer to enter back into movement mode
-        playerTakingAction = false;
-        timeLeftUntilAction = 6;
 
+
+       
+           
+           ResetTurn(6);
+
+       
+        
+
+
+        //Once the function is  complete reset the bool and timer to enter back into movement mode
+
+
+    }
+
+    void ResetTurn(float calcualtedTimeToNextAction)
+    {
+        playerTakingAction = false;
+        timeLeftUntilAction = calcualtedTimeToNextAction;
     }
 
     void CheckDamage()
@@ -145,6 +164,93 @@ public class PlayerScript : MonoBehaviour
 
         //playerAudio.clip = deathClip;
         //playerAudio.Play ();
+
+    }
+
+    void Attack()
+    {
+
+    }
+
+    void Defend()
+    {
+
+    }
+
+    void Item()
+    {
+
+    }
+
+    void Haste()
+    {
+
+    }
+
+    void Slow()
+    {
+
+    }
+
+    void Blink()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Physics.Raycast(ray, out hit, 100))
+            {
+                self.localPosition = hit.point;
+            }
+        }
+    }
+
+    void SwapInitiatives()
+    {
+
+    }
+
+    void NetherSwap()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        //Picks first target
+        print("Select Target 1");
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Physics.Raycast(ray, out hit, 100))
+            {
+                
+                GameObject tar1 = GameObject.Find(hit.collider.gameObject.name);
+ 
+                //Pick Second target
+                print("Select Target 2");
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (Physics.Raycast(ray, out hit, 100))
+                    {
+                        GameObject tar2 = GameObject.Find(hit.collider.gameObject.name); //hit.point.
+                        //Now we have both targets, we can 
+                        Transform tempLocation = tar1.GetComponent<Transform>();
+                        tar1.GetComponent<Transform>().localPosition = tar2.GetComponent<Transform>().localPosition;
+                        tar2.GetComponent<Transform>().localPosition = tempLocation.localPosition;
+
+
+                        
+
+
+                    }
+                }
+
+            }
+        }
+
+        //Vector3 posA = tar1.GetComponent<Transform>().localPosition;
+        //tar1.GetComponent<Transform>().localPosition = tar2.GetComponent<Transform>().localPosition;
+        //tar2.GetComponent<Transform>().localPosition = posA;
+        
 
     }
 
