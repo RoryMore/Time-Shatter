@@ -8,12 +8,13 @@ using UnityEngine.UI;
 public class PlayerScript : MonoBehaviour
 {
 
-    public int startingHealth = 100;
-    public int currentHealth;
-    public float timeLeftUntilAction = 6;
+    public float maxHealth = 100.0f;
+    public float currentHealth;
+    //public float timeLeftUntilAction = 6.0f;
     public bool playerTakingAction = false;
 
-
+    //public float initiativeSpeed; // If turns are to change to a different speed system
+    public float initiativeEntrySpeed = 3.0f;
 
     //Animator anim;
     //AudioSource playerAudio;
@@ -36,7 +37,7 @@ public class PlayerScript : MonoBehaviour
     {
         //anim = GetComponent <Animator> ();
         //playerAudio = GetComponent <AudioSource> ();
-        currentHealth = startingHealth;
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -45,31 +46,29 @@ public class PlayerScript : MonoBehaviour
         CheckDamage();
         //Movement();
         //NetherSwap();
-        
-        CountdownToTurn();
-       
+
 
 
     }
 
-    void CountdownToTurn()
-    {
-        if (playerTakingAction == false)
-        {
-            //Iterate on player timer
-            timeLeftUntilAction -= 1f * Time.deltaTime;
-            Mathf.Round(timeLeftUntilAction);
-            print(timeLeftUntilAction);
-            if (timeLeftUntilAction <= 0)
-            {
-                print("Player Turn!");
-                playerTakingAction = true;
-                TakeAction();
-                //Do player action
-            }
-        }
+    //void CountdownToTurn()
+    //{
+    //    if (playerTakingAction == false)
+    //    {
+    //        //Iterate on player timer
+    //        timeLeftUntilAction -= 1f * Time.deltaTime;
+    //        Mathf.Round(timeLeftUntilAction);
+    //        print(timeLeftUntilAction);
+    //        if (timeLeftUntilAction <= 0)
+    //        {
+    //            print("Player Turn!");
+    //            playerTakingAction = true;
+    //            TakeAction();
+    //            //Do player action
+    //        }
+    //    }
 
-    }
+    //}
 
     void TakeAction()
     {
@@ -79,26 +78,16 @@ public class PlayerScript : MonoBehaviour
         print("Were gonna pretend you did something!");
         navmeshAgent.enabled = true;
 
-
-
-       
-           
-           ResetTurn(6);
-
-       
-        
-
-
         //Once the function is  complete reset the bool and timer to enter back into movement mode
 
 
     }
 
-    void ResetTurn(float calcualtedTimeToNextAction)
-    {
-        playerTakingAction = false;
-        timeLeftUntilAction = calcualtedTimeToNextAction;
-    }
+    //void ResetTurn(float calcualtedTimeToNextAction)
+    //{
+    //    playerTakingAction = false;
+    //    timeLeftUntilAction = calcualtedTimeToNextAction;
+    //}
 
     void CheckDamage()
     {
@@ -158,7 +147,7 @@ public class PlayerScript : MonoBehaviour
     {
         isDead = true;
 
-        
+
 
         //anim.SetTrigger ("Die");
 
@@ -222,9 +211,9 @@ public class PlayerScript : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit, 100))
             {
-                
+
                 GameObject tar1 = GameObject.Find(hit.collider.gameObject.name);
- 
+
                 //Pick Second target
                 print("Select Target 2");
                 if (Input.GetMouseButtonDown(0))
@@ -238,7 +227,7 @@ public class PlayerScript : MonoBehaviour
                         tar2.GetComponent<Transform>().localPosition = tempLocation.localPosition;
 
 
-                        
+
 
 
                     }
@@ -250,7 +239,7 @@ public class PlayerScript : MonoBehaviour
         //Vector3 posA = tar1.GetComponent<Transform>().localPosition;
         //tar1.GetComponent<Transform>().localPosition = tar2.GetComponent<Transform>().localPosition;
         //tar2.GetComponent<Transform>().localPosition = posA;
-        
+
 
     }
 
