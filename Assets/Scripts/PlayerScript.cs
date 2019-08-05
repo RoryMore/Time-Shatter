@@ -14,9 +14,10 @@ public class PlayerScript : MonoBehaviour
     float timeSpentDoingAction = 0.0f;
     [HideInInspector] public bool isTakingAction = false;
     bool actionSelection = false;
+    bool isExecutingAbility = false;
 
-    float oldInitiativeSpeed = 5.0f;
-    public float initiativeSpeed = 5.0f;    // If turns are to change to a different speed system
+    float oldInitiativeSpeed = 3.0f;
+    public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
                                             // How long it takes for the player to reach their action
     public float initiativeEntrySpeed = 3.0f;
 
@@ -41,8 +42,8 @@ public class PlayerScript : MonoBehaviour
 
     bool isDead;
     bool damaged;
-	//For animation
-	[HideInInspector] public bool running = false;
+    //For animation
+    public bool running = false;
 
     private NavMeshAgent navmeshAgent;
     private Transform self;
@@ -63,8 +64,8 @@ public class PlayerScript : MonoBehaviour
 
         initiativeSpeed = oldInitiativeSpeed;
 
-        //  isTakingAction = true;
-        actionSelection = true;
+        //isTakingAction = true;
+        //actionSelection = true;
         SelectAbility(attackID);
     }
 
@@ -76,7 +77,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (isTakingAction)
+            if (isTakingAction || isExecutingAbility)
             {
                 //timeSpentDoingAction += (Time.deltaTime * (1.0f + (1.0f - Time.timeScale)));
                 //if (timeSpentDoingAction >= 0.9f)
@@ -100,30 +101,6 @@ public class PlayerScript : MonoBehaviour
     {
 
     }
-    //void CountdownToTurn()
-    //{
-    //    if (playerTakingAction == false)
-    //    {
-    //        //Iterate on player timer
-    //        timeLeftUntilAction -= 1f * Time.deltaTime;
-    //        Mathf.Round(timeLeftUntilAction);
-    //        print(timeLeftUntilAction);
-    //        if (timeLeftUntilAction <= 0)
-    //        {
-    //            print("Player Turn!");
-    //            playerTakingAction = true;
-    //            TakeAction();
-    //            //Do player action
-    //        }
-    //    }
-
-    //}
-
-    //void ResetTurn(float calcualtedTimeToNextAction)
-    //{
-    //    playerTakingAction = false;
-    //    timeLeftUntilAction = calcualtedTimeToNextAction;
-    //}
 
     void CheckDamage()
     {
@@ -134,11 +111,11 @@ public class PlayerScript : MonoBehaviour
     void Movement()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        //RaycastHit hit;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            if (Physics.Raycast(ray, out hit, 100))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100))
             {
                 navmeshAgent.destination = hit.point;
             }
@@ -204,22 +181,26 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 isTakingAction = false;
+                isExecutingAbility = true;
+
+                navmeshAgent.enabled = false;
+                Debug.Log("PlayerScript: Attack Action rotation chosen");
             }
 
-            navmeshAgent.enabled = false;
+            //navmeshAgent.enabled = false;
 
             // Rotate player towards point
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            //RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, 100))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100))
             {
                 Vector3 dir = (hit.point - transform.position).normalized;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
                 lookRotation.x = transform.rotation.x;
                 lookRotation.z = transform.rotation.z;
                 
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.05f) * (1.0f + (1.0f - Time.timeScale))));
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.02f) * (1.0f + (1.0f - Time.timeScale))));
             }
             
         }
@@ -229,10 +210,13 @@ public class PlayerScript : MonoBehaviour
             timeSpentDoingAction += Time.deltaTime;
 
             // Set player to attack animate
+
+            // Draw a range indicator based on weapon attack type
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            Debug.Log("PlayerScript: Attack action completing");
             // Check if an enemy is standing in front of player
             // Deal damage to them if they got hit
 
@@ -300,11 +284,11 @@ public class PlayerScript : MonoBehaviour
         actionSelection = true;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        //RaycastHit hit;
 
         if (Input.GetMouseButtonDown(1))
         {
-            if (Physics.Raycast(ray, out hit, 100))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100))
             {
                 self.localPosition = hit.point;
             }
@@ -343,7 +327,7 @@ public class PlayerScript : MonoBehaviour
                     {
                         // Set First target
                         netherSwapAbility.target1 = hit.collider.gameObject.transform;
-                        Debug.Log("NetherSwap Target 1: SET");
+                        Debug.Log("PlayerScript: NetherSwap Target 1: SET");
                     }
                 }
             }
@@ -360,7 +344,7 @@ public class PlayerScript : MonoBehaviour
                     {
                         // Set Second target
                         netherSwapAbility.target2 = hit.collider.gameObject.transform;
-                        Debug.Log("NetherSwap Target 2: SET");
+                        Debug.Log("PlayerScript: NetherSwap Target 2: SET");
                     }
                 }
             }
@@ -381,7 +365,7 @@ public class PlayerScript : MonoBehaviour
 
                     netherSwapAbility.target2.position = tempT;
 
-                    Debug.Log("Targets NetherSwapped!");
+                    Debug.Log("PlayerScript: Targets NetherSwapped!");
 
                     EndAction();
                 }
@@ -391,48 +375,53 @@ public class PlayerScript : MonoBehaviour
 
     void DoAction()
     {
-        switch (selectedAbility.type)
+        if (selectedAbility != null)
         {
-            case Ability.Type.WeaponAttack:
-                Attack();
-                break;
+            switch (selectedAbility.type)
+            {
+                case Ability.Type.WeaponAttack:
+                    Attack();
+                    break;
 
-            case Ability.Type.Defend:
-                Defend();
-                break;
+                case Ability.Type.Defend:
+                    Defend();
+                    break;
 
-            case Ability.Type.Item:
-                Item();
-                break;
+                case Ability.Type.Item:
+                    Item();
+                    break;
 
-            case Ability.Type.Blink:
-                Blink();
-                break;
+                case Ability.Type.Blink:
+                    Blink();
+                    break;
 
-            case Ability.Type.Haste:
-                Haste();
-                break;
+                case Ability.Type.Haste:
+                    Haste();
+                    break;
 
-            case Ability.Type.Slow:
-                Slow();
-                break;
+                case Ability.Type.Slow:
+                    Slow();
+                    break;
 
-            case Ability.Type.InitiativeSwap:
-                SwapInitiatives();
-                break;
+                case Ability.Type.InitiativeSwap:
+                    SwapInitiatives();
+                    break;
 
-            case Ability.Type.Swap:
-                NetherSwap();
-                break;
+                case Ability.Type.Swap:
+                    NetherSwap();
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
     void EndAction()
     {
         isTakingAction = false;
+        isExecutingAbility = false;
+
         timeSpentDoingAction = 0.0f;
         navmeshAgent.enabled = true;
         actionSelection = false;
@@ -442,6 +431,8 @@ public class PlayerScript : MonoBehaviour
         netherSwapAbility.target2 = null;
 
         initiativeSpeed = oldInitiativeSpeed;
+
+        //selectedAbility = null;
     }
 
 
