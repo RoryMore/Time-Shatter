@@ -15,8 +15,8 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector] public bool isTakingAction = false;
     bool actionSelection = false;
 
-    float oldInitiativeSpeed = 2.0f;
-    public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
+    float oldInitiativeSpeed = 5.0f;
+    public float initiativeSpeed = 5.0f;    // If turns are to change to a different speed system
                                             // How long it takes for the player to reach their action
     public float initiativeEntrySpeed = 3.0f;
 
@@ -41,8 +41,8 @@ public class PlayerScript : MonoBehaviour
 
     bool isDead;
     bool damaged;
-    //For animation
-    private bool running = false;
+	//For animation
+	[HideInInspector] public bool running = false;
 
     private NavMeshAgent navmeshAgent;
     private Transform self;
