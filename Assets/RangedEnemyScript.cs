@@ -39,20 +39,20 @@ public class RangedEnemyScript : EnemyScript
     void Update()
     {
         //While the player isn't in the "take turn" stage, follow the player but otherwise stop
-        if (player.playerTakingAction == false)
-        {
-            nav.enabled = true;
+        /*if (player.playerTakingAction == false)
+        {*/
+            //nav.enabled = true;
             Movement();
             RangedAttack();
             Turn();
-        }
-        else
+        
+        /*else
         {
 
             nav.enabled = false;
 
             //Pause animation
-        }
+        }*/
 
 
 

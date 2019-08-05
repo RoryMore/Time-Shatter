@@ -29,20 +29,20 @@ public class MeleeEnemyScript : EnemyScript
     void Update()
     {
         //While the player isn't in the "take turn" stage, follow the player but otherwise stop
-        if (player.playerTakingAction == false)
+        /*if (player.playerTakingAction == false)
         {
-            nav.enabled = true;
+            nav.enabled = true;*/
             Movement();
             MeleeAttack();
             Turn();
-        }
+       /* }
         else
         {
 
             nav.enabled = false;
             
             //Pause animation
-        }
+        }*/
 
 
 
