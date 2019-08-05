@@ -43,7 +43,8 @@ public class PlayerScript : MonoBehaviour
     void FixedUpdate()
     {
         CheckDamage();
-        //Movement();
+        Movement();
+        Blink();
         //NetherSwap();
         
         CountdownToTurn();
@@ -59,7 +60,7 @@ public class PlayerScript : MonoBehaviour
             //Iterate on player timer
             timeLeftUntilAction -= 1f * Time.deltaTime;
             Mathf.Round(timeLeftUntilAction);
-            print(timeLeftUntilAction);
+            //Debug.Log(timeLeftUntilAction);
             if (timeLeftUntilAction <= 0)
             {
                 print("Player Turn!");
@@ -77,18 +78,10 @@ public class PlayerScript : MonoBehaviour
         //This one is gonna be complex!
         navmeshAgent.enabled = false;
         print("Were gonna pretend you did something!");
-        navmeshAgent.enabled = true;
-
-
-
-       
-           
-           ResetTurn(6);
-
-       
         
 
 
+        //ResetTurn(6);
         //Once the function is  complete reset the bool and timer to enter back into movement mode
 
 
@@ -96,8 +89,10 @@ public class PlayerScript : MonoBehaviour
 
     void ResetTurn(float calcualtedTimeToNextAction)
     {
+        navmeshAgent.enabled = true;
         playerTakingAction = false;
         timeLeftUntilAction = calcualtedTimeToNextAction;
+        
     }
 
     void CheckDamage()
@@ -197,7 +192,7 @@ public class PlayerScript : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
             if (Physics.Raycast(ray, out hit, 100))
             {
