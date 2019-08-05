@@ -42,7 +42,7 @@ public class MeleeEnemyScript : MonoBehaviour
 
     void Update()
     {
-        if (player.playerTakingAction == false)
+        if (player.isTakingAction == false)
         {
             nav.enabled = true;
             Movement();

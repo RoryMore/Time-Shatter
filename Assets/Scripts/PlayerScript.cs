@@ -7,17 +7,35 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
-
     public float maxHealth = 100.0f;
     public float currentHealth;
+
     //public float timeLeftUntilAction = 6.0f;
-    public bool playerTakingAction = false;
+    float timeSpentDoingAction = 0.0f;
+    [HideInInspector] public bool isTakingAction = false;
+    bool actionSelection = false;
 
     //public float initiativeSpeed; // If turns are to change to a different speed system
     public float initiativeEntrySpeed = 3.0f;
 
     //Animator anim;
     //AudioSource playerAudio;
+
+    // -Abilities -------------------------------------------
+    public List<Ability> abilities;
+    [HideInInspector] public Ability selectedAbility = null;
+
+    public int attackID;
+    public int defendID;
+    public int itemID;
+    public int hasteID;
+    public int slowID;
+    public int blinkID;
+    public int netherSwapID;
+    public int initiativeSwapID;
+
+    NetherSwap netherSwapAbility;
+    // -------------------------------------------------------
 
     bool isDead;
     bool damaged;
@@ -31,24 +49,40 @@ public class PlayerScript : MonoBehaviour
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
         self = GetComponentInParent<Transform>();
+
     }
 
     void Awake()
     {
+        PopulateAbilitiesList();
         //anim = GetComponent <Animator> ();
         //playerAudio = GetComponent <AudioSource> ();
         currentHealth = maxHealth;
+
+        isTakingAction = true;
+        SelectAbility(netherSwapID);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        CheckDamage();
-        //Movement();
-        //NetherSwap();
+        if (isDead)
+        {
+            Death();
+        }
+        else
+        {
+            if (isTakingAction)
+            {
+                DoAction();
+            }
+            else
+            {
+                Movement();
+            }
 
-
-
+            CheckDamage();
+        }
     }
 
     //void CountdownToTurn()
@@ -70,19 +104,6 @@ public class PlayerScript : MonoBehaviour
 
     //}
 
-    void TakeAction()
-    {
-        //Script to determine how the player actually does their turn 
-        //This one is gonna be complex!
-        navmeshAgent.enabled = false;
-        print("Were gonna pretend you did something!");
-        navmeshAgent.enabled = true;
-
-        //Once the function is  complete reset the bool and timer to enter back into movement mode
-
-
-    }
-
     //void ResetTurn(float calcualtedTimeToNextAction)
     //{
     //    playerTakingAction = false;
@@ -97,40 +118,49 @@ public class PlayerScript : MonoBehaviour
 
     void Movement()
     {
-        if (playerTakingAction == false)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Input.GetMouseButtonDown(0))
+            if (Physics.Raycast(ray, out hit, 100))
             {
-                if (Physics.Raycast(ray, out hit, 100))
-                {
-                    navmeshAgent.destination = hit.point;
-                }
+                navmeshAgent.destination = hit.point;
             }
-
-            //Animation stuff
-            if (navmeshAgent.remainingDistance <= navmeshAgent.stoppingDistance)
-            {
-                running = false;
-            }
-            else
-            {
-                running = true;
-            }
-
-            //animator.SetBool("running", running);
         }
+
+        //Animation stuff
+        if (navmeshAgent.remainingDistance <= navmeshAgent.stoppingDistance)
+        {
+            running = false;
+        }
+        else
+        {
+            running = true;
+        }
+
+        //animator.SetBool("running", running);
+        
     }
 
 
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         damaged = true;
 
-        currentHealth -= amount;
+        float damageToTake = amount;
+
+        if (selectedAbility.type == Ability.Type.Defend)
+        {
+            damageToTake = amount - selectedAbility.magnitude;
+            if (damageToTake < 0.0f)
+            {
+                damageToTake = 0.0f;
+            }
+        }
+
+        currentHealth -= damageToTake;
 
         //healthSlider.value = currentHealth;
 
@@ -138,17 +168,13 @@ public class PlayerScript : MonoBehaviour
 
         if (currentHealth <= 0 && !isDead)
         {
-            Death();
+            isDead = true;
         }
     }
 
 
     void Death()
     {
-        isDead = true;
-
-
-
         //anim.SetTrigger ("Die");
 
         //playerAudio.clip = deathClip;
@@ -158,31 +184,69 @@ public class PlayerScript : MonoBehaviour
 
     void Attack()
     {
+        if (actionSelection)
+        {
+            navmeshAgent.enabled = false;
+        }
+        else
+        {
+            navmeshAgent.enabled = true;
+            timeSpentDoingAction += Time.fixedDeltaTime;
+        }
+        
+        
+        
+        
+        // Set player to attack animate
 
+        if (timeSpentDoingAction >= selectedAbility.actionSpeed)
+        {
+            // Check if an enemy is standing in front of player
+            // Deal damage to them if they got hit
+
+            // Reset variables to do with taking an action
+            EndAction();
+        }
     }
 
     void Defend()
     {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.enabled = false;
+        actionSelection = true;
 
     }
 
     void Item()
     {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.enabled = false;
+        actionSelection = true;
 
     }
 
     void Haste()
     {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.enabled = false;
+        actionSelection = true;
 
     }
 
     void Slow()
     {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.enabled = false;
+        actionSelection = true;
 
     }
 
     void Blink()
     {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.enabled = false;
+        actionSelection = true;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -197,50 +261,129 @@ public class PlayerScript : MonoBehaviour
 
     void SwapInitiatives()
     {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.enabled = false;
+        actionSelection = true;
 
     }
 
     void NetherSwap()
     {
+        navmeshAgent.enabled = false;
+        actionSelection = true;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        //Picks first target
-        print("Select Target 1");
-        if (Input.GetMouseButtonDown(0))
+        // Do we have a First target?
+        if (netherSwapAbility.target1 == null)
         {
-            if (Physics.Raycast(ray, out hit, 100))
+            if (Input.GetMouseButtonDown(0))
             {
-
-                GameObject tar1 = GameObject.Find(hit.collider.gameObject.name);
-
-                //Pick Second target
-                print("Select Target 2");
-                if (Input.GetMouseButtonDown(0))
+                if (Physics.Raycast(ray, out hit, 200))
                 {
-                    if (Physics.Raycast(ray, out hit, 100))
+                    // Check validity of target
+                    if (IsValidNetherSwapTarget(hit.collider.gameObject))
                     {
-                        GameObject tar2 = GameObject.Find(hit.collider.gameObject.name); //hit.point.
-                        //Now we have both targets, we can 
-                        Transform tempLocation = tar1.GetComponent<Transform>();
-                        tar1.GetComponent<Transform>().localPosition = tar2.GetComponent<Transform>().localPosition;
-                        tar2.GetComponent<Transform>().localPosition = tempLocation.localPosition;
-
-
-
-
-
+                        // Set First target
+                        netherSwapAbility.target1 = hit.collider.gameObject.transform;
+                        Debug.Log("NetherSwap Target 1: SET");
                     }
                 }
-
+            }
+        }
+        // Do we have a Second target?
+        else if (netherSwapAbility.target2 == null)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (Physics.Raycast(ray, out hit, 200))
+                {
+                    // Check validity of target
+                    if (IsValidNetherSwapTarget(hit.collider.gameObject))
+                    {
+                        // Set Second target
+                        netherSwapAbility.target2 = hit.collider.gameObject.transform;
+                        Debug.Log("NetherSwap Target 2: SET");
+                    }
+                }
             }
         }
 
-        //Vector3 posA = tar1.GetComponent<Transform>().localPosition;
-        //tar1.GetComponent<Transform>().localPosition = tar2.GetComponent<Transform>().localPosition;
-        //tar2.GetComponent<Transform>().localPosition = posA;
+        // Both targets selected
+        if (netherSwapAbility.target1 != null)
+        {
+            if (netherSwapAbility.target2 != null)
+            {
+                timeSpentDoingAction += Time.fixedDeltaTime;
 
+                if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
+                {
+                    Vector3 tempT = netherSwapAbility.target1.position;
 
+                    netherSwapAbility.target1.position = netherSwapAbility.target2.position;
+
+                    netherSwapAbility.target2.position = tempT;
+
+                    Debug.Log("Targets NetherSwapped!");
+
+                    EndAction();
+                }
+            }
+        }
+    }
+
+    void DoAction()
+    {
+        switch (selectedAbility.type)
+        {
+            case Ability.Type.WeaponAttack:
+                Attack();
+                break;
+
+            case Ability.Type.Defend:
+                Defend();
+                break;
+
+            case Ability.Type.Item:
+                Item();
+                break;
+
+            case Ability.Type.Blink:
+                Blink();
+                break;
+
+            case Ability.Type.Haste:
+                Haste();
+                break;
+
+            case Ability.Type.Slow:
+                Slow();
+                break;
+
+            case Ability.Type.InitiativeSwap:
+                SwapInitiatives();
+                break;
+
+            case Ability.Type.Swap:
+                NetherSwap();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    void EndAction()
+    {
+        isTakingAction = false;
+        timeSpentDoingAction = 0.0f;
+        navmeshAgent.enabled = true;
+        actionSelection = false;
+
+        // Clear NetherSwap targeting
+        netherSwapAbility.target1 = null;
+        netherSwapAbility.target2 = null;
     }
 
 
@@ -249,4 +392,83 @@ public class PlayerScript : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
+    void PopulateAbilitiesList()
+    {
+        Transform directChild = transform;
+        if (directChild.GetChild(0).name == "PlayerAbilities")
+        {
+            directChild = transform.GetChild(0);
+        }
+
+        int abilityId = 0;
+        foreach (Transform child in directChild)
+        {
+            abilities.Add(child.GetComponent<Ability>());
+            child.GetComponent<Ability>().id = abilityId;
+
+            switch (child.GetComponent<Ability>().type)
+            {
+                case Ability.Type.WeaponAttack:
+                    attackID = abilityId;
+                    break;
+
+                case Ability.Type.Defend:
+                    defendID = abilityId;
+                    break;
+
+                case Ability.Type.Item:
+                    itemID = abilityId;
+                    break;
+
+                case Ability.Type.Haste:
+                    hasteID = abilityId;
+                    break;
+
+                case Ability.Type.Slow:
+                    slowID = abilityId;
+                    break;
+
+                case Ability.Type.Blink:
+                    blinkID = abilityId;
+                    break;
+
+                case Ability.Type.Swap:
+                    netherSwapID = abilityId;
+                    netherSwapAbility = (NetherSwap)child.GetComponent<Ability>();
+                    break;
+
+                case Ability.Type.InitiativeSwap:
+                    initiativeSwapID = abilityId;
+                    break;
+
+                default:
+                    break;
+            }
+
+            abilityId++;
+        }
+    }
+
+    public void SelectAbility(int id)
+    {
+        foreach (Ability ability in abilities)
+        {
+            if (ability.id == id)
+            {
+                actionSelection = true;
+                selectedAbility = ability;
+                break;
+            }
+        }
+    }
+
+    bool IsValidNetherSwapTarget(GameObject teleportedObject)
+    {
+        if (teleportedObject.tag.Contains("Player") || teleportedObject.tag.Contains("Enemy"))
+        {
+            return true;
+        }
+        Debug.Log("LOL, you tried teleporting something you CAN'T! HAH");
+        return false;
+    }
 }
