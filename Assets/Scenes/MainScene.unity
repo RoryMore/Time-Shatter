@@ -293,7 +293,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 1.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -544,7 +544,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 1.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -705,6 +705,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e5d2da5c51b0b14a8f1ebec1c300c9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slowMotionCount: 0.02
+  playerTurnCounter: 3
 --- !u!4 &1415704141
 Transform:
   m_ObjectHideFlags: 0
@@ -874,10 +876,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef9294214fad9df4c961e090653e867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 100
+  maxHealth: 100
   currentHealth: 0
-  timeLeftUntilAction: 6
   playerTakingAction: 0
+  initiativeEntrySpeed: 3
 --- !u!1 &1859374624
 GameObject:
   m_ObjectHideFlags: 0
