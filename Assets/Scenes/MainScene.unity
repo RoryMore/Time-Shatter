@@ -608,8 +608,8 @@ MonoBehaviour:
   player: {fileID: 0}
   isDead: 0
   isSinking: 0
-  meleeAttackRange: 5
-  meleeDamage: 2
+  meleeAttackRange: 0
+  meleeDamage: 0
 --- !u!1 &1220689007
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,7 +747,7 @@ MonoBehaviour:
   player: {fileID: 0}
   isDead: 0
   isSinking: 0
-  rangedAttackRange: 10
+  rangedAttackRange: 0
   rangedDamage: 0
   followSharpness: 0.1
 --- !u!65 &1373573133
@@ -1112,7 +1112,7 @@ MonoBehaviour:
   slowMostionAmbient: {fileID: 0}
   slowMotionMusic: {fileID: 1845066913}
   mainMenuMusic: {fileID: 1845066912}
-  state: 0
+  state: 2
 --- !u!4 &1845066911
 Transform:
   m_ObjectHideFlags: 0
@@ -1125,7 +1125,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1845066912
 AudioSource:
@@ -1333,7 +1333,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.7
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
