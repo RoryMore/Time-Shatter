@@ -43,7 +43,7 @@ public class PlayerScript : MonoBehaviour
     bool isDead;
     bool damaged;
     //For animation
-    private bool running = false;
+    public bool running = false;
 
     private NavMeshAgent navmeshAgent;
     private Transform self;
@@ -66,7 +66,7 @@ public class PlayerScript : MonoBehaviour
 
         //isTakingAction = true;
         //actionSelection = true;
-        //SelectAbility(attackID);
+        SelectAbility(attackID);
     }
 
     private void Update()
