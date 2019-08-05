@@ -42,18 +42,18 @@ public class MeleeEnemyScript : MonoBehaviour
 
     void Update()
     {
-        if (player.isTakingAction == false)
-        {
-            nav.enabled = true;
-            Movement();
-        }
-        else
-        {
-            nav.enabled = false;
-        }
+        /* if (player.isTakingAction == false)
+         {
+             nav.enabled = true;
 
+         }
+         else
+         {
+             nav.enabled = false;
+         }
 
-
+     */
+        Movement();
     }
 
     //Function that is called when the player deals damage to you
