@@ -58,6 +58,7 @@ public class SoundManager : MonoBehaviour
 			case MusicState.MAINMENU:
 				{
 					MuteAllAudio();
+                    battleMusic.volume = 0.0f;
 					mainMenuMusic.volume = 0.7f;
 					break;
 				}
