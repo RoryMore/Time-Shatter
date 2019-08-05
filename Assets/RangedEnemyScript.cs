@@ -7,7 +7,6 @@ public class RangedEnemyScript : EnemyScript
 {
     // Start is called before the first frame update
 
-
     public float rangedAttackRange;
     public int rangedDamage;
 
@@ -68,16 +67,17 @@ public class RangedEnemyScript : EnemyScript
 
             float distance = Vector3.Distance(transform.position, player.transform.position);
 
+            //Approach
             if (distance <= rangedAttackRange)
             {
-
-
+                
                 nav.SetDestination(transform.position);
             }
+            //Run away!
             else if (distance >= rangedAttackRange/2)
             {
                 
-
+                
 
                 ////Get angle between current position and player position
                 //float xDiff = transform.position.x - player.transform.position.x;

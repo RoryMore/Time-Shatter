@@ -64,8 +64,8 @@ public class PlayerScript : MonoBehaviour
             if (timeLeftUntilAction <= 0)
             {
                 print("Player Turn!");
-                playerTakingAction = true;
-                TakeAction();
+                //playerTakingAction = true;
+                //TakeAction();
                 //Do player action
             }
         }
