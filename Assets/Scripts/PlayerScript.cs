@@ -101,30 +101,6 @@ public class PlayerScript : MonoBehaviour
     {
 
     }
-    //void CountdownToTurn()
-    //{
-    //    if (playerTakingAction == false)
-    //    {
-    //        //Iterate on player timer
-    //        timeLeftUntilAction -= 1f * Time.deltaTime;
-    //        Mathf.Round(timeLeftUntilAction);
-    //        print(timeLeftUntilAction);
-    //        if (timeLeftUntilAction <= 0)
-    //        {
-    //            print("Player Turn!");
-    //            playerTakingAction = true;
-    //            TakeAction();
-    //            //Do player action
-    //        }
-    //    }
-
-    //}
-
-    //void ResetTurn(float calcualtedTimeToNextAction)
-    //{
-    //    playerTakingAction = false;
-    //    timeLeftUntilAction = calcualtedTimeToNextAction;
-    //}
 
     void CheckDamage()
     {
@@ -234,6 +210,8 @@ public class PlayerScript : MonoBehaviour
             timeSpentDoingAction += Time.deltaTime;
 
             // Set player to attack animate
+
+            // Draw a range indicator based on weapon attack type
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
@@ -454,7 +432,7 @@ public class PlayerScript : MonoBehaviour
 
         initiativeSpeed = oldInitiativeSpeed;
 
-        selectedAbility = null;
+        //selectedAbility = null;
     }
 
 
