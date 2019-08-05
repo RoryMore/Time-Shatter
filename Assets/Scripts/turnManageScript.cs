@@ -7,22 +7,6 @@ public class turnManageScript : MonoBehaviour
     //This may or may not be required. It could simply be for managing the actual 
     //UI bar element instead of facilitating turns, which seems more efficient to do inside of each character
 
-
-    // Start is called before the first frame update
-
-    //ResetTurn of player and enemey
-    //TurnTick
-    //thing goes when reach 5
-    //get the things speed
-    //action at 10
-    //bool player action
-    //bool enemey actions
-    //when player turn pause
-    //actions have a speed very slow, slow, Medium, Fast , Very Fast , get from the thing
-    // turn timer 
-    //Take action
-    //each enemey player had a turncoutner or speed at which it turns into an action
-
     private float fixedUpdateCount = 0;
     private float updateFixedUpdateCountPerSecond;
     private float turnCounter = 0;
@@ -33,13 +17,15 @@ public class turnManageScript : MonoBehaviour
 
     PlayerScript player;
 
-
+	//public SoundManager.MusicState muscType;
+	SoundManager soundManager;
 
 
     void Awake()
     {
         StartCoroutine(Loop());
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+		soundManager = GameObject.FindGameObjectWithTag("Music").GetComponent<SoundManager>();
     }
 
     void FixedUpdate()
@@ -55,14 +41,13 @@ public class turnManageScript : MonoBehaviour
         {
             Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
             turnCounter = 0;
+			soundManager.state = SoundManager.MusicState.SLOWMOTION;
         }
         else if (player.isTakingAction == false)
         {
             Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
-           
-        }
-
-  
+			soundManager.state = SoundManager.MusicState.BATTLE;
+		}
 
     }
 
