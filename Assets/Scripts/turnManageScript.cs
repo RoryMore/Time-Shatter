@@ -29,7 +29,9 @@ public class turnManageScript : MonoBehaviour
     public float slowMotionCount;
     private float normalSpeedCount = 1.0f;
     public float playerTurnCounter;
-    bool playerAction = false;
+    //bool playerAction = false;
+
+    PlayerScript player;
 
 
 
@@ -37,25 +39,30 @@ public class turnManageScript : MonoBehaviour
     void Awake()
     {
         StartCoroutine(Loop());
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
     }
 
     void FixedUpdate()
     {
         fixedUpdateCount += 1;
 
-        if (turnCounter == playerTurnCounter)
+        if (turnCounter == player.initiativeSpeed)
         {
-            playerAction = true;
+            player.isTakingAction = true;
         }
 
-        if (playerAction == true)
+        if (player.isTakingAction == true)
         {
-            Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.2f);
+            Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
+            turnCounter = 0;
         }
-        else if (playerAction == false)
+        else if (player.isTakingAction == false)
         {
-            Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.2f);
+            Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
+           
         }
+
+  
 
     }
 
@@ -66,10 +73,12 @@ public class turnManageScript : MonoBehaviour
             yield return new WaitForSeconds(1);
             updateFixedUpdateCountPerSecond = fixedUpdateCount;
             fixedUpdateCount = 0;
-            if (playerAction == false)
+            if (player.isTakingAction == false)
             {
                 turnCounter += 1;
             }
+
+
             Debug.Log(turnCounter);
 
         }

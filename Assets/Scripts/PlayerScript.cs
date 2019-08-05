@@ -15,8 +15,8 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector] public bool isTakingAction = false;
     bool actionSelection = false;
 
-    float oldInitiativeSpeed = 3.0f;
-    public float initiativeSpeed = 3.0f;    // If turns are to change to a different speed system
+    float oldInitiativeSpeed = 2.0f;
+    public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
                                             // How long it takes for the player to reach their action
     public float initiativeEntrySpeed = 3.0f;
 
@@ -63,12 +63,12 @@ public class PlayerScript : MonoBehaviour
 
         initiativeSpeed = oldInitiativeSpeed;
 
-        isTakingAction = true;
+        //  isTakingAction = true;
+        actionSelection = true;
         SelectAbility(attackID);
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void Update()
     {
         if (isDead)
         {
@@ -78,6 +78,11 @@ public class PlayerScript : MonoBehaviour
         {
             if (isTakingAction)
             {
+                //timeSpentDoingAction += (Time.deltaTime * (1.0f + (1.0f - Time.timeScale)));
+                //if (timeSpentDoingAction >= 0.9f)
+                //{
+                //EndAction();
+                //}
                 DoAction();
             }
             else
@@ -87,8 +92,14 @@ public class PlayerScript : MonoBehaviour
 
             CheckDamage();
         }
+    
     }
 
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+
+    }
     //void CountdownToTurn()
     //{
     //    if (playerTakingAction == false)
@@ -188,11 +199,11 @@ public class PlayerScript : MonoBehaviour
 
     void Attack()
     {
-        if (actionSelection)
+        if (isTakingAction)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                actionSelection = false;
+                isTakingAction = false;
             }
 
             navmeshAgent.enabled = false;
@@ -208,14 +219,14 @@ public class PlayerScript : MonoBehaviour
                 lookRotation.x = transform.rotation.x;
                 lookRotation.z = transform.rotation.z;
                 
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime / 0.25f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.05f) * (1.0f + (1.0f - Time.timeScale))));
             }
             
         }
         else
         {
             //navmeshAgent.enabled = true;
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            timeSpentDoingAction += Time.deltaTime;
 
             // Set player to attack animate
         }
