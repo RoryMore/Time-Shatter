@@ -20,6 +20,7 @@ public class turnManageScript : MonoBehaviour
     {
         START,
         BATTLE,
+        ACTION,
         END
     }
 
@@ -54,7 +55,7 @@ public class turnManageScript : MonoBehaviour
                 {
                     //Time.timeScale = 0.1f;
 
-                   if (battleStart >= 0.1f)
+                   if (battleStart >= 4.0f)
                     {
                         start = true;
                     }
@@ -76,13 +77,31 @@ public class turnManageScript : MonoBehaviour
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
                         turnCounter = 0;
                         soundManager.state = SoundManager.MusicState.SLOWMOTION;
-                        //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
+                        if (player.isExecutingAbility == true)
+                        {
+                            state = BattleState.ACTION;
+                        }
                     }
                     else if (player.isTakingAction == false)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
                         soundManager.state = SoundManager.MusicState.BATTLE;
                         //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
+                    }
+
+                    break;
+                }
+            case BattleState.ACTION:
+                {
+                    Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
+                    if (player.selectedAbility != null)
+                    {
+                        if (player.isExecutingAbility == false)
+                        {
+
+                            state = BattleState.BATTLE;
+
+                        }
                     }
 
                     break;
@@ -113,6 +132,7 @@ public class turnManageScript : MonoBehaviour
 
             battleStart += 1;
 
+            Debug.Log(Time.timeScale);
 
             Debug.Log("TurnManagerScript: turnCounter = " + turnCounter);
 
