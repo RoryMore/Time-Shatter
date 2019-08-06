@@ -13,41 +13,102 @@ public class turnManageScript : MonoBehaviour
     public float slowMotionCount;
     private float normalSpeedCount = 1.0f;
     public float playerTurnCounter;
-    //bool playerAction = false;
+    private float battleStart = 0;
+    bool start = false;
+
+    public enum BattleState
+    {
+        START,
+        BATTLE,
+        ACTION,
+        END
+    }
+
+    public BattleState state;
 
     PlayerScript player;
 
-	//public SoundManager.MusicState muscType;
-	SoundManager soundManager;
+    //public SoundManager.MusicState muscType;
+    SoundManager soundManager;
 
 
     void Awake()
     {
         StartCoroutine(Loop());
+
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
-		soundManager = GameObject.FindGameObjectWithTag("Music").GetComponent<SoundManager>();
+        soundManager = GameObject.FindGameObjectWithTag("Music").GetComponent<SoundManager>();
+    }
+
+    private void Start()
+    {
+        state = BattleState.START;
     }
 
     void FixedUpdate()
     {
         fixedUpdateCount += 1;
 
-        if (turnCounter == player.initiativeSpeed)
+        switch (state)
         {
-            player.isTakingAction = true;
-        }
+            case BattleState.START:
+                {
+                    //Time.timeScale = 0.1f;
 
-        if (player.isTakingAction == true)
-        {
-            Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
-            turnCounter = 0;
-			soundManager.state = SoundManager.MusicState.SLOWMOTION;
+                   if (battleStart >= 4.0f)
+                    {
+                        start = true;
+                    }
+
+                    if (start == true)
+                    {
+                        state = BattleState.BATTLE;
+                    }
+                    break;
+                }
+            case BattleState.BATTLE:
+                {
+                    if (turnCounter == player.initiativeSpeed)
+                    {
+                        player.isTakingAction = true;
+                    }
+                    if (player.isTakingAction == true)
+                    {
+                        Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
+                        turnCounter = 0;
+                        soundManager.state = SoundManager.MusicState.SLOWMOTION;
+                        if (player.isExecutingAbility == true)
+                        {
+                            state = BattleState.ACTION;
+                        }
+                    }
+                    else if (player.isTakingAction == false)
+                    {
+                        Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
+                        soundManager.state = SoundManager.MusicState.BATTLE;
+                        //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
+                    }
+
+                    break;
+                }
+            case BattleState.ACTION:
+                {
+                    Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
+                    soundManager.state = SoundManager.MusicState.BATTLE;
+                    if (player.isExecutingAbility == false)
+                    {
+
+                        state = BattleState.BATTLE;
+
+                    }
+
+                    break;
+                }
+            case BattleState.END:
+                {
+                    break;
+                }
         }
-        else if (player.isTakingAction == false)
-        {
-            Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
-			soundManager.state = SoundManager.MusicState.BATTLE;
-		}
 
     }
 
@@ -60,12 +121,21 @@ public class turnManageScript : MonoBehaviour
             fixedUpdateCount = 0;
             if (player.isTakingAction == false)
             {
-                turnCounter += 1;
+                if (state == BattleState.BATTLE)
+                {
+                    turnCounter += 1;
+                   // Debug.Log("YEEEEEEEEEEEEEEEEEEEE");
+                }
             }
 
+            battleStart += 1;
 
-            Debug.Log(turnCounter);
+            Debug.Log(Time.timeScale);
+
+            Debug.Log("TurnManagerScript: turnCounter = " + turnCounter);
 
         }
+
     }
+
 }

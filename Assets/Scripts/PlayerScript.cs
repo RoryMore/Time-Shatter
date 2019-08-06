@@ -10,11 +10,13 @@ public class PlayerScript : MonoBehaviour
     public float maxHealth = 100.0f;
     public float currentHealth;
 
+    float baseMoveSpeed;
+
     //public float timeLeftUntilAction = 6.0f;
     float timeSpentDoingAction = 0.0f;
-    [HideInInspector] public bool isTakingAction = false;
+     public bool isTakingAction = false;
     bool actionSelection = false;
-    bool isExecutingAbility = false;
+    public bool isExecutingAbility = false;
 
     float oldInitiativeSpeed = 3.0f;
     public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
@@ -38,6 +40,7 @@ public class PlayerScript : MonoBehaviour
     public int initiativeSwapID;
 
     NetherSwap netherSwapAbility;
+    Ability hasteAbility;
     // -------------------------------------------------------
 
     bool isDead;
@@ -52,7 +55,8 @@ public class PlayerScript : MonoBehaviour
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
         self = GetComponentInParent<Transform>();
-        
+
+        baseMoveSpeed = navmeshAgent.speed;
     }
 
     void Awake()
@@ -66,7 +70,7 @@ public class PlayerScript : MonoBehaviour
 
         //isTakingAction = true;
         //actionSelection = true;
-        SelectAbility(attackID);
+        //SelectAbility(attackID);
     }
 
     private void Update()
@@ -178,6 +182,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (isTakingAction)
         {
+            Debug.Log("PlayerScript: isTakingAction has to equal true here. We should be rotating the player");
             if (Input.GetMouseButtonDown(0))
             {
                 isTakingAction = false;
@@ -193,7 +198,7 @@ public class PlayerScript : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //RaycastHit hit;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 100))
+            if (Physics.Raycast(ray, out RaycastHit hit, 200))
             {
                 Vector3 dir = (hit.point - transform.position).normalized;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
@@ -207,7 +212,9 @@ public class PlayerScript : MonoBehaviour
         else
         {
             //navmeshAgent.enabled = true;
-            timeSpentDoingAction += Time.deltaTime;
+            timeSpentDoingAction += Time.fixedDeltaTime;
+
+
 
             // Set player to attack animate
 
@@ -228,24 +235,39 @@ public class PlayerScript : MonoBehaviour
     void Defend()
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
-        navmeshAgent.enabled = false;
+        
+        Debug.Log("PlayerScript: Defend timeSpentDoingAction = " + timeSpentDoingAction);
+        //navmeshAgent.enabled = false;
+        if (isTakingAction && !isExecutingAbility)
+        {
+            navmeshAgent.speed = navmeshAgent.speed * 0.2f;
+        }
+        
         actionSelection = true;
+        //isTakingAction = true;
+        isExecutingAbility = true;
+
+        Movement();
 
         // Animate Defense
-
+        
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            navmeshAgent.speed = baseMoveSpeed;
             // Stop Defense animation
-
+            Debug.Log("PlayerScript: Defend action finished");
             EndAction();
         }
     }
 
     void Item()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
+
+        //isTakingAction = false;
+        //isExecutingAbility = true;
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
@@ -255,19 +277,29 @@ public class PlayerScript : MonoBehaviour
 
     void Haste()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
-        navmeshAgent.enabled = false;
+        timeSpentDoingAction += Time.deltaTime;
+        
         actionSelection = true;
+
+        isTakingAction = false;
+        isExecutingAbility = true;
+        navmeshAgent.enabled = false;
+
+        // Cast time anim
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            selectedAbility.isBuffActive = true;
+
+            initiativeSpeed = oldInitiativeSpeed * selectedAbility.magnitude;
+
             EndAction();
         }
     }
 
     void Slow()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -279,7 +311,7 @@ public class PlayerScript : MonoBehaviour
 
     void Blink()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -297,7 +329,7 @@ public class PlayerScript : MonoBehaviour
 
     void SwapInitiatives()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -355,7 +387,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (netherSwapAbility.target2 != null)
             {
-                timeSpentDoingAction += Time.fixedDeltaTime;
+                timeSpentDoingAction += Time.deltaTime;
 
                 if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
                 {
@@ -412,8 +444,52 @@ public class PlayerScript : MonoBehaviour
                     break;
 
                 default:
+                    
                     break;
             }
+        }
+        else
+        {
+            SelectAbilityViaKeyboardHotkey();
+        }
+    }
+
+    void SelectAbilityViaKeyboardHotkey()
+    {
+        if (Input.GetKeyDown("1"))
+        {
+            SelectAbility(attackID);
+            Debug.Log("PlayerScript: Attack selected.");
+        }
+        else if (Input.GetKeyDown("2"))
+        {
+            SelectAbility(defendID);
+            Debug.Log("PlayerScript: Defense selected.");
+        }
+        else if (Input.GetKeyDown("3"))
+        {
+            SelectAbility(hasteID);
+            Debug.Log("PlayerScript: Haste selected.");
+        }
+        else if (Input.GetKeyDown("4"))
+        {
+            SelectAbility(slowID);
+            Debug.Log("PlayerScript: Slow selected.");
+        }
+        else if (Input.GetKeyDown("5"))
+        {
+            SelectAbility(blinkID);
+            Debug.Log("PlayerScript: Blink selected.");
+        }
+        else if (Input.GetKeyDown("6"))
+        {
+            SelectAbility(netherSwapID);
+            Debug.Log("PlayerScript: Have you ever played the game Switch?");
+        }
+        else if (Input.GetKeyDown("7"))
+        {
+            SelectAbility(initiativeSwapID);
+            Debug.Log("PlayerScript: InitiativeSwap selected.");
         }
     }
 
@@ -421,18 +497,66 @@ public class PlayerScript : MonoBehaviour
     {
         isTakingAction = false;
         isExecutingAbility = false;
+        actionSelection = false;
 
         timeSpentDoingAction = 0.0f;
         navmeshAgent.enabled = true;
-        actionSelection = false;
+        
 
         // Clear NetherSwap targeting
         netherSwapAbility.target1 = null;
         netherSwapAbility.target2 = null;
 
-        initiativeSpeed = oldInitiativeSpeed;
+        //initiativeSpeed = oldInitiativeSpeed;
 
-        //selectedAbility = null;
+        // This foreach loop contains: ABILITY COOLDOWNS AND BUFFS/DEBUFFS
+        foreach (Ability ability in abilities)
+        {
+            // If the ability has been used/is on cooldown - increment the cooldown check value
+            if (ability.turnsBeenOnCooldown < ability.cooldown)
+            {
+                ability.turnsBeenOnCooldown++;
+            }
+            // Is the abilities buff active? Increment the turnsBuffed
+            if (ability.isBuffActive)
+            {
+                if (ability.turnsBuffed < ability.buffDuration+1)
+                {
+                    ability.turnsBuffed++;
+                }
+                // Buff has been active for desired duration.
+                // What ability was it, so what do we do next
+                else if (ability.id == hasteID)
+                {
+                    ability.isBuffActive = false;
+                    ability.turnsBuffed = 0;
+
+                    // We are no longer buffed. Haste debuffs our initiativeSpeed after our buff finishes
+                    initiativeSpeed = oldInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
+                    ability.isDebuffActive = true;
+                }
+            }
+            // Is the abilities debuff active? Increment the turnsDebuffed
+            if (ability.isDebuffActive)
+            {
+                if (ability.turnsDebuffed < ability.debuffDuration)
+                {
+                    ability.turnsDebuffed++;
+                }
+                // debuff has been active for desired duration.
+                // What ability was it, so what do we do next
+                else if (ability.id == hasteID)
+                {
+                    ability.isDebuffActive = false;
+                    ability.turnsDebuffed = 0;
+
+                    initiativeSpeed = oldInitiativeSpeed;
+                }
+            }
+        }
+
+        selectedAbility.turnsBeenOnCooldown = 0;
+        selectedAbility = null;
     }
 
 
@@ -471,6 +595,7 @@ public class PlayerScript : MonoBehaviour
 
                 case Ability.Type.Haste:
                     hasteID = abilityId;
+                    hasteAbility = child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Slow:
@@ -504,9 +629,12 @@ public class PlayerScript : MonoBehaviour
         {
             if (ability.id == id)
             {
-                actionSelection = true;
-                selectedAbility = ability;
-                break;
+                if (ability.turnsBeenOnCooldown >= ability.cooldown)
+                {
+                    actionSelection = true;
+                    selectedAbility = ability;
+                    break;
+                }
             }
         }
     }

@@ -110,15 +110,15 @@ public class RangedEnemyScript : EnemyScript
         else if (rangedAttackRange <= distance && enemyCooldown <= 0.0f)
         {
             enemyCooldown = 6.0f;
-            Debug.Log("Somehow I am actually out of ranged");
+            //Debug.Log("Somehow I am actually out of ranged");
         }
         else if (rangedAttackRange <= distance && 0.0f <= enemyCooldown)
         {
-            Debug.Log("It isn't the turn yet...");
+           // Debug.Log("It isn't the turn yet...");
         }
         else
         {
-            Debug.Log("Should never trigger ya dumbo");
+           // Debug.Log("Should never trigger ya dumbo");
         }
     }
 }

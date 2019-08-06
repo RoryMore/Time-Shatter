@@ -46,6 +46,14 @@ MonoBehaviour:
   actionSpeed: 2
   range: 5
   magnitude: 20
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 1
+  turnsBeenOnCooldown: 0
   type: 0
   id: 0
   attackType: 1
@@ -94,7 +102,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionSpeed: 1
   range: 0
-  magnitude: 0.75
+  magnitude: 0.5
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 6
+  turnsBeenOnCooldown: 0
   type: 3
   id: 0
 --- !u!1 &2360742187017617147
@@ -143,7 +159,15 @@ MonoBehaviour:
   actionSpeed: 0.75
   range: 0
   magnitude: 0
-  type: 0
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 4
+  turnsBeenOnCooldown: 0
+  type: 5
   id: 0
 --- !u!1 &6718267439629265239
 GameObject:
@@ -191,6 +215,14 @@ MonoBehaviour:
   actionSpeed: 0.1
   range: 4
   magnitude: 0
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 5
+  turnsBeenOnCooldown: 0
   type: 6
   id: 0
   target1: {fileID: 0}
@@ -241,6 +273,14 @@ MonoBehaviour:
   actionSpeed: 5
   range: 0
   magnitude: 7.5
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 1
+  turnsBeenOnCooldown: 0
   type: 1
   id: 0
 --- !u!1 &7760009501327630570
@@ -325,7 +365,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionSpeed: 1
   range: 6
-  magnitude: 0.75
+  magnitude: 0.5
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 3
+  turnsBeenOnCooldown: 0
   type: 4
   id: 0
 --- !u!1 &8193714675090267386
@@ -374,6 +422,14 @@ MonoBehaviour:
   actionSpeed: 1
   range: 0
   magnitude: 10
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 1
+  turnsBeenOnCooldown: 0
   type: 2
   id: 0
   usesLeft: 0
