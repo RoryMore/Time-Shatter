@@ -76,11 +76,13 @@ public class turnManageScript : MonoBehaviour
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
                         turnCounter = 0;
                         soundManager.state = SoundManager.MusicState.SLOWMOTION;
+                        //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
                     }
                     else if (player.isTakingAction == false)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
                         soundManager.state = SoundManager.MusicState.BATTLE;
+                        //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
                     }
 
                     break;
@@ -112,7 +114,7 @@ public class turnManageScript : MonoBehaviour
             battleStart += 1;
 
 
-            Debug.Log(battleStart);
+            Debug.Log("TurnManagerScript: turnCounter = " + turnCounter);
 
         }
 
