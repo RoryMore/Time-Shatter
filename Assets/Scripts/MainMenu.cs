@@ -10,9 +10,28 @@ public class MainMenu : MonoBehaviour
 
 	private int levelToLoad;
 
+	public enum Scene
+	{
+		MAINMENU,
+		BATTLESCENE
+	}
+
+	public Scene SceneState;
+
 	private void Update()
 	{
-		MainMenuMusic.volume = Mathf.Lerp(MainMenuMusic.volume, 0.7f, Time.deltaTime / 0.3f);
+		switch (SceneState)
+		{
+			case Scene.MAINMENU:
+				{
+					MainMenuMusic.volume = Mathf.Lerp(MainMenuMusic.volume, 0.7f, Time.deltaTime / 0.3f);
+					break;
+				}
+			case Scene.BATTLESCENE:
+				{
+					break;
+				}
+		}
 	}
 
 	public void PlayGame()
@@ -26,12 +45,13 @@ public class MainMenu : MonoBehaviour
 		levelToLoad = levelIndex;
 		animator.SetTrigger("FadeOut");
 		MainMenuMusic.pitch = Mathf.Lerp(MainMenuMusic.pitch, 0.8f, Time.deltaTime / 0.05f);
-		MainMenuMusic.volume = Mathf.Lerp(MainMenuMusic.volume, 0.1f, Time.deltaTime / 0.3f);
+		MainMenuMusic.volume = Mathf.Lerp(MainMenuMusic.volume, 0.0f, Time.deltaTime / 0.03f);
 	}
 
 	public void OnFadeComplete()
 	{
 		SceneManager.LoadScene("MainScene");
+		SceneState = Scene.BATTLESCENE;
 	}
 
 }
