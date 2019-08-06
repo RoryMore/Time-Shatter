@@ -103,10 +103,10 @@ MonoBehaviour:
   actionSpeed: 1
   range: 0
   magnitude: 0.5
-  buffDuration: 0
+  buffDuration: 2
   turnsBuffed: 0
   isBuffActive: 0
-  debuffDuration: 0
+  debuffDuration: 3
   turnsDebuffed: 0
   isDebuffActive: 0
   cooldown: 6
@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bae314e56c36aa941bd2a1de892ec853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 5
+  actionSpeed: 3
   range: 0
   magnitude: 7.5
   buffDuration: 0
@@ -329,7 +329,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2495852127310954632}
-  - component: {fileID: 3893668996785322856}
+  - component: {fileID: 1438715778989561442}
   m_Layer: 0
   m_Name: Slow
   m_TagString: Untagged
@@ -351,7 +351,7 @@ Transform:
   m_Father: {fileID: 7760009501327630564}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3893668996785322856
+--- !u!114 &1438715778989561442
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8108334643017484612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bae314e56c36aa941bd2a1de892ec853, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bf980cb98dac9c44b318e8aded051fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpeed: 1
@@ -369,13 +369,14 @@ MonoBehaviour:
   buffDuration: 0
   turnsBuffed: 0
   isBuffActive: 0
-  debuffDuration: 0
+  debuffDuration: 2
   turnsDebuffed: 0
   isDebuffActive: 0
   cooldown: 3
   turnsBeenOnCooldown: 0
   type: 4
   id: 0
+  targettedEnemy: {fileID: 0}
 --- !u!1 &8193714675090267386
 GameObject:
   m_ObjectHideFlags: 0

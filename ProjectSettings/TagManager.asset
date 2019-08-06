@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Enemy
   - Music
+  - EnemyTele
+  - EnemyTeleSlow
+  - EnemySlow
+  - Tele
   layers:
   - Default
   - TransparentFX

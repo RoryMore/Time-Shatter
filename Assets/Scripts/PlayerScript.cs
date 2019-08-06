@@ -41,6 +41,7 @@ public class PlayerScript : MonoBehaviour
 
     NetherSwap netherSwapAbility;
     Ability hasteAbility;
+    SlowAbility slowAbility;
     // -------------------------------------------------------
 
     bool isDead;
@@ -50,6 +51,8 @@ public class PlayerScript : MonoBehaviour
 
     private NavMeshAgent navmeshAgent;
     private Transform self;
+
+    turnManageScript turnManager;
     // Start is called before the first frame update
     void Start()
     {
@@ -57,6 +60,8 @@ public class PlayerScript : MonoBehaviour
         self = GetComponentInParent<Transform>();
 
         baseMoveSpeed = navmeshAgent.speed;
+
+        turnManager = FindObjectOfType<turnManageScript>();
     }
 
     void Awake()
@@ -81,21 +86,24 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (isTakingAction || isExecutingAbility)
+            if (turnManager.state != turnManageScript.BattleState.START)
             {
-                //timeSpentDoingAction += (Time.deltaTime * (1.0f + (1.0f - Time.timeScale)));
-                //if (timeSpentDoingAction >= 0.9f)
-                //{
-                //EndAction();
-                //}
-                DoAction();
-            }
-            else
-            {
-                Movement();
-            }
+                if (isTakingAction || isExecutingAbility)
+                {
+                    //timeSpentDoingAction += (Time.deltaTime * (1.0f + (1.0f - Time.timeScale)));
+                    //if (timeSpentDoingAction >= 0.9f)
+                    //{
+                    //EndAction();
+                    //}
+                    DoAction();
+                }
+                else
+                {
+                    Movement();
+                }
 
-            CheckDamage();
+                CheckDamage();
+            }
         }
     
     }
@@ -214,8 +222,6 @@ public class PlayerScript : MonoBehaviour
             //navmeshAgent.enabled = true;
             timeSpentDoingAction += Time.fixedDeltaTime;
 
-
-
             // Set player to attack animate
 
             // Draw a range indicator based on weapon attack type
@@ -236,7 +242,7 @@ public class PlayerScript : MonoBehaviour
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
         
-        Debug.Log("PlayerScript: Defend timeSpentDoingAction = " + timeSpentDoingAction);
+        //Debug.Log("PlayerScript: Defend timeSpentDoingAction = " + timeSpentDoingAction);
         //navmeshAgent.enabled = false;
         if (isTakingAction && !isExecutingAbility)
         {
@@ -255,14 +261,14 @@ public class PlayerScript : MonoBehaviour
         {
             navmeshAgent.speed = baseMoveSpeed;
             // Stop Defense animation
-            Debug.Log("PlayerScript: Defend action finished");
+            //Debug.Log("PlayerScript: Defend action finished");
             EndAction();
         }
     }
 
     void Item()
     {
-        timeSpentDoingAction += Time.deltaTime;
+        timeSpentDoingAction += Time.fixedDeltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -277,7 +283,7 @@ public class PlayerScript : MonoBehaviour
 
     void Haste()
     {
-        timeSpentDoingAction += Time.deltaTime;
+        timeSpentDoingAction += Time.fixedDeltaTime;
         
         actionSelection = true;
 
@@ -297,21 +303,48 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    // Currently the slow will stay on the target for 2 of Player's turns
+    // I.e if player hastes while a target is slowed, the target may become unslowed unintentionally quickly
     void Slow()
     {
-        timeSpentDoingAction += Time.deltaTime;
-        navmeshAgent.enabled = false;
-        actionSelection = true;
+        //actionSelection = true;
+
+        if (slowAbility.targettedEnemy == null)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit, 200))
+                {
+                    if (IsValidSlowTarget(hit.collider.gameObject))
+                    {
+                        slowAbility.targettedEnemy = hit.collider.gameObject.GetComponent<EnemyScript>();
+                        isTakingAction = false;
+                        isExecutingAbility = true;
+
+                        navmeshAgent.enabled = false;
+                    }
+                }
+            }
+        }
+        // We have a target
+        else
+        {
+            timeSpentDoingAction += Time.fixedDeltaTime;
+        }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            slowAbility.targettedEnemy.enemyCooldown = slowAbility.targettedEnemy.enemyCooldown / selectedAbility.magnitude;
+            selectedAbility.isDebuffActive = true;
+
             EndAction();
         }
     }
 
     void Blink()
     {
-        timeSpentDoingAction += Time.deltaTime;
+        timeSpentDoingAction += Time.fixedDeltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -329,7 +362,7 @@ public class PlayerScript : MonoBehaviour
 
     void SwapInitiatives()
     {
-        timeSpentDoingAction += Time.deltaTime;
+        timeSpentDoingAction += Time.fixedDeltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -387,7 +420,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (netherSwapAbility.target2 != null)
             {
-                timeSpentDoingAction += Time.deltaTime;
+                timeSpentDoingAction += Time.fixedDeltaTime;
 
                 if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
                 {
@@ -520,41 +553,54 @@ public class PlayerScript : MonoBehaviour
             // Is the abilities buff active? Increment the turnsBuffed
             if (ability.isBuffActive)
             {
-                if (ability.turnsBuffed < ability.buffDuration+1)
+                if (ability.turnsBuffed >= ability.buffDuration)
                 {
-                    ability.turnsBuffed++;
+                    if (ability.id == hasteID)
+                    {
+                        ability.isBuffActive = false;
+                        ability.turnsBuffed = 0;
+
+                        // We are no longer buffed. Haste debuffs our initiativeSpeed after our buff finishes
+                        initiativeSpeed = oldInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
+                        ability.isDebuffActive = true;
+                        Debug.Log("PlayerScript: hasteAbility->turnsDebuffed = " + hasteAbility.turnsDebuffed);
+                    }
+                    
                 }
                 // Buff has been active for desired duration.
                 // What ability was it, so what do we do next
-                else if (ability.id == hasteID)
+                else
                 {
-                    ability.isBuffActive = false;
-                    ability.turnsBuffed = 0;
-
-                    // We are no longer buffed. Haste debuffs our initiativeSpeed after our buff finishes
-                    initiativeSpeed = oldInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
-                    ability.isDebuffActive = true;
+                    ability.turnsBuffed++;
                 }
             }
             // Is the abilities debuff active? Increment the turnsDebuffed
             if (ability.isDebuffActive)
             {
-                if (ability.turnsDebuffed < ability.debuffDuration)
-                {
-                    ability.turnsDebuffed++;
-                }
-                // debuff has been active for desired duration.
-                // What ability was it, so what do we do next
-                else if (ability.id == hasteID)
+                if (ability.turnsDebuffed >= ability.debuffDuration)
                 {
                     ability.isDebuffActive = false;
                     ability.turnsDebuffed = 0;
 
-                    initiativeSpeed = oldInitiativeSpeed;
+                    if (ability.id == hasteID)
+                    {
+                        initiativeSpeed = oldInitiativeSpeed;
+                    }
+                    else if (ability.id == slowID)
+                    {
+                        slowAbility.targettedEnemy.enemyCooldown = slowAbility.targettedEnemy.enemyCooldown * selectedAbility.magnitude;
+                        slowAbility.targettedEnemy = null;
+                    }
+                }
+                // debuff has been active for desired duration.
+                // What ability was it, so what do we do next
+                else
+                {
+                    ability.turnsDebuffed++;
                 }
             }
         }
-
+        Debug.Log("PlayerScript: initiativeSpeed = " + initiativeSpeed);
         selectedAbility.turnsBeenOnCooldown = 0;
         selectedAbility = null;
     }
@@ -600,6 +646,7 @@ public class PlayerScript : MonoBehaviour
 
                 case Ability.Type.Slow:
                     slowID = abilityId;
+                    slowAbility = (SlowAbility)child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Blink:
@@ -641,11 +688,21 @@ public class PlayerScript : MonoBehaviour
 
     bool IsValidNetherSwapTarget(GameObject teleportedObject)
     {
-        if (teleportedObject.tag.Contains("Player") || teleportedObject.tag.Contains("Enemy"))
+        if (teleportedObject.tag.Contains("Player") || teleportedObject.tag.Contains("Tele"))
         {
             return true;
         }
         Debug.Log("LOL, you tried teleporting something you CAN'T! HAH");
+        return false;
+    }
+
+    bool IsValidSlowTarget(GameObject slowedObject)
+    {
+        if (slowedObject.tag.Contains("Player") || slowedObject.tag.Contains("Slow"))
+        {
+            return true;
+        }
+        Debug.Log("Target cannot be slowed.");
         return false;
     }
 }
