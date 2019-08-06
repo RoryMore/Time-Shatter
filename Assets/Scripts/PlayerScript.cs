@@ -10,6 +10,8 @@ public class PlayerScript : MonoBehaviour
     public float maxHealth = 100.0f;
     public float currentHealth;
 
+    float baseMoveSpeed;
+
     //public float timeLeftUntilAction = 6.0f;
     float timeSpentDoingAction = 0.0f;
     [HideInInspector] public bool isTakingAction = false;
@@ -38,6 +40,7 @@ public class PlayerScript : MonoBehaviour
     public int initiativeSwapID;
 
     NetherSwap netherSwapAbility;
+    Ability hasteAbility;
     // -------------------------------------------------------
 
     bool isDead;
@@ -52,7 +55,8 @@ public class PlayerScript : MonoBehaviour
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
         self = GetComponentInParent<Transform>();
-        
+
+        baseMoveSpeed = navmeshAgent.speed;
     }
 
     void Awake()
@@ -66,7 +70,7 @@ public class PlayerScript : MonoBehaviour
 
         //isTakingAction = true;
         //actionSelection = true;
-        SelectAbility(attackID);
+        //SelectAbility(attackID);
     }
 
     private void Update()
@@ -227,16 +231,25 @@ public class PlayerScript : MonoBehaviour
 
     void Defend()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
-        navmeshAgent.enabled = false;
+        timeSpentDoingAction += Time.deltaTime;
+
+        //navmeshAgent.enabled = false;
+        if (!isExecutingAbility)
+        {
+            navmeshAgent.speed = navmeshAgent.speed * 0.1f;
+        }
+        
         actionSelection = true;
+        isTakingAction = false;
+        isExecutingAbility = true;
 
         // Animate Defense
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            navmeshAgent.speed = baseMoveSpeed;
             // Stop Defense animation
-
+            Debug.Log("PlayerScript: Defend action finished");
             EndAction();
         }
     }
@@ -247,6 +260,9 @@ public class PlayerScript : MonoBehaviour
         navmeshAgent.enabled = false;
         actionSelection = true;
 
+        //isTakingAction = false;
+        //isExecutingAbility = true;
+
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
             EndAction();
@@ -256,11 +272,21 @@ public class PlayerScript : MonoBehaviour
     void Haste()
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
-        navmeshAgent.enabled = false;
+        
         actionSelection = true;
+
+        isTakingAction = false;
+        isExecutingAbility = true;
+        navmeshAgent.enabled = false;
+
+        // Cast time anim
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            selectedAbility.isBuffActive = true;
+
+            initiativeSpeed = oldInitiativeSpeed * selectedAbility.magnitude;
+
             EndAction();
         }
     }
@@ -412,8 +438,52 @@ public class PlayerScript : MonoBehaviour
                     break;
 
                 default:
+                    
                     break;
             }
+        }
+        else
+        {
+            SelectAbilityViaKeyboardHotkey();
+        }
+    }
+
+    void SelectAbilityViaKeyboardHotkey()
+    {
+        if (Input.GetKeyDown("1"))
+        {
+            SelectAbility(attackID);
+            Debug.Log("PlayerScript: Attack selected.");
+        }
+        else if (Input.GetKeyDown("2"))
+        {
+            SelectAbility(defendID);
+            Debug.Log("PlayerScript: Defense selected.");
+        }
+        else if (Input.GetKeyDown("3"))
+        {
+            SelectAbility(hasteID);
+            Debug.Log("PlayerScript: Haste selected.");
+        }
+        else if (Input.GetKeyDown("4"))
+        {
+            SelectAbility(slowID);
+            Debug.Log("PlayerScript: Slow selected.");
+        }
+        else if (Input.GetKeyDown("5"))
+        {
+            SelectAbility(blinkID);
+            Debug.Log("PlayerScript: Blink selected.");
+        }
+        else if (Input.GetKeyDown("6"))
+        {
+            SelectAbility(netherSwapID);
+            Debug.Log("PlayerScript: Have you ever played the game Switch?");
+        }
+        else if (Input.GetKeyDown("7"))
+        {
+            SelectAbility(initiativeSwapID);
+            Debug.Log("PlayerScript: InitiativeSwap selected.");
         }
     }
 
@@ -430,9 +500,56 @@ public class PlayerScript : MonoBehaviour
         netherSwapAbility.target1 = null;
         netherSwapAbility.target2 = null;
 
-        initiativeSpeed = oldInitiativeSpeed;
+        //initiativeSpeed = oldInitiativeSpeed;
 
-        //selectedAbility = null;
+        // This foreach loop contains: ABILITY COOLDOWNS AND BUFFS/DEBUFFS
+        foreach (Ability ability in abilities)
+        {
+            // If the ability has been used/is on cooldown - increment the cooldown check value
+            if (ability.turnsBeenOnCooldown < ability.cooldown)
+            {
+                ability.turnsBeenOnCooldown++;
+            }
+            // Is the abilities buff active? Increment the turnsBuffed
+            if (ability.isBuffActive)
+            {
+                if (ability.turnsBuffed < ability.buffDuration+1)
+                {
+                    ability.turnsBuffed++;
+                }
+                // Buff has been active for desired duration.
+                // What ability was it, so what do we do next
+                else if (ability.id == hasteID)
+                {
+                    ability.isBuffActive = false;
+                    ability.turnsBuffed = 0;
+
+                    // We are no longer buffed. Haste debuffs our initiativeSpeed after our buff finishes
+                    initiativeSpeed = oldInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
+                    ability.isDebuffActive = true;
+                }
+            }
+            // Is the abilities debuff active? Increment the turnsDebuffed
+            if (ability.isDebuffActive)
+            {
+                if (ability.turnsDebuffed < ability.debuffDuration)
+                {
+                    ability.turnsDebuffed++;
+                }
+                // debuff has been active for desired duration.
+                // What ability was it, so what do we do next
+                else if (ability.id == hasteID)
+                {
+                    ability.isDebuffActive = false;
+                    ability.turnsDebuffed = 0;
+
+                    initiativeSpeed = oldInitiativeSpeed;
+                }
+            }
+        }
+
+        selectedAbility.turnsBeenOnCooldown = 0;
+        selectedAbility = null;
     }
 
 
@@ -471,6 +588,7 @@ public class PlayerScript : MonoBehaviour
 
                 case Ability.Type.Haste:
                     hasteID = abilityId;
+                    hasteAbility = child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Slow:
@@ -504,9 +622,12 @@ public class PlayerScript : MonoBehaviour
         {
             if (ability.id == id)
             {
-                actionSelection = true;
-                selectedAbility = ability;
-                break;
+                if (ability.turnsBeenOnCooldown >= ability.cooldown)
+                {
+                    actionSelection = true;
+                    selectedAbility = ability;
+                    break;
+                }
             }
         }
     }
