@@ -80,17 +80,17 @@ public class MeleeEnemyScript : EnemyScript
             player.TakeDamage(meleeDamage);
             //Play Animation
             enemyCooldown = 6.0f;
-            Debug.Log("ATTACK!");
+            //Debug.Log("ATTACK!");
         }
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!
         else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)
         {
             enemyCooldown = 6.0f;
-            Debug.Log("She's too far!");
+            //Debug.Log("She's too far!");
         }
         else if (meleeAttackRange <= distance && 0.0f <= enemyCooldown)
         {
-            Debug.Log("");
+           // Debug.Log("");
         }
     }
 
