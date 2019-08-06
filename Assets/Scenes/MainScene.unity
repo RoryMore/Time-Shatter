@@ -560,6 +560,7 @@ MonoBehaviour:
   blinkID: 0
   netherSwapID: 0
   initiativeSwapID: 0
+  waitID: 0
   running: 0
 --- !u!1 &1845066909
 GameObject:
@@ -1103,7 +1104,7 @@ GameObject:
   - component: {fileID: 2006449945}
   m_Layer: 0
   m_Name: HealerEnemy
-  m_TagString: Untagged
+  m_TagString: EnemyTeleSlowInitswappable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1192,6 +1193,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: RangedEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 7469480948372856707, guid: 8f69c7238e7713a46be3b2e83eff4668,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyTeleSlowInitswappable
+      objectReference: {fileID: 0}
     - target: {fileID: 7469480948372856729, guid: 8f69c7238e7713a46be3b2e83eff4668,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1256,6 +1262,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1793460566}
     m_Modifications:
+    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerAbilities
+      objectReference: {fileID: 0}
     - target: {fileID: 7760009501327630564, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1311,11 +1322,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerAbilities
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d7657471c7c4d4c970ce8f7ef8a50e, type: 3}
 --- !u!1001 &8160882630651200418
@@ -1329,6 +1335,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MeleeEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8160882631590183728, guid: f359abda0f1c9ee4da013d2c8523da62,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyTeleSlowInitswappable
       objectReference: {fileID: 0}
     - target: {fileID: 8160882631590183738, guid: f359abda0f1c9ee4da013d2c8523da62,
         type: 3}
