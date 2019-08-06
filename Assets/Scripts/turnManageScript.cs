@@ -94,14 +94,12 @@ public class turnManageScript : MonoBehaviour
             case BattleState.ACTION:
                 {
                     Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
-                    if (player.selectedAbility != null)
+                    soundManager.state = SoundManager.MusicState.BATTLE;
+                    if (player.isExecutingAbility == false)
                     {
-                        if (player.isExecutingAbility == false)
-                        {
 
-                            state = BattleState.BATTLE;
+                        state = BattleState.BATTLE;
 
-                        }
                     }
 
                     break;
