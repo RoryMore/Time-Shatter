@@ -28,7 +28,9 @@ public class PlayerAttack : Ability
         actionSpeed = 2.0f;
         range = 5.0f;
         magnitude = 20.0f;
-        
+
+        turnsBeenOnCooldown = cooldown;
+
     }
 
     // Update is called once per frame
