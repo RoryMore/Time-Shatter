@@ -126,22 +126,22 @@ public class RangedEnemyScript : EnemyScript
             nav.enabled = false;
             //Play Animation
             enemyCooldown = 6.0f;
-            Debug.Log("FIRE!");
+           // Debug.Log("FIRE!");
 
         }
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!
         else if (rangedAttackRange <= distance && enemyCooldown <= 0.0f)
         {
             enemyCooldown = 6.0f;
-            Debug.Log("Somehow I am actually out of ranged");
+            //Debug.Log("Somehow I am actually out of ranged");
         }
         else if (rangedAttackRange <= distance && 0.0f <= enemyCooldown)
         {
-            Debug.Log("It isn't the turn yet...");
+           // Debug.Log("It isn't the turn yet...");
         }
         else
         {
-            Debug.Log("Should never trigger ya dumbo");
+           // Debug.Log("Should never trigger ya dumbo");
         }
     }
 }
