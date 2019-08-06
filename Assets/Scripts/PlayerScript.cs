@@ -16,7 +16,7 @@ public class PlayerScript : MonoBehaviour
     float timeSpentDoingAction = 0.0f;
     [HideInInspector] public bool isTakingAction = false;
     bool actionSelection = false;
-    bool isExecutingAbility = false;
+    public bool isExecutingAbility = false;
 
     float oldInitiativeSpeed = 3.0f;
     public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
