@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PlayerAttack : Ability
 {
-    //public float attackWidth;     // effective width of the ability in which it can damage enemies 
-                                    //making a 'hit rectangle' with range and attackWidth
+    [Tooltip("The width a straight attack will have, damaging enemies in an area based on width and range")]
+    public float attackWidth;     // effective width of the ability in which it can damage enemies 
+    //making a 'hit rectangle' with range and attackWidth
 
     public enum AttackType
     {
@@ -15,6 +16,9 @@ public class PlayerAttack : Ability
     };
 
     public AttackType attackType;
+
+    [Tooltip("The angle that a conal attack will hit, damaging enemies in an area based on angle and range")]
+    public float angle;
 
     // Start is called before the first frame update
     void Start()
