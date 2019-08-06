@@ -36,7 +36,8 @@ public class turnManageScript : MonoBehaviour
     {
         StartCoroutine(Loop());
 
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+        player = FindObjectOfType<PlayerScript>();
+        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
         soundManager = GameObject.FindGameObjectWithTag("Music").GetComponent<SoundManager>();
     }
 
@@ -68,7 +69,7 @@ public class turnManageScript : MonoBehaviour
                 }
             case BattleState.BATTLE:
                 {
-                    if (turnCounter == player.initiativeSpeed)
+                    if (turnCounter >= player.initiativeSpeed)
                     {
                         player.isTakingAction = true;
                     }

@@ -888,6 +888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slowMotionCount: 0.03
   playerTurnCounter: 3
+  state: 0
 --- !u!4 &1415704141
 Transform:
   m_ObjectHideFlags: 0
@@ -1061,6 +1062,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   isTakingAction: 0
+  isExecutingAbility: 0
   initiativeSpeed: 3
   initiativeEntrySpeed: 3
   abilities: []
@@ -1609,11 +1611,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1793460566}
     m_Modifications:
-    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerAbilities
-      objectReference: {fileID: 0}
     - target: {fileID: 7760009501327630564, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1668,6 +1665,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerAbilities
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d7657471c7c4d4c970ce8f7ef8a50e, type: 3}
