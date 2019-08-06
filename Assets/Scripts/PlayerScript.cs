@@ -14,7 +14,7 @@ public class PlayerScript : MonoBehaviour
 
     //public float timeLeftUntilAction = 6.0f;
     float timeSpentDoingAction = 0.0f;
-    [HideInInspector] public bool isTakingAction = false;
+     public bool isTakingAction = false;
     bool actionSelection = false;
     public bool isExecutingAbility = false;
 
@@ -182,6 +182,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (isTakingAction)
         {
+            Debug.Log("PlayerScript: isTakingAction has to equal true here. We should be rotating the player");
             if (Input.GetMouseButtonDown(0))
             {
                 isTakingAction = false;
@@ -197,7 +198,7 @@ public class PlayerScript : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //RaycastHit hit;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 100))
+            if (Physics.Raycast(ray, out RaycastHit hit, 200))
             {
                 Vector3 dir = (hit.point - transform.position).normalized;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
@@ -211,7 +212,9 @@ public class PlayerScript : MonoBehaviour
         else
         {
             //navmeshAgent.enabled = true;
-            timeSpentDoingAction += Time.deltaTime;
+            timeSpentDoingAction += Time.fixedDeltaTime;
+
+
 
             // Set player to attack animate
 
@@ -231,20 +234,23 @@ public class PlayerScript : MonoBehaviour
 
     void Defend()
     {
-        timeSpentDoingAction += Time.deltaTime;
-
+        timeSpentDoingAction += Time.fixedDeltaTime;
+        
+        Debug.Log("PlayerScript: Defend timeSpentDoingAction = " + timeSpentDoingAction);
         //navmeshAgent.enabled = false;
-        if (!isExecutingAbility)
+        if (isTakingAction && !isExecutingAbility)
         {
-            navmeshAgent.speed = navmeshAgent.speed * 0.1f;
+            navmeshAgent.speed = navmeshAgent.speed * 0.2f;
         }
         
         actionSelection = true;
-        isTakingAction = false;
+        //isTakingAction = true;
         isExecutingAbility = true;
 
-        // Animate Defense
+        Movement();
 
+        // Animate Defense
+        
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
             navmeshAgent.speed = baseMoveSpeed;
@@ -256,7 +262,7 @@ public class PlayerScript : MonoBehaviour
 
     void Item()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -271,7 +277,7 @@ public class PlayerScript : MonoBehaviour
 
     void Haste()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         
         actionSelection = true;
 
@@ -293,7 +299,7 @@ public class PlayerScript : MonoBehaviour
 
     void Slow()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -305,7 +311,7 @@ public class PlayerScript : MonoBehaviour
 
     void Blink()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -323,7 +329,7 @@ public class PlayerScript : MonoBehaviour
 
     void SwapInitiatives()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
+        timeSpentDoingAction += Time.deltaTime;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -381,7 +387,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (netherSwapAbility.target2 != null)
             {
-                timeSpentDoingAction += Time.fixedDeltaTime;
+                timeSpentDoingAction += Time.deltaTime;
 
                 if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
                 {
@@ -491,10 +497,11 @@ public class PlayerScript : MonoBehaviour
     {
         isTakingAction = false;
         isExecutingAbility = false;
+        actionSelection = false;
 
         timeSpentDoingAction = 0.0f;
         navmeshAgent.enabled = true;
-        actionSelection = false;
+        
 
         // Clear NetherSwap targeting
         netherSwapAbility.target1 = null;

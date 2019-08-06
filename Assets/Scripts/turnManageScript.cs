@@ -86,6 +86,7 @@ public class turnManageScript : MonoBehaviour
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
                         soundManager.state = SoundManager.MusicState.BATTLE;
+                        //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
                     }
 
                     break;
@@ -133,7 +134,7 @@ public class turnManageScript : MonoBehaviour
 
             Debug.Log(Time.timeScale);
 
-            Debug.Log(battleStart);
+            Debug.Log("TurnManagerScript: turnCounter = " + turnCounter);
 
         }
 
