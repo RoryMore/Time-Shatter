@@ -44,6 +44,7 @@ public class turnManageScript : MonoBehaviour
     private void Start()
     {
         state = BattleState.START;
+
     }
 
     void FixedUpdate()
