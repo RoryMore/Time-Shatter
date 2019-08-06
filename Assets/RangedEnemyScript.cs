@@ -10,9 +10,7 @@ public class RangedEnemyScript : EnemyScript
     public float rangedAttackRange;
     public int rangedDamage;
 
-    public float followSharpness = 0.1f;
-
-    Vector3 _followOffest;
+    public GameObject bolt;
 
     void Awake()
     {
@@ -29,32 +27,19 @@ public class RangedEnemyScript : EnemyScript
         enemyCooldown = 4.0f;
         currentHealth = startingHealth;
 
-        _followOffest = transform.position - player.transform.position;
-
-        //Set initial position choice
+        
         
     }
 
 
     void Update()
     {
-        //While the player isn't in the "take turn" stage, follow the player but otherwise stop
-        /*if (player.playerTakingAction == false)
-        {*/
-            //nav.enabled = true;
-            Movement();
-            RangedAttack();
-            Turn();
-        
-        /*else
-        {
 
-            nav.enabled = false;
-
-            //Pause animation
-        }*/
-
-
+        Turn();
+        Movement();
+        RangedAttack();
+            
+  
 
     }
 
@@ -63,39 +48,25 @@ public class RangedEnemyScript : EnemyScript
     {
         if (currentHealth > 0 && player.currentHealth > 0)
         {
-            nav.SetDestination(player.transform.position);
 
             float distance = Vector3.Distance(transform.position, player.transform.position);
 
-            //Approach
-            if (distance <= rangedAttackRange)
+            if (distance < rangedAttackRange)
             {
-                
+                nav.SetDestination(Vector3.MoveTowards(transform.position, player.transform.position, -nav.speed));
+            }
+            else if (distance > nav.stoppingDistance)
+            {
+                nav.SetDestination(Vector3.MoveTowards(transform.position, player.transform.position, nav.speed));
+            }
+            else if (distance < nav.stoppingDistance && distance > rangedAttackRange)
+            {
                 nav.SetDestination(transform.position);
             }
-            //Run away!
-            else if (distance >= rangedAttackRange/2)
+            else
             {
-                
-                
-
-                ////Get angle between current position and player position
-                //float xDiff = transform.position.x - player.transform.position.x;
-                //float zDiff = transform.position.z - player.transform.position.z;
-                ////Angle!
-                //float angle = Mathf.Atan2(zDiff, xDiff) * 180 / Mathf.PI;
-
-
-
-                //float newX = player.transform.position.x + Mathf.Cos(angle) * rangedAttackRange;
-                //float newZ = player.transform.position.z + Mathf.Sin(angle) * rangedAttackRange;
-
-                //Vector3 newTar = new Vector3(newX, transform.position.y, newZ);
-                //nav.SetDestination(newTar);
-
-                //nav.SetDestination(player.transform.position)
+                nav.SetDestination(player.transform.position);
             }
-
 
 
         }
@@ -116,6 +87,7 @@ public class RangedEnemyScript : EnemyScript
 
     public void RangedAttack()
     {
+        
 
         float distance = Vector3.Distance(transform.position, player.transform.position);
 
@@ -125,11 +97,16 @@ public class RangedEnemyScript : EnemyScript
             //player.TakeDamage(meleeDamage);
             nav.enabled = false;
             //Play Animation
-            enemyCooldown = 6.0f;
+            //Face towards player!
+
+            
             Debug.Log("FIRE!");
+            Instantiate(bolt, transform.position, Quaternion.identity);
+            enemyCooldown = 6.0f;
+            nav.enabled = true;
 
         }
-        //If its the melee enemy turn BUT we are out of range, we go into defence stance!
+        //If its the range enemy turn BUT we are out of range, we go into defence stance!
         else if (rangedAttackRange <= distance && enemyCooldown <= 0.0f)
         {
             enemyCooldown = 6.0f;
