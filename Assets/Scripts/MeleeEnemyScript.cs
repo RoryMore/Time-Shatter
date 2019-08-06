@@ -3,106 +3,95 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MeleeEnemyScript : MonoBehaviour
+public class MeleeEnemyScript : EnemyScript
 {
-    public int startingHealth = 100;
-    public int currentHealth;
 
-    public AudioClip deathClip;
-
-
-    Animator anim;
-    AudioSource enemyAudio;
-    ParticleSystem hitParticles;
-    CapsuleCollider capsuleCollider;
-
-    NavMeshAgent nav;
-
-    Transform playerLocation;
-    PlayerScript player;
-
-    bool isDead;
-    bool isSinking;
-
-
+    public float meleeAttackRange;
+    public int meleeDamage;
+    
     void Awake()
     {
         anim = GetComponent<Animator>();
-        enemyAudio = GetComponent<AudioSource>();
+        //enemyAudio = GetComponent<AudioSource>();
         hitParticles = GetComponentInChildren<ParticleSystem>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         nav = GetComponent<NavMeshAgent>();
 
-        player = GameObject.Find("Player").GetComponent<PlayerScript>();
-        playerLocation = GameObject.Find("Player").transform;
 
+        player = GameObject.Find("Player").GetComponent<PlayerScript>();
+
+
+        enemyCooldown = 4.0f;
         currentHealth = startingHealth;
     }
 
 
     void Update()
     {
-        if (player.playerTakingAction == false)
+        //While the player isn't in the "take turn" stage, follow the player but otherwise stop
+        /*if (player.playerTakingAction == false)
         {
-            nav.enabled = true;
+            nav.enabled = true;*/
             Movement();
-        }
+            MeleeAttack();
+            Turn();
+       /* }
         else
         {
+
             nav.enabled = false;
-        }
+            
+            //Pause animation
+        }*/
 
 
 
     }
-
-    //Function that is called when the player deals damage to you
-    //Default condition format
-    public void TakeDamage(int amount, Vector3 hitPoint)
-    {
-        if (isDead)
-            return;
-
-        //Audio Cue
-        enemyAudio.Play();
-
-        currentHealth -= amount;
-
-        hitParticles.transform.position = hitPoint;
-        hitParticles.Play();
-
-        if (currentHealth <= 0)
-        {
-            Death();
-        }
-    }
-
-
-
-    void Death()
-    {
-        isDead = true;
-
-        capsuleCollider.isTrigger = true;
-
-        anim.SetTrigger("Dead");
-
-        enemyAudio.clip = deathClip;
-        enemyAudio.Play();
-    }
-
-
 
 
     public void Movement()
     {
         if(currentHealth > 0 && player.currentHealth > 0)
         {
-        nav.SetDestination(playerLocation.position);
+        nav.SetDestination(GameObject.Find("Player").transform.position);
         }
         else
         {
             nav.enabled = false;
         }
     }
+
+    //TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
+    public void Turn()
+    {
+        enemyCooldown -= 1f * Time.deltaTime;
+        //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
+       
+    }
+    
+    public void MeleeAttack()
+    {
+
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+
+        //We are ready to make our attack, and we are in range. ATTACK!
+        if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
+        {
+            player.TakeDamage(meleeDamage);
+            //Play Animation
+            enemyCooldown = 6.0f;
+            //Debug.Log("ATTACK!");
+        }
+        //If its the melee enemy turn BUT we are out of range, we go into defence stance!
+        else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)
+        {
+            enemyCooldown = 6.0f;
+            //Debug.Log("She's too far!");
+        }
+        else if (meleeAttackRange <= distance && 0.0f <= enemyCooldown)
+        {
+           // Debug.Log("");
+        }
+    }
+
 }
