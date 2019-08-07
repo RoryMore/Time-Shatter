@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetherSwap : Ability
+public class InitiativeSwapAbility : Ability
 {
-    [HideInInspector] public Transform target1 = null;
-    [HideInInspector] public Transform target2 = null;
+    [HideInInspector] public EnemyScript target1 = null;
+    [HideInInspector] public EnemyScript target2 = null;
 
     // Start is called before the first frame update
     void Start()
