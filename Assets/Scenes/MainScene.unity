@@ -1055,6 +1055,7 @@ GameObject:
   - component: {fileID: 1208500371}
   - component: {fileID: 1208500377}
   - component: {fileID: 1208500379}
+  - component: {fileID: 1208500380}
   m_Layer: 0
   m_Name: MeleeEnemy
   m_TagString: Enemy
@@ -1218,6 +1219,19 @@ MonoBehaviour:
   isSinking: 0
   meleeAttackRange: 0
   meleeDamage: 0
+--- !u!114 &1208500380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208500370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20235f7685520549a5e171cc2260446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRewinding: 0
 --- !u!1 &1220689007
 GameObject:
   m_ObjectHideFlags: 0
