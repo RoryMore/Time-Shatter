@@ -22,7 +22,8 @@ public class SoundManager : MonoBehaviour
 	{
 		BATTLE,
 		SLOWMOTION,
-		MAINMENU
+		MAINMENU,
+		START
 	}
 
 	public MusicState state;
@@ -39,6 +40,13 @@ public class SoundManager : MonoBehaviour
     {
 		switch (state)
 		{
+			/*case MusicState.START:
+				{
+					MuteAllAudio();
+					battleMusic.pitch = Mathf.Lerp(battleMusic.pitch, 1f, Time.deltaTime / 0.5f);
+					battleMusic.volume = Mathf.Lerp(battleMusic.volume, 0.7f, Time.deltaTime / 0.3f);
+					break;
+				}*/
 			case MusicState.BATTLE:
 				{
 					MuteAllAudio();
