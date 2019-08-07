@@ -245,7 +245,7 @@ public class PlayerScript : MonoBehaviour
         //navmeshAgent.enabled = false;
         if (isTakingAction && !isExecutingAbility)
         {
-            navmeshAgent.speed = navmeshAgent.speed * 0.2f;
+            navmeshAgent.speed = navmeshAgent.speed * 0.4f;
         }
         
         actionSelection = true;
