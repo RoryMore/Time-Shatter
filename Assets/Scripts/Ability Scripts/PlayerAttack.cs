@@ -20,9 +20,17 @@ public class PlayerAttack : Ability
     [Tooltip("The angle that a conal attack will hit, damaging enemies in an area based on angle and range")]
     public float angle;
 
+    ConeRangeIndicator coneRangeIndicator = null;
+
     // Start is called before the first frame update
     void Start()
     {
+        coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
+
+        if (coneRangeIndicator == null)
+        {
+            Debug.LogAssertion("coneRangeIndicator failed to be set");
+        }
         // If there were to be diff equipped weapons
         //GameObject pRef = GameObject.FindGameObjectWithTag("Player");
         //magnitude = pRef.equippedWep.damage;
@@ -41,5 +49,13 @@ public class PlayerAttack : Ability
     void Update()
     {
         
+    }
+
+    public void DrawRangeIndicator()
+    {
+        if (attackType == AttackType.Cone)
+        {
+            coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
+        }
     }
 }
