@@ -45,7 +45,7 @@ public class MainMenu : MonoBehaviour
 		levelToLoad = levelIndex;
 		animator.SetTrigger("FadeOut");
 		MainMenuMusic.pitch = Mathf.Lerp(MainMenuMusic.pitch, 0.8f, Time.deltaTime / 0.05f);
-		MainMenuMusic.volume = Mathf.Lerp(MainMenuMusic.volume, 0.0f, Time.deltaTime / 0.03f);
+		MainMenuMusic.volume = Mathf.Lerp(MainMenuMusic.volume, 0.0f, Time.deltaTime / 0.0005f);
 	}
 
 	public void OnFadeComplete()
