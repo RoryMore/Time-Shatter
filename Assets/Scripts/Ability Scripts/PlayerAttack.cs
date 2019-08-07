@@ -17,7 +17,7 @@ public class PlayerAttack : Ability
 
     public AttackType attackType;
 
-    [Tooltip("The angle that a conal attack will hit, damaging enemies in an area based on angle and range")]
+    [Tooltip("The half the angle that a conal attack will hit, damaging enemies in an area based on angle and range. [180deg is full circle]")]
     public float angle;
 
     ConeRangeIndicator coneRangeIndicator = null;
@@ -43,6 +43,7 @@ public class PlayerAttack : Ability
 
         turnsBeenOnCooldown = cooldown;
 
+        coneRangeIndicator.Init(angle, 0.0f, range);
     }
 
     // Update is called once per frame
@@ -56,6 +57,17 @@ public class PlayerAttack : Ability
         if (attackType == AttackType.Cone)
         {
             coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
+        }
+    }
+
+    public void DrawCastTimeRangeIndicator(float timeSpentCasting)
+    {
+        if (attackType == AttackType.Cone)
+        {
+            float drawPercentage = (timeSpentCasting / actionSpeed) * range;
+
+            coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
+            coneRangeIndicator.DrawCastTimeIndicator(angle, 0.0f, drawPercentage);
         }
     }
 }

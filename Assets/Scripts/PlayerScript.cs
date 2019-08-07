@@ -238,7 +238,7 @@ public class PlayerScript : MonoBehaviour
             // Set player to attack animate
 
             // Draw a range indicator based on weapon attack type
-            attackAbility.DrawRangeIndicator();
+            attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
