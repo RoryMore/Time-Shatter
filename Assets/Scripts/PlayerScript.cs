@@ -26,7 +26,7 @@ public class PlayerScript : MonoBehaviour
     //float spellPower; 
 
     //public float timeLeftUntilAction = 6.0f;
-    float timeSpentDoingAction = 0.0f;
+    public float timeSpentDoingAction = 0.0f;
      public bool isTakingAction = false;
     bool actionSelection = false;
     public bool isExecutingAbility = false;

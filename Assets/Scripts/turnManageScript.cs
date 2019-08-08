@@ -9,11 +9,11 @@ public class turnManageScript : MonoBehaviour
 
     private float fixedUpdateCount = 0;
     private float updateFixedUpdateCountPerSecond;
-    private float turnCounter = 0;
+    public float turnCounter = 0;
     public float slowMotionCount;
     private float normalSpeedCount = 1.0f;
-    public float playerTurnCounter;
-    private float battleStart = 0;
+   // public float playerTurnCounter;
+    public float battleStart = 0;
     bool start = false;
 
     public enum BattleState
@@ -49,7 +49,9 @@ public class turnManageScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        fixedUpdateCount += 1;
+       // fixedUpdateCount += 1;
+
+        
 
         switch (state)
         {
@@ -77,7 +79,7 @@ public class turnManageScript : MonoBehaviour
                     if (player.isTakingAction == true)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
-                        turnCounter = 0;
+                        
                         soundManager.state = SoundManager.MusicState.SLOWMOTION;
                         if (player.isExecutingAbility == true)
                         {
@@ -99,7 +101,7 @@ public class turnManageScript : MonoBehaviour
                     soundManager.state = SoundManager.MusicState.BATTLE;
                     if (player.isExecutingAbility == false)
                     {
-
+                        turnCounter = 0;
                         state = BattleState.BATTLE;
 
                     }
@@ -114,27 +116,25 @@ public class turnManageScript : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (player.isTakingAction == false)
+        {
+            if (state == BattleState.BATTLE)
+             {
+               turnCounter += Time.deltaTime;
+
+              }
+            }
+    }
+
     IEnumerator Loop()
     {
         while (true)
         {
             yield return new WaitForSeconds(1);
-            updateFixedUpdateCountPerSecond = fixedUpdateCount;
-            fixedUpdateCount = 0;
-            if (player.isTakingAction == false)
-            {
-                if (state == BattleState.BATTLE)
-                {
-                    turnCounter += 1;
-                   // Debug.Log("YEEEEEEEEEEEEEEEEEEEE");
-                }
-            }
-
+         
             battleStart += 1;
-
-            Debug.Log(Time.timeScale);
-
-            Debug.Log("TurnManagerScript: turnCounter = " + turnCounter);
 
         }
 
