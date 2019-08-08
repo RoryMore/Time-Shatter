@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetherSwap : Ability
+public class BlinkAbility : Ability
 {
-    [HideInInspector] public Transform target1 = null;
-    [HideInInspector] public Transform target2 = null;
-
+    [HideInInspector] public Vector3 blinkLocation;
     // Start is called before the first frame update
     void Start()
     {

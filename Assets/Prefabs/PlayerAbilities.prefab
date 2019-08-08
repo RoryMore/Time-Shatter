@@ -1,5 +1,61 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &346201866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 346201867}
+  - component: {fileID: 346201868}
+  m_Layer: 0
+  m_Name: Wait
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &346201867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346201866}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7760009501327630564}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &346201868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346201866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae314e56c36aa941bd2a1de892ec853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionSpeed: 0
+  range: 0
+  magnitude: 1
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 1
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 0
+  turnsBeenOnCooldown: 0
+  type: 8
+  id: 0
 --- !u!1 &536419064913879406
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,6 +66,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8663733970314540905}
   - component: {fileID: 8463534892645255302}
+  - component: {fileID: 863015739}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Untagged
@@ -52,11 +109,27 @@ MonoBehaviour:
   debuffDuration: 0
   turnsDebuffed: 0
   isDebuffActive: 0
-  cooldown: 1
+  cooldown: 0
   turnsBeenOnCooldown: 0
   type: 0
   id: 0
+  attackWidth: 0
   attackType: 1
+  angle: 35
+--- !u!114 &863015739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536419064913879406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20010bd794f8d8b4bba3b1f2b03b67ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quality: 15
+  indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
 --- !u!1 &1137851733871096209
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,7 +195,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 961829375124355914}
-  - component: {fileID: 96085324004941422}
+  - component: {fileID: 236513393}
   m_Layer: 0
   m_Name: Blink
   m_TagString: Untagged
@@ -144,7 +217,7 @@ Transform:
   m_Father: {fileID: 7760009501327630564}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &96085324004941422
+--- !u!114 &236513393
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,11 +226,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2360742187017617147}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bae314e56c36aa941bd2a1de892ec853, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fce5fe290c28fb4783e9b1cd024da09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpeed: 0.75
-  range: 0
+  range: 4
   magnitude: 0
   buffDuration: 0
   turnsBuffed: 0
@@ -169,6 +242,65 @@ MonoBehaviour:
   turnsBeenOnCooldown: 0
   type: 5
   id: 0
+  blinkLocation: {x: 0, y: 0, z: 0}
+--- !u!1 &5623329975649183664
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5182041467457773462}
+  - component: {fileID: 5879491365111453210}
+  m_Layer: 0
+  m_Name: InitiativeSwap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5182041467457773462
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5623329975649183664}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7760009501327630564}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5879491365111453210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5623329975649183664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c13bcd67a2c68ea408d832fd86fea3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionSpeed: 2
+  range: 5
+  magnitude: 5
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 4
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 6
+  turnsBeenOnCooldown: 0
+  type: 7
+  id: 0
+  target1: {fileID: 0}
+  target2: {fileID: 0}
 --- !u!1 &6718267439629265239
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,9 +344,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c4aa1e77b62a94880ca7db0e3b5fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 0.1
+  actionSpeed: 2
   range: 4
-  magnitude: 0
+  magnitude: 12
   buffDuration: 0
   turnsBuffed: 0
   isBuffActive: 0
@@ -270,13 +402,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bae314e56c36aa941bd2a1de892ec853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 3
+  actionSpeed: 2
   range: 0
   magnitude: 7.5
-  buffDuration: 0
+  buffDuration: 1
   turnsBuffed: 0
   isBuffActive: 0
-  debuffDuration: 0
+  debuffDuration: 1
   turnsDebuffed: 0
   isDebuffActive: 0
   cooldown: 1
@@ -317,6 +449,8 @@ Transform:
   - {fileID: 2495852127310954632}
   - {fileID: 961829375124355914}
   - {fileID: 3414491577744749289}
+  - {fileID: 5182041467457773462}
+  - {fileID: 346201867}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

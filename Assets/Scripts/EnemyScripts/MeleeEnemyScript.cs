@@ -9,7 +9,8 @@ public class MeleeEnemyScript : EnemyScript
     public float meleeAttackRange;
     public int meleeDamage;
     turnManageScript turnManger;
-    
+    EnemyManager enemyManager;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -22,6 +23,7 @@ public class MeleeEnemyScript : EnemyScript
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
 
         turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
+        enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
 
         enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);

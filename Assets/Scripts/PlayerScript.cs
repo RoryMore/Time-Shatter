@@ -11,6 +11,19 @@ public class PlayerScript : MonoBehaviour
     public float currentHealth;
 
     float baseMoveSpeed;
+    // Current moveSpeed is the navmeshAgent.speed variable
+
+    float oldInitiativeSpeed = 3.0f;
+    // If turns are to change to a different speed system
+    // How long it takes for the player to reach their action
+    public float initiativeSpeed = 2.0f;
+
+    // Modifier to determine how strong physical attacks/abilities are
+    //float strength;
+
+    // Name can be changed to whatever. 
+    //Purpose would be a to increase/decrease how powerful non-melee/physical attacks would be
+    //float spellPower; 
 
     //public float timeLeftUntilAction = 6.0f;
     float timeSpentDoingAction = 0.0f;
@@ -18,9 +31,7 @@ public class PlayerScript : MonoBehaviour
     bool actionSelection = false;
     public bool isExecutingAbility = false;
 
-    float oldInitiativeSpeed = 3.0f;
-    public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
-                                            // How long it takes for the player to reach their action
+       
     public float initiativeEntrySpeed = 3.0f;
 
     //Animator anim;
@@ -38,10 +49,16 @@ public class PlayerScript : MonoBehaviour
     public int blinkID;
     public int netherSwapID;
     public int initiativeSwapID;
+    public int waitID;
 
+    PlayerAttack attackAbility;
+    Ability defendAbility;
     NetherSwap netherSwapAbility;
     Ability hasteAbility;
     SlowAbility slowAbility;
+    BlinkAbility blinkAbility;
+    InitiativeSwapAbility initiativeSwapAbility;
+    Ability waitAbility;
     // -------------------------------------------------------
 
     bool isDead;
@@ -50,14 +67,12 @@ public class PlayerScript : MonoBehaviour
     public bool running = false;
 
     private NavMeshAgent navmeshAgent;
-    private Transform self;
 
     turnManageScript turnManager;
     // Start is called before the first frame update
     void Start()
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
-        self = GetComponentInParent<Transform>();
 
         baseMoveSpeed = navmeshAgent.speed;
 
@@ -86,15 +101,10 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (turnManager.state != turnManageScript.BattleState.START)
+            if ((turnManager.state == turnManageScript.BattleState.BATTLE) || (turnManager.state == turnManageScript.BattleState.ACTION))
             {
                 if (isTakingAction || isExecutingAbility)
                 {
-                    //timeSpentDoingAction += (Time.deltaTime * (1.0f + (1.0f - Time.timeScale)));
-                    //if (timeSpentDoingAction >= 0.9f)
-                    //{
-                    //EndAction();
-                    //}
                     DoAction();
                 }
                 else
@@ -155,7 +165,7 @@ public class PlayerScript : MonoBehaviour
 
         float damageToTake = amount;
 
-        if (selectedAbility.type == Ability.Type.Defend)
+        if (defendAbility.isBuffActive)
         {
             damageToTake = amount - selectedAbility.magnitude;
             if (damageToTake < 0.0f)
@@ -190,7 +200,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (isTakingAction)
         {
-            Debug.Log("PlayerScript: isTakingAction has to equal true here. We should be rotating the player");
+            //Debug.Log("PlayerScript: isTakingAction has to equal true here. We should be rotating the player");
             if (Input.GetMouseButtonDown(0))
             {
                 isTakingAction = false;
@@ -215,6 +225,9 @@ public class PlayerScript : MonoBehaviour
                 
                 transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.02f) * (1.0f + (1.0f - Time.timeScale))));
             }
+
+            // While choosing where to attack, show where we will be attacking
+            attackAbility.DrawRangeIndicator();
             
         }
         else
@@ -225,6 +238,7 @@ public class PlayerScript : MonoBehaviour
             // Set player to attack animate
 
             // Draw a range indicator based on weapon attack type
+            attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
@@ -241,16 +255,19 @@ public class PlayerScript : MonoBehaviour
     void Defend()
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
-        
+
+        selectedAbility.isBuffActive = true;
+        selectedAbility.isDebuffActive = true;
+
         //Debug.Log("PlayerScript: Defend timeSpentDoingAction = " + timeSpentDoingAction);
         //navmeshAgent.enabled = false;
         if (isTakingAction && !isExecutingAbility)
         {
-            navmeshAgent.speed = navmeshAgent.speed * 0.2f;
+            navmeshAgent.speed = navmeshAgent.speed * 0.4f;
         }
         
         actionSelection = true;
-        //isTakingAction = true;
+        isTakingAction = false;
         isExecutingAbility = true;
 
         Movement();
@@ -259,7 +276,10 @@ public class PlayerScript : MonoBehaviour
         
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
-            navmeshAgent.speed = baseMoveSpeed;
+            navmeshAgent.speed = navmeshAgent.speed * 1.6f;
+            selectedAbility.turnsBuffed = 0;
+            
+            selectedAbility.turnsDebuffed = 0;
             // Stop Defense animation
             //Debug.Log("PlayerScript: Defend action finished");
             EndAction();
@@ -344,48 +364,115 @@ public class PlayerScript : MonoBehaviour
 
     void Blink()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
-        navmeshAgent.enabled = false;
         actionSelection = true;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //RaycastHit hit;
-
-        if (Input.GetMouseButtonDown(1))
+        if (isTakingAction)
         {
-            if (Physics.Raycast(ray, out RaycastHit hit, 100))
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Input.GetMouseButtonDown(0))
             {
-                self.localPosition = hit.point;
+                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                {
+                    blinkAbility.blinkLocation = hit.point;
+                    blinkAbility.blinkLocation.y += 0.5f;
+
+                    isTakingAction = false;
+                    isExecutingAbility = true;
+
+                    navmeshAgent.enabled = false;
+                }
             }
+        }
+        else if (isExecutingAbility)
+        {
+            timeSpentDoingAction += Time.fixedDeltaTime;
+
+            // Animate cast-time
+        }
+        
+
+        if (timeSpentDoingAction >= selectedAbility.actionSpeed)
+        {
+            // Stop animate cast-time
+            // Animate spell cast
+            transform.position = blinkAbility.blinkLocation;
+
+            EndAction();
         }
     }
 
     void SwapInitiatives()
     {
-        timeSpentDoingAction += Time.fixedDeltaTime;
-        navmeshAgent.enabled = false;
         actionSelection = true;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (initiativeSwapAbility.target1 == null)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                {
+                    // Check validity of target
+                    if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+                    {
+                        initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
+                        Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
+                    }
+                }
+            }
+        }
+        else if (initiativeSwapAbility.target2 == null)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                {
+                    // Check validity of target
+                    if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+                    {
+                        initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
+                        Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
+
+                        isTakingAction = false;
+                        isExecutingAbility = true;
+                        navmeshAgent.enabled = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            timeSpentDoingAction += Time.fixedDeltaTime;
+        }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            float tempF = initiativeSwapAbility.target1.enemyCooldown;
+            initiativeSwapAbility.target1.enemyCooldown = initiativeSwapAbility.target2.enemyCooldown;
+            initiativeSwapAbility.target2.enemyCooldown = tempF;
+
+            initiativeSwapAbility.isDebuffActive = true;
+            Debug.Log("PlayerScript: Enemy initiatives swapped!");
+
             EndAction();
         }
     }
 
     void NetherSwap()
     {
-        navmeshAgent.enabled = false;
+        //navmeshAgent.enabled = false;
         actionSelection = true;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        //RaycastHit hit;
 
         // Do we have a First target?
         if (netherSwapAbility.target1 == null)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (Physics.Raycast(ray, out hit, 200))
+                if (Physics.Raycast(ray, out RaycastHit hit, 400))
                 {
                     // Check validity of target
                     if (IsValidNetherSwapTarget(hit.collider.gameObject))
@@ -402,7 +489,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (Physics.Raycast(ray, out hit, 200))
+                if (Physics.Raycast(ray, out RaycastHit hit, 400))
                 {
                     // Check validity of target
                     if (IsValidNetherSwapTarget(hit.collider.gameObject))
@@ -410,6 +497,10 @@ public class PlayerScript : MonoBehaviour
                         // Set Second target
                         netherSwapAbility.target2 = hit.collider.gameObject.transform;
                         Debug.Log("PlayerScript: NetherSwap Target 2: SET");
+
+                        isTakingAction = false;
+                        isExecutingAbility = true;
+                        navmeshAgent.enabled = false;
                     }
                 }
             }
@@ -422,8 +513,13 @@ public class PlayerScript : MonoBehaviour
             {
                 timeSpentDoingAction += Time.fixedDeltaTime;
 
+                // Animate cast time
+
                 if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
                 {
+                    // Stop cast time animate
+                    // Animate spell cast?
+
                     Vector3 tempT = netherSwapAbility.target1.position;
 
                     netherSwapAbility.target1.position = netherSwapAbility.target2.position;
@@ -435,6 +531,29 @@ public class PlayerScript : MonoBehaviour
                     EndAction();
                 }
             }
+        }
+    }
+
+    void Wait()
+    {
+        timeSpentDoingAction += Time.fixedDeltaTime;
+
+        actionSelection = true;
+
+        isTakingAction = false;
+        isExecutingAbility = true;
+        navmeshAgent.enabled = false;
+
+        // Cast time anim
+
+        if (timeSpentDoingAction >= selectedAbility.actionSpeed)
+        {
+            selectedAbility.isDebuffActive = true;
+
+            initiativeSpeed += selectedAbility.magnitude;
+            Debug.Log("PlayerScript: initiativeSpeed = " + initiativeSpeed);
+
+            EndAction();
         }
     }
 
@@ -476,6 +595,10 @@ public class PlayerScript : MonoBehaviour
                     NetherSwap();
                     break;
 
+                case Ability.Type.Wait:
+                    Wait();
+                    break;
+
                 default:
                     
                     break;
@@ -491,38 +614,50 @@ public class PlayerScript : MonoBehaviour
     {
         if (Input.GetKeyDown("1"))
         {
+            Debug.Log("PlayerScript: Attempted to select Attack");
             SelectAbility(attackID);
-            Debug.Log("PlayerScript: Attack selected.");
+            
         }
         else if (Input.GetKeyDown("2"))
         {
+            Debug.Log("PlayerScript: Attempted to select Defend");
             SelectAbility(defendID);
-            Debug.Log("PlayerScript: Defense selected.");
+            
         }
         else if (Input.GetKeyDown("3"))
         {
+            Debug.Log("PlayerScript: Attempted to select Haste");
             SelectAbility(hasteID);
-            Debug.Log("PlayerScript: Haste selected.");
+            
         }
         else if (Input.GetKeyDown("4"))
         {
+            Debug.Log("PlayerScript: Attempted to select Slow");
             SelectAbility(slowID);
-            Debug.Log("PlayerScript: Slow selected.");
+            
         }
         else if (Input.GetKeyDown("5"))
         {
+            Debug.Log("PlayerScript: Attempted to select Blink");
             SelectAbility(blinkID);
-            Debug.Log("PlayerScript: Blink selected.");
+            
         }
         else if (Input.GetKeyDown("6"))
         {
+            Debug.Log("PlayerScript: Attempted to select NetherSwap");
             SelectAbility(netherSwapID);
-            Debug.Log("PlayerScript: Have you ever played the game Switch?");
+            
         }
         else if (Input.GetKeyDown("7"))
         {
+            Debug.Log("PlayerScript: Attempted to select InitiativeSwap");
             SelectAbility(initiativeSwapID);
-            Debug.Log("PlayerScript: InitiativeSwap selected.");
+            
+        }
+        else if (Input.GetKeyDown("8"))
+        {
+            Debug.Log("PlayerScript: Attempted to select Wait");
+            SelectAbility(waitID);
         }
     }
 
@@ -535,10 +670,16 @@ public class PlayerScript : MonoBehaviour
         timeSpentDoingAction = 0.0f;
         navmeshAgent.enabled = true;
         
-
+        // - CLEAR SPELL TARGETTING -----------
         // Clear NetherSwap targeting
         netherSwapAbility.target1 = null;
         netherSwapAbility.target2 = null;
+
+        slowAbility.targettedEnemy = null;
+
+        initiativeSwapAbility.target1 = null;
+        initiativeSwapAbility.target2 = null;
+        // ------------------------------------
 
         //initiativeSpeed = oldInitiativeSpeed;
 
@@ -578,7 +719,7 @@ public class PlayerScript : MonoBehaviour
             if (ability.isDebuffActive)
             {
                 if (ability.turnsDebuffed >= ability.debuffDuration)
-                {
+                { 
                     ability.isDebuffActive = false;
                     ability.turnsDebuffed = 0;
 
@@ -591,6 +732,41 @@ public class PlayerScript : MonoBehaviour
                         slowAbility.targettedEnemy.enemyCooldown = slowAbility.targettedEnemy.enemyCooldown * selectedAbility.magnitude;
                         slowAbility.targettedEnemy = null;
                     }
+                    else if (ability.id == waitID)
+                    {
+                        // Is our initiativeSpeed still greater than the base value?
+                        if (initiativeSpeed > oldInitiativeSpeed)
+                        {
+                            // Therefore we are still debuffed
+                            ability.isDebuffActive = true;
+
+                            // Debuff reduction 1
+                            ability.turnsDebuffed = 1;
+                            initiativeSpeed -= waitAbility.magnitude * 0.5f;
+
+                            // Debuff reduction 2
+                            //initiativeSpeed -= waitAbility.magnitude;
+
+                            Debug.Log("PlayerScript->EndAction: initiativeSpeed = " + initiativeSpeed);
+                        }
+                        else
+                        {
+                            // Our initiativeSpeed has gone back down to a more normal value
+                            // If the new initiativeSpeed accidentally goes below where we want it
+                            // Set it to where we want it just in case
+                            initiativeSpeed = oldInitiativeSpeed;
+                        }
+                    }
+                    else if (ability.id == defendID)
+                    {
+                        navmeshAgent.speed = baseMoveSpeed;
+                    }
+                    // Currently no way to swap back the enemyCooldown values on the initiativeSwap debuff.
+                    // Permanently changes the enemies enemyCooldown values with eachother
+                    /*else if (ability.id == initiativeSwapID)
+                    {
+
+                    }*/
                 }
                 // debuff has been active for desired duration.
                 // What ability was it, so what do we do next
@@ -629,10 +805,12 @@ public class PlayerScript : MonoBehaviour
             {
                 case Ability.Type.WeaponAttack:
                     attackID = abilityId;
+                    attackAbility = (PlayerAttack)child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Defend:
                     defendID = abilityId;
+                    defendAbility = child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Item:
@@ -651,6 +829,7 @@ public class PlayerScript : MonoBehaviour
 
                 case Ability.Type.Blink:
                     blinkID = abilityId;
+                    blinkAbility = (BlinkAbility)child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Swap:
@@ -660,6 +839,12 @@ public class PlayerScript : MonoBehaviour
 
                 case Ability.Type.InitiativeSwap:
                     initiativeSwapID = abilityId;
+                    initiativeSwapAbility = (InitiativeSwapAbility)child.GetComponent<Ability>();
+                    break;
+
+                case Ability.Type.Wait:
+                    waitID = abilityId;
+                    waitAbility = child.GetComponent<Ability>();
                     break;
 
                 default:
@@ -680,6 +865,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     actionSelection = true;
                     selectedAbility = ability;
+                    Debug.Log("Ability selected!");
                     break;
                 }
             }
@@ -698,11 +884,23 @@ public class PlayerScript : MonoBehaviour
 
     bool IsValidSlowTarget(GameObject slowedObject)
     {
-        if (slowedObject.tag.Contains("Player") || slowedObject.tag.Contains("Slow"))
+        // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
+        // making it unviable to slow down both types of objects initiativeSpeeds.
+        // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
+        if (slowedObject.tag.Contains("Slow"))
         {
             return true;
         }
         Debug.Log("Target cannot be slowed.");
+        return false;
+    }
+
+    bool IsValidInitiativeSwapTarget(GameObject initSwappedObject)
+    {
+        if (initSwappedObject.tag.Contains("Initswappable"))
+        {
+            return true;
+        }
         return false;
     }
 }

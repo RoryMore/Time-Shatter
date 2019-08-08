@@ -13,6 +13,7 @@ public class RangedEnemyScript : EnemyScript
     public GameObject bolt;
 
     turnManageScript turnManger;
+    EnemyManager enemyManager;
 
     void Awake()
     {
@@ -25,7 +26,7 @@ public class RangedEnemyScript : EnemyScript
 
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
         turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
-
+        enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
         enemyCooldown = 3.0f + Random.Range(1.0f, 3.0f);
         currentHealth = startingHealth;

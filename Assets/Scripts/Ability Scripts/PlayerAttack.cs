@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PlayerAttack : Ability
 {
-    //public float attackWidth;     // effective width of the ability in which it can damage enemies 
-                                    //making a 'hit rectangle' with range and attackWidth
+    [Tooltip("The width a straight attack will have, damaging enemies in an area based on width and range")]
+    public float attackWidth;     // effective width of the ability in which it can damage enemies 
+    //making a 'hit rectangle' with range and attackWidth
 
     public enum AttackType
     {
@@ -16,9 +17,20 @@ public class PlayerAttack : Ability
 
     public AttackType attackType;
 
+    [Tooltip("The half the angle that a conal attack will hit, damaging enemies in an area based on angle and range. [180deg is full circle]")]
+    public float angle;
+
+    ConeRangeIndicator coneRangeIndicator = null;
+
     // Start is called before the first frame update
     void Start()
     {
+        coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
+
+        if (coneRangeIndicator == null)
+        {
+            Debug.LogAssertion("coneRangeIndicator failed to be set");
+        }
         // If there were to be diff equipped weapons
         //GameObject pRef = GameObject.FindGameObjectWithTag("Player");
         //magnitude = pRef.equippedWep.damage;
@@ -31,11 +43,31 @@ public class PlayerAttack : Ability
 
         turnsBeenOnCooldown = cooldown;
 
+        coneRangeIndicator.Init(angle, 0.0f, range);
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void DrawRangeIndicator()
+    {
+        if (attackType == AttackType.Cone)
+        {
+            coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
+        }
+    }
+
+    public void DrawCastTimeRangeIndicator(float timeSpentCasting)
+    {
+        if (attackType == AttackType.Cone)
+        {
+            float drawPercentage = (timeSpentCasting / actionSpeed) * range;
+
+            coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
+            coneRangeIndicator.DrawCastTimeIndicator(angle, 0.0f, drawPercentage);
+        }
     }
 }
