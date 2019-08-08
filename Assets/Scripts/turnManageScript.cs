@@ -7,11 +7,12 @@ public class turnManageScript : MonoBehaviour
     //This may or may not be required. It could simply be for managing the actual 
     //UI bar element instead of facilitating turns, which seems more efficient to do inside of each character
 
-    private float fixedUpdateCount = 0;
     private float updateFixedUpdateCountPerSecond;
     public float turnCounter = 0;
     public float slowMotionCount;
     private float normalSpeedCount = 1.0f;
+	public bool Ui  = false;
+	public bool actionUi = false;
    // public float playerTurnCounter;
     public float battleStart = 0;
     bool start = false;
@@ -68,6 +69,9 @@ public class turnManageScript : MonoBehaviour
                     {
                         state = BattleState.BATTLE;
                     }
+
+					Ui = false;
+					actionUi = false;
                     break;
                 }
             case BattleState.BATTLE:
@@ -79,7 +83,8 @@ public class turnManageScript : MonoBehaviour
                     if (player.isTakingAction == true)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
-                        
+						Ui = false;
+						actionUi = true;
                         soundManager.state = SoundManager.MusicState.SLOWMOTION;
                         if (player.isExecutingAbility == true)
                         {
@@ -89,6 +94,8 @@ public class turnManageScript : MonoBehaviour
                     else if (player.isTakingAction == false)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
+						Ui = true;
+						actionUi = false;
                         soundManager.state = SoundManager.MusicState.BATTLE;
                         //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
                     }
@@ -101,6 +108,8 @@ public class turnManageScript : MonoBehaviour
                     soundManager.state = SoundManager.MusicState.BATTLE;
                     if (player.isExecutingAbility == false)
                     {
+						Ui = false;
+						actionUi = true;
                         turnCounter = 0;
                         state = BattleState.BATTLE;
 
