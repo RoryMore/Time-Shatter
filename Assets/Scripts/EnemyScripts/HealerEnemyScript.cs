@@ -9,8 +9,8 @@ public class HealerEnemyScript : EnemyScript
     public float attackRange;
     public int healMagnitude;
     public int damageMagnitude;
-    turnManageScript turnManger;
-    EnemyManager enemyManager;
+    
+    
     GameObject target;
 
     bool firstTargetAqquired = false;
@@ -36,7 +36,7 @@ public class HealerEnemyScript : EnemyScript
         currentHealth = startingHealth;
 
 
-        //Once the healer starts, pick a random enemy in the field
+        
         
         
 
@@ -57,7 +57,7 @@ public class HealerEnemyScript : EnemyScript
 
     public void Movement()
     {
-        // At first, set target to be a random enemy in the list
+        //Once the healer starts, pick a random enemy in the field
         if (firstTargetAqquired == false)
         {
             target = enemyManager.initiativeList[(int)Random.Range(0, enemyManager.initiativeList.Count)];
@@ -65,15 +65,26 @@ public class HealerEnemyScript : EnemyScript
 
             Heal();
         }
+        //From this moment on, we only look for the injured
         // When enemies take damage, 
 
         if (currentHealth > 0 && player.currentHealth > 0)
         {
+
+            if (Vector3.Distance(transform.position, target.gameObject.transform.position) <= healRange)
+            {
+                nav.SetDestination(transform.position);
+                transform.LookAt(target.transform);
+
+            }
+            else
+            {
+                nav.SetDestination(target.transform.position);
+
+            }
+
             
-
-
-            nav.SetDestination(target.transform.position);
-            print("Going towards " + target.name);
+            
         }
         else
         {
@@ -134,6 +145,12 @@ public class HealerEnemyScript : EnemyScript
                         enemyCooldown = 6.0f;
                     }
 
+                    //Assuming we cant attack or heal ANYONE in range, then all we can do is hold turn
+                    else
+                    {
+                        HoldTurn();
+                    }
+
                     
                 }
 
@@ -143,11 +160,13 @@ public class HealerEnemyScript : EnemyScript
         }
 
         //If no one at all needs healing and we are in range, simply attack!
-        if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
+        else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
         {
             player.TakeDamage(damageMagnitude);
             enemyCooldown = 6.0f;
         }
+
+
     }
 
 }

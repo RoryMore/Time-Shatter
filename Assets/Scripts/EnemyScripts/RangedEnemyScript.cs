@@ -8,12 +8,11 @@ public class RangedEnemyScript : EnemyScript
     // Start is called before the first frame update
 
     public float rangedAttackRange;
-    public int rangedDamage;
 
     public GameObject bolt;
 
-    turnManageScript turnManger;
-    EnemyManager enemyManager;
+    
+    
 
     void Awake()
     {
@@ -115,7 +114,8 @@ public class RangedEnemyScript : EnemyScript
         //If its the range enemy turn BUT we are out of range, we go into defence stance!
         else if (rangedAttackRange <= distance && enemyCooldown <= 0.0f)
         {
-            enemyCooldown = 6.0f;
+            //If they have an another ability it can activate here given enough time has gone by for a cooldown
+            HoldTurn();
             //Debug.Log("Somehow I am actually out of ranged");
         }
         else if (rangedAttackRange <= distance && 0.0f <= enemyCooldown)

@@ -13,6 +13,8 @@ public class EnemyScript : MonoBehaviour
     public float enemyCooldown;
     public bool enemyTakingAction;
 
+    public float turnsHeld;
+
      
 
     //public AudioClip deathClip;
@@ -26,6 +28,8 @@ public class EnemyScript : MonoBehaviour
     public NavMeshAgent nav;
 
     public PlayerScript player;
+    public EnemyManager enemyManager;
+    public turnManageScript turnManger;
 
     public bool isDead;
     public bool isSinking;
@@ -47,10 +51,20 @@ public class EnemyScript : MonoBehaviour
         
     }
 
+    //Every time the enemy is unable to act on their turn, simply reset their initiative with a slight stacking advantage
+    public void HoldTurn()
+    {
+        turnsHeld += 1;
+        enemyCooldown = 6.0f - (0.5f * turnsHeld);
+    }
+
+
     //Function that is called when the player deals damage to you
     //Default condition format
     public void TakeDamage(int amount, Vector3 hitPoint)
     {
+        
+
         if (isDead)
             return;
 
@@ -58,8 +72,9 @@ public class EnemyScript : MonoBehaviour
         //enemyAudio.Play();
 
         currentHealth -= amount;
+        enemyManager.healList.Add(this.gameObject);
 
-        hitParticles.transform.position = hitPoint;
+        //hitParticles.transform.position = hitPoint;
         hitParticles.Play();
 
         
@@ -79,6 +94,7 @@ public class EnemyScript : MonoBehaviour
         capsuleCollider.isTrigger = true;
 
         anim.SetTrigger("Dead");
+        enemyManager.healList.Remove(this.gameObject);
 
         //enemyAudio.clip = deathClip;
         //enemyAudio.Play();
