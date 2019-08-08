@@ -12,6 +12,8 @@ public class RangedEnemyScript : EnemyScript
 
     public GameObject bolt;
 
+    turnManageScript turnManger;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -22,9 +24,10 @@ public class RangedEnemyScript : EnemyScript
 
 
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
+        turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
 
 
-        enemyCooldown = 4.0f;
+        enemyCooldown = 3.0f + Random.Range(1.0f, 3.0f);
         currentHealth = startingHealth;
 
         
@@ -34,12 +37,14 @@ public class RangedEnemyScript : EnemyScript
 
     void Update()
     {
+        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        {
 
-        Turn();
-        Movement();
-        RangedAttack();
-            
-  
+            Turn();
+            Movement();
+            RangedAttack();
+
+        }
 
     }
 
