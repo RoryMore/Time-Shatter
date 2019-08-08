@@ -11,6 +11,19 @@ public class PlayerScript : MonoBehaviour
     public float currentHealth;
 
     float baseMoveSpeed;
+    // Current moveSpeed is the navmeshAgent.speed variable
+
+    float oldInitiativeSpeed = 3.0f;
+    // If turns are to change to a different speed system
+    // How long it takes for the player to reach their action
+    public float initiativeSpeed = 2.0f;
+
+    // Modifier to determine how strong physical attacks/abilities are
+    //float strength;
+
+    // Name can be changed to whatever. 
+    //Purpose would be a to increase/decrease how powerful non-melee/physical attacks would be
+    //float spellPower; 
 
     //public float timeLeftUntilAction = 6.0f;
     float timeSpentDoingAction = 0.0f;
@@ -18,9 +31,7 @@ public class PlayerScript : MonoBehaviour
     bool actionSelection = false;
     public bool isExecutingAbility = false;
 
-    float oldInitiativeSpeed = 3.0f;
-    public float initiativeSpeed = 2.0f;    // If turns are to change to a different speed system
-                                            // How long it takes for the player to reach their action
+       
     public float initiativeEntrySpeed = 3.0f;
 
     //Animator anim;
@@ -40,6 +51,8 @@ public class PlayerScript : MonoBehaviour
     public int initiativeSwapID;
     public int waitID;
 
+    PlayerAttack attackAbility;
+    Ability defendAbility;
     NetherSwap netherSwapAbility;
     Ability hasteAbility;
     SlowAbility slowAbility;
@@ -54,14 +67,12 @@ public class PlayerScript : MonoBehaviour
     public bool running = false;
 
     private NavMeshAgent navmeshAgent;
-    private Transform self;
 
     turnManageScript turnManager;
     // Start is called before the first frame update
     void Start()
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
-        self = GetComponentInParent<Transform>();
 
         baseMoveSpeed = navmeshAgent.speed;
 
@@ -90,7 +101,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (turnManager.state != turnManageScript.BattleState.START)
+            if ((turnManager.state == turnManageScript.BattleState.BATTLE) || (turnManager.state == turnManageScript.BattleState.ACTION))
             {
                 if (isTakingAction || isExecutingAbility)
                 {
@@ -154,7 +165,7 @@ public class PlayerScript : MonoBehaviour
 
         float damageToTake = amount;
 
-        if (selectedAbility.type == Ability.Type.Defend)
+        if (defendAbility.isBuffActive)
         {
             damageToTake = amount - selectedAbility.magnitude;
             if (damageToTake < 0.0f)
@@ -214,6 +225,9 @@ public class PlayerScript : MonoBehaviour
                 
                 transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.02f) * (1.0f + (1.0f - Time.timeScale))));
             }
+
+            // While choosing where to attack, show where we will be attacking
+            attackAbility.DrawRangeIndicator();
             
         }
         else
@@ -224,6 +238,7 @@ public class PlayerScript : MonoBehaviour
             // Set player to attack animate
 
             // Draw a range indicator based on weapon attack type
+            attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
@@ -240,7 +255,10 @@ public class PlayerScript : MonoBehaviour
     void Defend()
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
-        
+
+        selectedAbility.isBuffActive = true;
+        selectedAbility.isDebuffActive = true;
+
         //Debug.Log("PlayerScript: Defend timeSpentDoingAction = " + timeSpentDoingAction);
         //navmeshAgent.enabled = false;
         if (isTakingAction && !isExecutingAbility)
@@ -249,7 +267,7 @@ public class PlayerScript : MonoBehaviour
         }
         
         actionSelection = true;
-        //isTakingAction = true;
+        isTakingAction = false;
         isExecutingAbility = true;
 
         Movement();
@@ -258,7 +276,10 @@ public class PlayerScript : MonoBehaviour
         
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
-            navmeshAgent.speed = baseMoveSpeed;
+            navmeshAgent.speed = navmeshAgent.speed * 1.6f;
+            selectedAbility.turnsBuffed = 0;
+            
+            selectedAbility.turnsDebuffed = 0;
             // Stop Defense animation
             //Debug.Log("PlayerScript: Defend action finished");
             EndAction();
@@ -736,6 +757,10 @@ public class PlayerScript : MonoBehaviour
                             initiativeSpeed = oldInitiativeSpeed;
                         }
                     }
+                    else if (ability.id == defendID)
+                    {
+                        navmeshAgent.speed = baseMoveSpeed;
+                    }
                     // Currently no way to swap back the enemyCooldown values on the initiativeSwap debuff.
                     // Permanently changes the enemies enemyCooldown values with eachother
                     /*else if (ability.id == initiativeSwapID)
@@ -780,10 +805,12 @@ public class PlayerScript : MonoBehaviour
             {
                 case Ability.Type.WeaponAttack:
                     attackID = abilityId;
+                    attackAbility = (PlayerAttack)child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Defend:
                     defendID = abilityId;
+                    defendAbility = child.GetComponent<Ability>();
                     break;
 
                 case Ability.Type.Item:

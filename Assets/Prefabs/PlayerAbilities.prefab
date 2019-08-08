@@ -66,6 +66,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8663733970314540905}
   - component: {fileID: 8463534892645255302}
+  - component: {fileID: 863015739}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Untagged
@@ -114,7 +115,21 @@ MonoBehaviour:
   id: 0
   attackWidth: 0
   attackType: 1
-  angle: 90
+  angle: 35
+--- !u!114 &863015739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536419064913879406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20010bd794f8d8b4bba3b1f2b03b67ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quality: 15
+  indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
 --- !u!1 &1137851733871096209
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c4aa1e77b62a94880ca7db0e3b5fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 0.5
+  actionSpeed: 2
   range: 4
   magnitude: 12
   buffDuration: 0
@@ -387,13 +402,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bae314e56c36aa941bd2a1de892ec853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 3
+  actionSpeed: 2
   range: 0
   magnitude: 7.5
-  buffDuration: 0
+  buffDuration: 1
   turnsBuffed: 0
   isBuffActive: 0
-  debuffDuration: 0
+  debuffDuration: 1
   turnsDebuffed: 0
   isDebuffActive: 0
   cooldown: 1
