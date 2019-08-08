@@ -6,7 +6,9 @@ using UnityEngine.AI;
 public class HealerEnemyScript : EnemyScript
 {
     public float healRange;
+    public float attackRange;
     public int healMagnitude;
+    public int damageMagnitude;
     turnManageScript turnManger;
     EnemyManager enemyManager;
     GameObject target;
@@ -101,23 +103,53 @@ public class HealerEnemyScript : EnemyScript
                 if (distanceToAlly <= previousDistanceToAlly)
                 {
                     //The closest one is now your target
+                    //MOVE TO MOVEMENT FUNCTION
                     target = enemy;
                  
                 }
 
-                //Make sure our heal
-                if (Vector3.Distance(transform.position, target.transform.position) < healRange)
+                //Make sure our heal is in range
+                if (Vector3.Distance(transform.position, target.transform.position) < healRange && enemyCooldown <= 0.0f)
                 {
-                    //
+                    //Heal Target
+                    target.GetComponent<EnemyScript>().currentHealth += healMagnitude;
+                    enemyManager.healList.Remove(target);
+                    enemyCooldown = 6.0f;
                 }
-                
+                //Out of range
+                else if (Vector3.Distance(transform.position, target.transform.position) > healRange && enemyCooldown <= 0.0f)
+                {
+                    // If we need healing, we can heal ourselves
+                    if (enemyManager.healList.Contains(this.gameObject))
+                    {
+                        this.currentHealth += healMagnitude;
+                        enemyManager.healList.Remove(this.gameObject);
+                        enemyCooldown = 6.0f;
+
+                    }
+                    // Otherwise if the player is in range, we can try attack them
+                    else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
+                    {
+                        player.TakeDamage(damageMagnitude);
+                        enemyCooldown = 6.0f;
+                    }
+
+                    
+                }
+
+
             }
-
-
             
-            //enemyManager.healList[0].gameObject.transform
+        }
+
+        //If no one at all needs healing and we are in range, simply attack!
+        if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
+        {
+            player.TakeDamage(damageMagnitude);
+            enemyCooldown = 6.0f;
         }
     }
+
 }
 
 
