@@ -118,6 +118,7 @@ public class PlayerScript : MonoBehaviour
                     Movement();
                 }
 
+                TestTakingDamage();
                 CheckDamage();
             }
         }
@@ -173,14 +174,18 @@ public class PlayerScript : MonoBehaviour
 
         if (defendAbility.isBuffActive)
         {
-            damageToTake = amount - selectedAbility.magnitude;
+            damageToTake = amount - defendAbility.magnitude;
             if (damageToTake < 0.0f)
             {
                 damageToTake = 0.0f;
             }
         }
 
-        currentHealth -= damageToTake;
+        if (!isDead)
+        {
+            currentHealth = Mathf.Clamp(currentHealth - damageToTake, 0.0f, maxHealth);
+            //currentHealth -= damageToTake;
+        }
 
         //healthSlider.value = currentHealth;
 
@@ -192,6 +197,15 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    void TestTakingDamage()
+    {
+        if (Input.GetKeyDown("k"))
+        {
+            TakeDamage(8.0f);
+            Debug.Log("OUCH! HP: " + currentHealth);
+        }
+    }
+
 
     void Death()
     {
@@ -199,6 +213,13 @@ public class PlayerScript : MonoBehaviour
 
         //playerAudio.clip = deathClip;
         //playerAudio.Play ();
+
+        // Make the player stop over a short amount of time. Can just make the player stop in their tracks immediately, but smoothing things tend to be nicer
+        float finalDestX = Mathf.Lerp(navmeshAgent.destination.x, transform.position.x, 0.5f * Time.fixedDeltaTime);
+        float finalDestY = Mathf.Lerp(navmeshAgent.destination.y, transform.position.y, 0.5f * Time.fixedDeltaTime);
+        float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, 0.5f * Time.fixedDeltaTime);
+
+        navmeshAgent.destination = new Vector3(finalDestX, finalDestY, finalDestZ);
 
     }
 
