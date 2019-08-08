@@ -101,7 +101,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (turnManager.state != turnManageScript.BattleState.START)
+            if ((turnManager.state == turnManageScript.BattleState.BATTLE) || (turnManager.state == turnManageScript.BattleState.ACTION))
             {
                 if (isTakingAction || isExecutingAbility)
                 {
