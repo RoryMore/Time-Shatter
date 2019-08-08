@@ -8,6 +8,7 @@ public class MeleeEnemyScript : EnemyScript
 
     public float meleeAttackRange;
     public int meleeDamage;
+    turnManageScript turnManger;
     
     void Awake()
     {
@@ -20,19 +21,22 @@ public class MeleeEnemyScript : EnemyScript
 
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
 
+        turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
 
-        enemyCooldown = 4.0f;
+
+        enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
         currentHealth = startingHealth;
     }
 
 
     void Update()
     {
-
+        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        {
             Movement();
             MeleeAttack();
             Turn();
-
+        }
 
 
 
