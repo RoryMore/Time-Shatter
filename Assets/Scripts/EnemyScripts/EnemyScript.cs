@@ -13,6 +13,8 @@ public class EnemyScript : MonoBehaviour
     public float enemyCooldown;
     public bool enemyTakingAction;
 
+     
+
     //public AudioClip deathClip;
 
 
@@ -60,6 +62,8 @@ public class EnemyScript : MonoBehaviour
         hitParticles.transform.position = hitPoint;
         hitParticles.Play();
 
+        
+
         if (currentHealth <= 0)
         {
             Death();
@@ -79,5 +83,7 @@ public class EnemyScript : MonoBehaviour
         //enemyAudio.clip = deathClip;
         //enemyAudio.Play();
     }
+
+
 }
 
