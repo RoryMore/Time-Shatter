@@ -57,8 +57,11 @@ public class EnemyScript : MonoBehaviour
 
         currentHealth -= amount;
 
-        hitParticles.transform.position = hitPoint;
-        hitParticles.Play();
+        if (hitParticles != null)
+        {
+            hitParticles.transform.position = hitPoint;
+            hitParticles.Play();
+        }
 
         if (currentHealth <= 0)
         {

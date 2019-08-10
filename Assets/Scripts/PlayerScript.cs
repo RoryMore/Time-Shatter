@@ -13,11 +13,12 @@ public class PlayerScript : MonoBehaviour
     float baseMoveSpeed;
     // Current moveSpeed is the navmeshAgent.speed variable
 
-    float oldInitiativeSpeed = 3.0f;
-    // If turns are to change to a different speed system
+    public float baseInitiativeSpeed = 3.0f;
     // How long it takes for the player to reach their action
-    public float initiativeSpeed = 2.0f;
+    [HideInInspector] public float initiativeSpeed;
 
+    // STRONGLY THINKING ABOUT CREATING A "StatBlock" class that PlayerScript and possibly enemies can Inherit from
+    // FOR NOW, STATS AREN'T BEING UTILISED, SO UNNECESSARY FOR PROTOTYPE
     // Modifier to determine how strong physical attacks/abilities are
     //float strength;
 
@@ -27,7 +28,7 @@ public class PlayerScript : MonoBehaviour
 
     //public float timeLeftUntilAction = 6.0f;
     float timeSpentDoingAction = 0.0f;
-     public bool isTakingAction = false;
+    public bool isTakingAction = false;
     bool actionSelection = false;
     public bool isExecutingAbility = false;
 
@@ -81,7 +82,6 @@ public class PlayerScript : MonoBehaviour
 
         turnManager = FindObjectOfType<turnManageScript>();
 
-        
     }
 
     void Awake()
@@ -92,7 +92,7 @@ public class PlayerScript : MonoBehaviour
         //playerAudio = GetComponent <AudioSource> ();
         currentHealth = maxHealth;
 
-        initiativeSpeed = oldInitiativeSpeed;
+        initiativeSpeed = baseInitiativeSpeed;
 
         //isTakingAction = true;
         //actionSelection = true;
@@ -118,7 +118,7 @@ public class PlayerScript : MonoBehaviour
                     Movement();
                 }
 
-                TestTakingDamage();
+                //TestTakingDamage();
                 CheckDamage();
             }
         }
@@ -164,10 +164,13 @@ public class PlayerScript : MonoBehaviour
         
     }
 
-
-
     public void TakeDamage(float amount)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         damaged = true;
 
         float damageToTake = amount;
@@ -181,11 +184,8 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-        if (!isDead)
-        {
-            currentHealth = Mathf.Clamp(currentHealth - damageToTake, 0.0f, maxHealth);
-            //currentHealth -= damageToTake;
-        }
+        currentHealth = Mathf.Clamp(currentHealth - damageToTake, 0.0f, maxHealth);
+        //currentHealth -= damageToTake;
 
         //healthSlider.value = currentHealth;
 
@@ -199,7 +199,7 @@ public class PlayerScript : MonoBehaviour
 
     void TestTakingDamage()
     {
-        if (Input.GetKeyDown("k"))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             TakeDamage(8.0f);
             Debug.Log("OUCH! HP: " + currentHealth);
@@ -349,7 +349,7 @@ public class PlayerScript : MonoBehaviour
         {
             selectedAbility.isBuffActive = true;
 
-            initiativeSpeed = oldInitiativeSpeed * selectedAbility.magnitude;
+            initiativeSpeed = baseInitiativeSpeed * selectedAbility.magnitude;
 
             EndAction();
         }
@@ -760,7 +760,7 @@ public class PlayerScript : MonoBehaviour
                         ability.turnsBuffed = 0;
 
                         // We are no longer buffed. Haste debuffs our initiativeSpeed after our buff finishes
-                        initiativeSpeed = oldInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
+                        initiativeSpeed = baseInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
                         ability.isDebuffActive = true;
                         Debug.Log("PlayerScript: hasteAbility->turnsDebuffed = " + hasteAbility.turnsDebuffed);
                     }
@@ -783,7 +783,7 @@ public class PlayerScript : MonoBehaviour
 
                     if (ability.id == hasteID)
                     {
-                        initiativeSpeed = oldInitiativeSpeed;
+                        initiativeSpeed = baseInitiativeSpeed;
                     }
                     else if (ability.id == slowID)
                     {
@@ -793,7 +793,7 @@ public class PlayerScript : MonoBehaviour
                     else if (ability.id == waitID)
                     {
                         // Is our initiativeSpeed still greater than the base value?
-                        if (initiativeSpeed > oldInitiativeSpeed)
+                        if (initiativeSpeed > baseInitiativeSpeed)
                         {
                             // Therefore we are still debuffed
                             ability.isDebuffActive = true;
@@ -812,7 +812,7 @@ public class PlayerScript : MonoBehaviour
                             // Our initiativeSpeed has gone back down to a more normal value
                             // If the new initiativeSpeed accidentally goes below where we want it
                             // Set it to where we want it just in case
-                            initiativeSpeed = oldInitiativeSpeed;
+                            initiativeSpeed = baseInitiativeSpeed;
                         }
                     }
                     else if (ability.id == defendID)

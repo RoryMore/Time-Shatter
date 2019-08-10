@@ -1539,6 +1539,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8463534892645255302, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
+        type: 3}
+      propertyPath: angle
+      value: 35
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d7657471c7c4d4c970ce8f7ef8a50e, type: 3}
 --- !u!1 &1415704139
@@ -1597,6 +1602,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 777096930}
     m_Modifications:
+    - target: {fileID: 2709648689663942311, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
+        type: 3}
+      propertyPath: m_Name
+      value: BlackFade
+      objectReference: {fileID: 0}
     - target: {fileID: 2709648689663942308, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1702,11 +1712,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 2709648689663942311, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
-        type: 3}
-      propertyPath: m_Name
-      value: BlackFade
-      objectReference: {fileID: 0}
     - target: {fileID: 2709648689663942312, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
         type: 3}
       propertyPath: MainMenuMusic
@@ -1727,9 +1732,8 @@ GameObject:
   - component: {fileID: 1793460564}
   - component: {fileID: 1793460563}
   - component: {fileID: 1793460568}
-  - component: {fileID: 1793460567}
   - component: {fileID: 1793460569}
-  - component: {fileID: 1793460570}
+  - component: {fileID: 1793460567}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1803,7 +1807,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1793460562}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.53, z: -0.75}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 158475390}
@@ -1819,9 +1823,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1793460562}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4281178663f935f4db8517de1a5f74d7, type: 3}
+  m_Script: {fileID: 11500000, guid: ef9294214fad9df4c961e090653e867a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  baseInitiativeSpeed: 3
+  initiativeSpeed: 0
+  isTakingAction: 0
+  isExecutingAbility: 0
+  initiativeEntrySpeed: 3
+  abilities: []
+  selectedAbility: {fileID: 0}
+  attackID: 0
+  defendID: 0
+  itemID: 0
+  hasteID: 0
+  slowID: 0
+  blinkID: 0
+  netherSwapID: 0
+  initiativeSwapID: 0
+  waitID: 0
+  running: 0
 --- !u!195 &1793460568
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1858,36 +1881,6 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1793460570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1793460562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef9294214fad9df4c961e090653e867a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
-  initiativeSpeed: 3
-  isTakingAction: 0
-  isExecutingAbility: 0
-  initiativeEntrySpeed: 3
-  abilities: []
-  selectedAbility: {fileID: 0}
-  attackID: 0
-  defendID: 0
-  itemID: 0
-  hasteID: 0
-  slowID: 0
-  blinkID: 0
-  netherSwapID: 0
-  initiativeSwapID: 0
-  waitID: 0
-  running: 0
 --- !u!1 &1845066909
 GameObject:
   m_ObjectHideFlags: 0

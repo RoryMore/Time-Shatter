@@ -22,13 +22,10 @@ public class PlayerAttack : Ability
 
     ConeRangeIndicator coneRangeIndicator = null;
 
-    // For debugging
-    LineRenderer line;
-
     // Start is called before the first frame update
     void Start()
     {
-        line = GetComponent<LineRenderer>();
+        //line = GetComponent<LineRenderer>();
 
         coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
 
@@ -48,7 +45,7 @@ public class PlayerAttack : Ability
 
         turnsBeenOnCooldown = cooldown;
 
-        coneRangeIndicator.Init(angle, 0.0f, range);
+        coneRangeIndicator.Init(angle);
     }
 
     // Update is called once per frame
@@ -78,6 +75,7 @@ public class PlayerAttack : Ability
 
     public bool ShouldEnemyInPositionBeDamaged(Vector3 position)
     {
+        // Depending on our 'attackType' we calculate hits slightly differently
         if (attackType == AttackType.Cone)
         {
             float forwardAngle = 90 - Mathf.Rad2Deg * Mathf.Atan2(transform.forward.z, transform.forward.x);
@@ -89,9 +87,6 @@ public class PlayerAttack : Ability
             {
                 if (distance <= range)
                 {
-                    //float drawLineFor = 5.0f;
-                    //DrawLineAtAngleFor(Mathf.Deg2Rad * positionAngle, ref drawLineFor);
-
                     return true;
                 }
                 else
@@ -109,7 +104,7 @@ public class PlayerAttack : Ability
         return false;
     }
 
-    void DrawLineAtAngleFor(float givenAngle, ref float seconds)
+    /*void DrawLineAtAngleFor(float givenAngle, ref float seconds)
     {
         seconds -= Time.fixedDeltaTime;
 
@@ -127,5 +122,5 @@ public class PlayerAttack : Ability
         {
             DrawLineAtAngleFor(givenAngle, ref seconds);
         }
-    }
+    }*/
 }
