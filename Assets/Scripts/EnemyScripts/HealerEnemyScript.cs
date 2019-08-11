@@ -6,11 +6,9 @@ using UnityEngine.AI;
 public class HealerEnemyScript : EnemyScript
 {
     public float healRange;
-    public float attackRange;
     public int healMagnitude;
-    public int damageMagnitude;
-    
-    
+    turnManageScript turnManger;
+    EnemyManager enemyManager;
     GameObject target;
 
     bool firstTargetAqquired = false;
@@ -31,18 +29,12 @@ public class HealerEnemyScript : EnemyScript
 
         enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
-        //Value the enemy has to reach before taking their turn
-        enemyCooldown = 6.0f;
 
-        //Current turn value
-        enemyTurnCounter = 0.0f;
-
-        //enemyCooldown = 4.0f + Random.Range(1.0f, 2.0f);
-        initiativeSpeed = 1.0f;
+        enemyCooldown = 4.0f + Random.Range(1.0f, 2.0f);
         currentHealth = startingHealth;
 
 
-        
+        //Once the healer starts, pick a random enemy in the field
         
         
 
@@ -63,7 +55,7 @@ public class HealerEnemyScript : EnemyScript
 
     public void Movement()
     {
-        //Once the healer starts, pick a random enemy in the field
+        // At first, set target to be a random enemy in the list
         if (firstTargetAqquired == false)
         {
             target = enemyManager.initiativeList[(int)Random.Range(0, enemyManager.initiativeList.Count)];
@@ -71,26 +63,15 @@ public class HealerEnemyScript : EnemyScript
 
             Heal();
         }
-        //From this moment on, we only look for the injured
         // When enemies take damage, 
 
         if (currentHealth > 0 && player.currentHealth > 0)
         {
-
-            if (Vector3.Distance(transform.position, target.gameObject.transform.position) <= healRange)
-            {
-                nav.SetDestination(transform.position);
-                transform.LookAt(target.transform);
-
-            }
-            else
-            {
-                nav.SetDestination(target.transform.position);
-
-            }
-
             
-            
+
+
+            nav.SetDestination(target.transform.position);
+            print("Going towards " + target.name);
         }
         else
         {
@@ -100,7 +81,7 @@ public class HealerEnemyScript : EnemyScript
 
     public void Turn()
     {
-        //enemyCooldown -= 1f * Time.deltaTime;
+        enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
 
     }
@@ -120,61 +101,23 @@ public class HealerEnemyScript : EnemyScript
                 if (distanceToAlly <= previousDistanceToAlly)
                 {
                     //The closest one is now your target
-                    //MOVE TO MOVEMENT FUNCTION
                     target = enemy;
                  
                 }
 
-                //Make sure our heal is in range
-                if (Vector3.Distance(transform.position, target.transform.position) < healRange && enemyCooldown <= 0.0f)
+                //Make sure our heal
+                if (Vector3.Distance(transform.position, target.transform.position) < healRange)
                 {
-                    //Heal Target
-                    target.GetComponent<EnemyScript>().currentHealth += healMagnitude;
-                    enemyManager.healList.Remove(target);
-                    enemyCooldown = 6.0f;
+                    //
                 }
-                //Out of range
-                else if (Vector3.Distance(transform.position, target.transform.position) > healRange && enemyCooldown <= 0.0f)
-                {
-                    // If we need healing, we can heal ourselves
-                    if (enemyManager.healList.Contains(this.gameObject))
-                    {
-                        this.currentHealth += healMagnitude;
-                        enemyManager.healList.Remove(this.gameObject);
-                        enemyCooldown = 6.0f;
-
-                    }
-                    // Otherwise if the player is in range, we can try attack them
-                    else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
-                    {
-                        player.TakeDamage(damageMagnitude);
-                        enemyCooldown = 6.0f;
-                    }
-
-                    //Assuming we cant attack or heal ANYONE in range, then all we can do is hold turn
-                    else
-                    {
-                        HoldTurn();
-                    }
-
-                    
-                }
-
-
+                
             }
+
+
             
+            //enemyManager.healList[0].gameObject.transform
         }
-
-        //If no one at all needs healing and we are in range, simply attack!
-        else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
-        {
-            player.TakeDamage(damageMagnitude);
-            enemyCooldown = 6.0f;
-        }
-
-
     }
-
 }
 
 
