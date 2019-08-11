@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    public GameObject meleeEnemy;
-    public GameObject rangedEnemy;
-    public GameObject healerEnemy;
-
+    GameObject[] initiativeListInitial;
     
 
     public List<GameObject> initiativeList;
     public List<GameObject> healList;
-
-    public List<GameObject> spawnPoints;
 
 
     
@@ -21,26 +16,10 @@ public class EnemyManager : MonoBehaviour
     void Start()
     {
 
-        foreach (GameObject location in spawnPoints)
-        {
-            if (location.name.Contains("MeleeSpawnPoint"))
-            {
-                Instantiate(meleeEnemy, location.transform);
-                
-            }
-            else if (location.name.Contains("RangedSpawnPoint"))
-            {
-                Instantiate(rangedEnemy, location.transform);
-            }
-            else if (location.name.Contains("HealerSpawnPoint"))
-            {
-                Instantiate(healerEnemy, location.transform);
-            }
-        }
 
         initiativeList = new List<GameObject>();
         initiativeList.AddRange(GameObject.FindGameObjectsWithTag("EnemyTeleSlowInitswappable"));
-        healList = new List<GameObject>();
+        
     
         
     }

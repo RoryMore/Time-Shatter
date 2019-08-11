@@ -5,17 +5,16 @@ using UnityEngine;
 public class ProjectileScript : MonoBehaviour
 {
 
-    public float speed;
-    public int damage;
+    float speed = 0.25f;
 
-    private GameObject player;
+    private Transform player;
     private Vector3 target;
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player");
-        target = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+        player = GameObject.Find("Player").transform;
+        target = new Vector3(player.position.x, player.position.y, player.position.z);
     }
 
     // Update is called once per frame
@@ -34,7 +33,6 @@ public class ProjectileScript : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            player.GetComponent<PlayerScript>().TakeDamage(damage);
             DestroyProjectile();
         }
     }
