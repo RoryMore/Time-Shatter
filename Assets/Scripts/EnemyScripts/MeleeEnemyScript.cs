@@ -26,8 +26,9 @@ public class MeleeEnemyScript : EnemyScript
         turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
         enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
-
-        enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
+        enemyCooldown = 6.0f;
+        //enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
+        initiativeSpeed = 1.5f;
         currentHealth = startingHealth;
     }
 
@@ -77,7 +78,7 @@ public class MeleeEnemyScript : EnemyScript
     //TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
     public void Turn()
     {
-        enemyCooldown -= 1f * Time.deltaTime;
+        //enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
        
     }

@@ -31,8 +31,14 @@ public class HealerEnemyScript : EnemyScript
 
         enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
+        //Value the enemy has to reach before taking their turn
+        enemyCooldown = 6.0f;
 
-        enemyCooldown = 4.0f + Random.Range(1.0f, 2.0f);
+        //Current turn value
+        enemyTurnCounter = 0.0f;
+
+        //enemyCooldown = 4.0f + Random.Range(1.0f, 2.0f);
+        initiativeSpeed = 1.0f;
         currentHealth = startingHealth;
 
 
@@ -94,7 +100,7 @@ public class HealerEnemyScript : EnemyScript
 
     public void Turn()
     {
-        enemyCooldown -= 1f * Time.deltaTime;
+        //enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
 
     }

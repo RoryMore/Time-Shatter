@@ -10,7 +10,11 @@ public class EnemyScript : MonoBehaviour
     public int startingHealth = 100;
     public int currentHealth;
 
+    //Value required before they take their action
     public float enemyCooldown;
+    //Value of their initiative speed
+    public float initiativeSpeed;
+    public float enemyTurnCounter;
     public bool enemyTakingAction;
 
     public float turnsHeld;

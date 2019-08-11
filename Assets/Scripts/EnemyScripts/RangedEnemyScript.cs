@@ -27,7 +27,14 @@ public class RangedEnemyScript : EnemyScript
         turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
         enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
-        enemyCooldown = 3.0f + Random.Range(1.0f, 3.0f);
+        //There own "turn start" number
+        enemyCooldown = 6.0f;
+        //enemyCooldown = 3.0f + Random.Range(1.0f, 3.0f);
+        //Speed of movement
+        initiativeSpeed = 1.2f;
+
+
+
         currentHealth = startingHealth;
 
         
@@ -84,7 +91,7 @@ public class RangedEnemyScript : EnemyScript
     //TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
     public void Turn()
     {
-        enemyCooldown -= 1f * Time.deltaTime;
+        //enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
 
     }
