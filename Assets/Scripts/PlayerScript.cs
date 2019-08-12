@@ -930,6 +930,19 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    public Ability GetAbility(int id)
+    {
+        Ability temp = abilities[0];
+        foreach (Ability ability in abilities)
+        {
+            if (ability.id == id)
+            {
+                temp = ability;
+            }
+        }
+        return temp;
+    }
+
     bool IsValidNetherSwapTarget(GameObject teleportedObject)
     {
         if (teleportedObject.tag.Contains("Player") || teleportedObject.tag.Contains("Tele"))
