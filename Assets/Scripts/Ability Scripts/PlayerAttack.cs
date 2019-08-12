@@ -37,9 +37,9 @@ public class PlayerAttack : Ability
         type = Type.WeaponAttack;
         attackType = AttackType.Cone;
 
-        actionSpeed = 2.0f;
-        range = 5.0f;
-        magnitude = 20.0f;
+        //actionSpeed = 2.0f;
+        //range = 5.0f;
+        //magnitude = 20.0f;
 
         turnsBeenOnCooldown = cooldown;
 
@@ -70,4 +70,6 @@ public class PlayerAttack : Ability
             coneRangeIndicator.DrawCastTimeIndicator(angle, 0.0f, drawPercentage);
         }
     }
+
+    
 }

@@ -14,12 +14,12 @@ public class EnemyScript : MonoBehaviour
     public float enemyCooldown;
     //Value of their initiative speed
     public float initiativeSpeed;
-    public float enemyTurnCounter;
+    
     public bool enemyTakingAction;
 
     public float turnsHeld;
 
-     
+    public float timeSpentDoingAction = 0.0f;
 
     //public AudioClip deathClip;
 

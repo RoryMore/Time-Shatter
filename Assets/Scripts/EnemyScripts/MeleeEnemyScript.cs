@@ -8,8 +8,8 @@ public class MeleeEnemyScript : EnemyScript
 
     public float meleeAttackRange;
     public int meleeDamage;
-    
-    
+
+    PlayerAttack ourAttack;
     
 
     void Awake()
@@ -30,6 +30,9 @@ public class MeleeEnemyScript : EnemyScript
         //enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
         initiativeSpeed = 1.5f;
         currentHealth = startingHealth;
+
+        ourAttack = GetComponent<PlayerAttack>();
+
     }
 
 
@@ -78,7 +81,7 @@ public class MeleeEnemyScript : EnemyScript
     //TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
     public void Turn()
     {
-        //enemyCooldown -= 1f * Time.deltaTime;
+        enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
        
     }
@@ -91,9 +94,19 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
-            player.TakeDamage(meleeDamage);
-            //Play Animation
-            enemyCooldown = 6.0f;
+            timeSpentDoingAction += Time.fixedDeltaTime;
+
+            ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+
+            if (timeSpentDoingAction >= ourAttack.actionSpeed)
+            {
+
+                player.TakeDamage(meleeDamage);
+
+                //Play Animation
+                enemyCooldown = 6.0f;
+                timeSpentDoingAction = 0.0f;
+            }
             //Debug.Log("ATTACK!");
         }
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!

@@ -35,7 +35,7 @@ public class HealerEnemyScript : EnemyScript
         enemyCooldown = 6.0f;
 
         //Current turn value
-        enemyTurnCounter = 0.0f;
+        //enemyTurnCounter = 0.0f;
 
         //enemyCooldown = 4.0f + Random.Range(1.0f, 2.0f);
         initiativeSpeed = 1.0f;
