@@ -25,6 +25,8 @@ public class PlayerAttack : Ability
     // Start is called before the first frame update
     void Start()
     {
+        //line = GetComponent<LineRenderer>();
+
         coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
 
         if (coneRangeIndicator == null)
@@ -37,13 +39,13 @@ public class PlayerAttack : Ability
         type = Type.WeaponAttack;
         attackType = AttackType.Cone;
 
-        //actionSpeed = 2.0f;
-        //range = 5.0f;
-        //magnitude = 20.0f;
+        actionSpeed = 2.0f;
+        range = 5.0f;
+        magnitude = 20.0f;
 
         turnsBeenOnCooldown = cooldown;
 
-        coneRangeIndicator.Init(angle, 0.0f, range);
+        coneRangeIndicator.Init(angle);
     }
 
     // Update is called once per frame
@@ -71,5 +73,54 @@ public class PlayerAttack : Ability
         }
     }
 
-    
+    public bool ShouldEnemyInPositionBeDamaged(Vector3 position)
+    {
+        // Depending on our 'attackType' we calculate hits slightly differently
+        if (attackType == AttackType.Cone)
+        {
+            float forwardAngle = 90 - Mathf.Rad2Deg * Mathf.Atan2(transform.forward.z, transform.forward.x);
+
+            float positionAngle = Vector3.Angle(position - transform.position, transform.forward);
+            float distance = Vector3.Distance(position, transform.position);
+
+            if (positionAngle <= angle)
+            {
+                if (distance <= range)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        Debug.Log("PlayerAttackScript: This Return path shouldn't be reached. Didn't discern whether enemy should be damaged or not");
+        return false;
+    }
+
+    /*void DrawLineAtAngleFor(float givenAngle, ref float seconds)
+    {
+        seconds -= Time.fixedDeltaTime;
+
+        // Draw Line
+        Vector3[] tempPositions = new Vector3[line.positionCount];
+        tempPositions[0] = transform.position;
+        float x = (range * 2) * Mathf.Cos(givenAngle) + transform.position.x;
+        float z = (range * 2) * Mathf.Sin(givenAngle) + transform.position.z;
+        float y = transform.position.y;
+        tempPositions[1] = new Vector3(x, y, z);
+
+        line.SetPositions(tempPositions);
+
+        if (seconds > 0.0f)
+        {
+            DrawLineAtAngleFor(givenAngle, ref seconds);
+        }
+    }*/
 }

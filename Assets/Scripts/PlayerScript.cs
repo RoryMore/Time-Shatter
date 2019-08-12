@@ -13,11 +13,12 @@ public class PlayerScript : MonoBehaviour
     float baseMoveSpeed;
     // Current moveSpeed is the navmeshAgent.speed variable
 
-    float oldInitiativeSpeed = 3.0f;
-    // If turns are to change to a different speed system
+    public float baseInitiativeSpeed = 3.0f;
     // How long it takes for the player to reach their action
-    public float initiativeSpeed = 2.0f;
+    [HideInInspector] public float initiativeSpeed;
 
+    // STRONGLY THINKING ABOUT CREATING A "StatBlock" class that PlayerScript and possibly enemies can Inherit from
+    // FOR NOW, STATS AREN'T BEING UTILISED, SO UNNECESSARY FOR PROTOTYPE
     // Modifier to determine how strong physical attacks/abilities are
     //float strength;
 
@@ -26,8 +27,8 @@ public class PlayerScript : MonoBehaviour
     //float spellPower; 
 
     //public float timeLeftUntilAction = 6.0f;
-    public float timeSpentDoingAction = 0.0f;
-     public bool isTakingAction = false;
+    float timeSpentDoingAction = 0.0f;
+    public bool isTakingAction = false;
     bool actionSelection = false;
     public bool isExecutingAbility = false;
 
@@ -69,6 +70,9 @@ public class PlayerScript : MonoBehaviour
     private NavMeshAgent navmeshAgent;
 
     turnManageScript turnManager;
+
+    EnemyScript[] enemies;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -77,16 +81,18 @@ public class PlayerScript : MonoBehaviour
         baseMoveSpeed = navmeshAgent.speed;
 
         turnManager = FindObjectOfType<turnManageScript>();
+
     }
 
     void Awake()
     {
+        PopulateEnemiesList();
         PopulateAbilitiesList();
         //anim = GetComponent <Animator> ();
         //playerAudio = GetComponent <AudioSource> ();
         currentHealth = maxHealth;
 
-        initiativeSpeed = oldInitiativeSpeed;
+        initiativeSpeed = baseInitiativeSpeed;
 
         //isTakingAction = true;
         //actionSelection = true;
@@ -112,6 +118,7 @@ public class PlayerScript : MonoBehaviour
                     Movement();
                 }
 
+                //TestTakingDamage();
                 CheckDamage();
             }
         }
@@ -157,11 +164,12 @@ public class PlayerScript : MonoBehaviour
         
     }
 
-
-
     public void TakeDamage(float amount)
     {
-        Debug.Log("Player Should Take Damage NOW!!!!!");
+        if (isDead)
+        {
+            return;
+        }
 
         damaged = true;
 
@@ -169,14 +177,15 @@ public class PlayerScript : MonoBehaviour
 
         if (defendAbility.isBuffActive)
         {
-            damageToTake = amount - selectedAbility.magnitude;
+            damageToTake = amount - defendAbility.magnitude;
             if (damageToTake < 0.0f)
             {
                 damageToTake = 0.0f;
             }
         }
 
-        currentHealth -= damageToTake;
+        currentHealth = Mathf.Clamp(currentHealth - damageToTake, 0.0f, maxHealth);
+        //currentHealth -= damageToTake;
 
         //healthSlider.value = currentHealth;
 
@@ -188,6 +197,15 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    void TestTakingDamage()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            TakeDamage(8.0f);
+            Debug.Log("OUCH! HP: " + currentHealth);
+        }
+    }
+
 
     void Death()
     {
@@ -196,13 +214,19 @@ public class PlayerScript : MonoBehaviour
         //playerAudio.clip = deathClip;
         //playerAudio.Play ();
 
+        // Make the player stop over a short amount of time. Can just make the player stop in their tracks immediately, but smoothing things tend to be nicer
+        float finalDestX = Mathf.Lerp(navmeshAgent.destination.x, transform.position.x, 0.5f * Time.fixedDeltaTime);
+        float finalDestY = Mathf.Lerp(navmeshAgent.destination.y, transform.position.y, 0.5f * Time.fixedDeltaTime);
+        float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, 0.5f * Time.fixedDeltaTime);
+
+        navmeshAgent.destination = new Vector3(finalDestX, finalDestY, finalDestZ);
+
     }
 
     void Attack()
     {
         if (isTakingAction)
         {
-            //Debug.Log("PlayerScript: isTakingAction has to equal true here. We should be rotating the player");
             if (Input.GetMouseButtonDown(0))
             {
                 isTakingAction = false;
@@ -211,8 +235,6 @@ public class PlayerScript : MonoBehaviour
                 navmeshAgent.enabled = false;
                 Debug.Log("PlayerScript: Attack Action rotation chosen");
             }
-
-            //navmeshAgent.enabled = false;
 
             // Rotate player towards point
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -245,9 +267,17 @@ public class PlayerScript : MonoBehaviour
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
-            Debug.Log("PlayerScript: Attack action completing");
+            //Debug.Log("PlayerScript: Attack action completing");
             // Check if an enemy is standing in front of player
             // Deal damage to them if they got hit
+            for (int i = 0; i < enemies.Length; i++)
+            {
+                if (attackAbility.ShouldEnemyInPositionBeDamaged(enemies[i].transform.position))
+                {
+                    //Debug.Log("DAMAGED ENEMIES HERE.");
+                    enemies[i].TakeDamage(Mathf.RoundToInt(attackAbility.magnitude), enemies[i].transform.position);
+                }
+            }
 
             // Stop player attack animation
             EndAction();
@@ -319,7 +349,7 @@ public class PlayerScript : MonoBehaviour
         {
             selectedAbility.isBuffActive = true;
 
-            initiativeSpeed = oldInitiativeSpeed * selectedAbility.magnitude;
+            initiativeSpeed = baseInitiativeSpeed * selectedAbility.magnitude;
 
             EndAction();
         }
@@ -340,6 +370,13 @@ public class PlayerScript : MonoBehaviour
                 {
                     if (IsValidSlowTarget(hit.collider.gameObject))
                     {
+                        // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
+                        // making it unviable to slow down both types of objects initiativeSpeeds.
+                        // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
+                        
+                        // This isn't impossible to do, however it is just a nuisance to implement the effect
+                        // of the ability by doing multiple checks here and in the debuff part of the abilities section,
+                        // and possible tweaking SlowAbility a little bit
                         slowAbility.targettedEnemy = hit.collider.gameObject.GetComponent<EnemyScript>();
                         isTakingAction = false;
                         isExecutingAbility = true;
@@ -525,8 +562,27 @@ public class PlayerScript : MonoBehaviour
                     Vector3 tempT = netherSwapAbility.target1.position;
 
                     netherSwapAbility.target1.position = netherSwapAbility.target2.position;
-
                     netherSwapAbility.target2.position = tempT;
+
+                    // Deal damage to Target1
+                    if (netherSwapAbility.target1.tag.Contains("Player"))
+                    {
+                        TakeDamage(netherSwapAbility.magnitude);
+                    }
+                    else if (netherSwapAbility.target1.tag.Contains("Enemy"))
+                    {
+                        netherSwapAbility.target1.GetComponent<EnemyScript>().TakeDamage(Mathf.RoundToInt(netherSwapAbility.magnitude), netherSwapAbility.target1.position);
+                    }
+
+                    // Deal damage to Target2
+                    if (netherSwapAbility.target2.tag.Contains("Player"))
+                    {
+                        TakeDamage(netherSwapAbility.magnitude);
+                    }
+                    else if (netherSwapAbility.target2.tag.Contains("Enemy"))
+                    {
+                        netherSwapAbility.target2.GetComponent<EnemyScript>().TakeDamage(Mathf.RoundToInt(netherSwapAbility.magnitude), netherSwapAbility.target2.position);
+                    }
 
                     Debug.Log("PlayerScript: Targets NetherSwapped!");
 
@@ -704,7 +760,7 @@ public class PlayerScript : MonoBehaviour
                         ability.turnsBuffed = 0;
 
                         // We are no longer buffed. Haste debuffs our initiativeSpeed after our buff finishes
-                        initiativeSpeed = oldInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
+                        initiativeSpeed = baseInitiativeSpeed * ((hasteAbility.magnitude * 1.75f) / hasteAbility.magnitude);
                         ability.isDebuffActive = true;
                         Debug.Log("PlayerScript: hasteAbility->turnsDebuffed = " + hasteAbility.turnsDebuffed);
                     }
@@ -727,7 +783,7 @@ public class PlayerScript : MonoBehaviour
 
                     if (ability.id == hasteID)
                     {
-                        initiativeSpeed = oldInitiativeSpeed;
+                        initiativeSpeed = baseInitiativeSpeed;
                     }
                     else if (ability.id == slowID)
                     {
@@ -737,7 +793,7 @@ public class PlayerScript : MonoBehaviour
                     else if (ability.id == waitID)
                     {
                         // Is our initiativeSpeed still greater than the base value?
-                        if (initiativeSpeed > oldInitiativeSpeed)
+                        if (initiativeSpeed > baseInitiativeSpeed)
                         {
                             // Therefore we are still debuffed
                             ability.isDebuffActive = true;
@@ -756,7 +812,7 @@ public class PlayerScript : MonoBehaviour
                             // Our initiativeSpeed has gone back down to a more normal value
                             // If the new initiativeSpeed accidentally goes below where we want it
                             // Set it to where we want it just in case
-                            initiativeSpeed = oldInitiativeSpeed;
+                            initiativeSpeed = baseInitiativeSpeed;
                         }
                     }
                     else if (ability.id == defendID)
@@ -886,9 +942,6 @@ public class PlayerScript : MonoBehaviour
 
     bool IsValidSlowTarget(GameObject slowedObject)
     {
-        // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
-        // making it unviable to slow down both types of objects initiativeSpeeds.
-        // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
         if (slowedObject.tag.Contains("Slow"))
         {
             return true;
@@ -904,5 +957,18 @@ public class PlayerScript : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    void PopulateEnemiesList()
+    {
+        enemies = new EnemyScript[FindObjectsOfType<EnemyScript>().Length];
+        EnemyScript[] allEnemies = new EnemyScript[enemies.Length];
+
+        allEnemies = FindObjectsOfType<EnemyScript>();
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i] = allEnemies[i];
+        }
     }
 }
