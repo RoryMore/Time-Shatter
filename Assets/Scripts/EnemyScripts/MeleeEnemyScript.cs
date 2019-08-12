@@ -8,8 +8,10 @@ public class MeleeEnemyScript : EnemyScript
 
     public float meleeAttackRange;
     public int meleeDamage;
-    turnManageScript turnManger;
+
+    PlayerAttack ourAttack;
     
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -22,10 +24,15 @@ public class MeleeEnemyScript : EnemyScript
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
 
         turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
+        enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
-
-        enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
+        enemyCooldown = 6.0f;
+        //enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
+        initiativeSpeed = 1.5f;
         currentHealth = startingHealth;
+
+        ourAttack = GetComponent<PlayerAttack>();
+
     }
 
 
@@ -37,7 +44,11 @@ public class MeleeEnemyScript : EnemyScript
             MeleeAttack();
             Turn();
         }
-
+        if (Input.GetKeyDown("g") == true)
+        {
+            print("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY");
+            TakeDamage(10, this.gameObject.transform.position);
+        }
 
 
     }
@@ -47,7 +58,19 @@ public class MeleeEnemyScript : EnemyScript
     {
         if(currentHealth > 0 && player.currentHealth > 0)
         {
-        nav.SetDestination(GameObject.Find("Player").transform.position);
+            //If we're close enough to smack, stop moving
+            if (Vector3.Distance(transform.position, player.gameObject.transform.position) < meleeAttackRange)
+            {
+                nav.SetDestination(transform.position);
+                transform.LookAt(player.transform);
+
+            }
+            else
+            {
+                nav.SetDestination(GameObject.Find("Player").transform.position);
+                
+            }
+            //Assuming we arent, get closer
         }
         else
         {
@@ -71,15 +94,25 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
-            player.TakeDamage(meleeDamage);
-            //Play Animation
-            enemyCooldown = 6.0f;
+            timeSpentDoingAction += Time.fixedDeltaTime;
+
+            ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+
+            if (timeSpentDoingAction >= ourAttack.actionSpeed)
+            {
+
+                player.TakeDamage(meleeDamage);
+
+                //Play Animation
+                enemyCooldown = 6.0f;
+                timeSpentDoingAction = 0.0f;
+            }
             //Debug.Log("ATTACK!");
         }
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!
         else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)
         {
-            enemyCooldown = 6.0f;
+            HoldTurn();
             //Debug.Log("She's too far!");
         }
         else if (meleeAttackRange <= distance && 0.0f <= enemyCooldown)

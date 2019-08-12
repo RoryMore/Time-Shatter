@@ -161,6 +161,8 @@ public class PlayerScript : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
+        Debug.Log("Player Should Take Damage NOW!!!!!");
+
         damaged = true;
 
         float damageToTake = amount;
