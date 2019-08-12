@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour
 {
     public Slider Healthbar;
-    public Slider Inititivebar;
+	public Slider Healthbar2;
+	public Slider Inititivebar;
    // public Button testbutton;
     PlayerScript player;
     turnManageScript turnManager;
@@ -34,6 +35,7 @@ public class UI : MonoBehaviour
     void Update()
     {
         Healthbar.value = CalculateHealth();
+		Healthbar2.value = CalculateHealth();
 
 		if (playerInititiveSlider.activeSelf)
 		{	
