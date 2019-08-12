@@ -18,7 +18,7 @@ public class EnemeyUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemySlider.value = CalculateInitative();
+        //enemySlider.value = CalculateInitative();
     }
 
     float CalculateInitative()

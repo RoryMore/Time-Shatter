@@ -21,6 +21,7 @@ public class PlayerAttack : Ability
     public float angle;
 
     ConeRangeIndicator coneRangeIndicator = null;
+    RectangleRangeIndicator rectangleRangeIndicator = null;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +43,12 @@ public class PlayerAttack : Ability
 
         turnsBeenOnCooldown = cooldown;
 
+        turnsBuffed = 0;
+        isBuffActive = false;
+
+        turnsDebuffed = 0;
+        isDebuffActive = false;
+
         switch (attackType)
         {
             case AttackType.Cone:
@@ -54,7 +61,12 @@ public class PlayerAttack : Ability
                 break;
 
             case AttackType.Forward:
-
+                rectangleRangeIndicator = transform.GetComponent<RectangleRangeIndicator>();
+                if (rectangleRangeIndicator == null)
+                {
+                    Debug.LogAssertion("rectangleRangeIndicator failed to be set");
+                }
+                rectangleRangeIndicator.Init();
                 break;
             default:
                 break;
@@ -75,16 +87,28 @@ public class PlayerAttack : Ability
         {
             coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
         }
+        else if (attackType == AttackType.Forward)
+        {
+            rectangleRangeIndicator.DrawIndicator(attackWidth, 0.0f, range);
+        }
     }
 
     public void DrawCastTimeRangeIndicator(float timeSpentCasting)
     {
+        //float drawPercentage = (timeSpentCasting / actionSpeed) * range;
         if (attackType == AttackType.Cone)
         {
             float drawPercentage = (timeSpentCasting / actionSpeed) * range;
 
             coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
             coneRangeIndicator.DrawCastTimeIndicator(angle, 0.0f, drawPercentage);
+        }
+        else if (attackType == AttackType.Forward)
+        {
+            float drawPercentage = (timeSpentCasting / actionSpeed) * range;
+
+            rectangleRangeIndicator.DrawIndicator(attackWidth, 0.0f, range);
+            rectangleRangeIndicator.DrawCastTimeIndicator(attackWidth, 0.0f, drawPercentage);
         }
     }
 
@@ -114,6 +138,10 @@ public class PlayerAttack : Ability
                 return false;
             }
 
+        }
+        else if (attackType == AttackType.Forward)
+        {
+            return false;
         }
         Debug.Log("PlayerAttackScript: This Return path shouldn't be reached. Didn't discern whether enemy should be damaged or not");
         return false;

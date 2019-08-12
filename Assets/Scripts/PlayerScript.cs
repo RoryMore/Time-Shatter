@@ -23,7 +23,7 @@ public class PlayerScript : MonoBehaviour
     //float strength;
 
     // Name can be changed to whatever. 
-    //Purpose would be a to increase/decrease how powerful non-melee/physical attacks would be
+    //Purpose would be a to increase/decrease how powerful non-melee/spell/ability attacks would be
     //float spellPower; 
 
     //public float timeLeftUntilAction = 6.0f;
@@ -220,6 +220,7 @@ public class PlayerScript : MonoBehaviour
         float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, 0.5f * Time.fixedDeltaTime);
 
         navmeshAgent.destination = new Vector3(finalDestX, finalDestY, finalDestZ);
+        navmeshAgent.speed = Mathf.Lerp(navmeshAgent.speed, 0.0f, 0.5f * Time.fixedDeltaTime);
 
     }
 
