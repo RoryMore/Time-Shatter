@@ -7,8 +7,7 @@ public class UI : MonoBehaviour
 {
     public Slider Healthbar;
     public Slider Inititivebar;
-	
-
+   // public Button testbutton;
     PlayerScript player;
     turnManageScript turnManager;
 
@@ -26,7 +25,7 @@ public class UI : MonoBehaviour
     void Start()
     {
 
-        Healthbar.value = CalculateHealth();
+       // Healthbar.value = CalculateHealth();
 
 
     }
@@ -40,6 +39,8 @@ public class UI : MonoBehaviour
 		{	
 			Inititivebar.value = CalculateInititive();
 		}
+
+       // testbutton.interactable = true;
 
 		if (turnManager.Ui == true)
 		{
