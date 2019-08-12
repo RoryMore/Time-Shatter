@@ -16,6 +16,6 @@ public class SetPlayerUiVisability : MonoBehaviour
     void Update()
     {
 
-        playerUi.SetActive(false);
+        //playerUi.SetActive(false);
     }
 }
