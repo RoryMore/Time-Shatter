@@ -13,6 +13,9 @@ public class UI : MonoBehaviour
     turnManageScript turnManager;
 
 	public GameObject playerInititiveSlider;
+	public GameObject BattleUI;
+
+	bool doOnce = false;
 	//public GameObject playerActionBar;
 
     // Start is called before the first frame update
@@ -26,35 +29,41 @@ public class UI : MonoBehaviour
     void Start()
     {
 
-       // Healthbar.value = CalculateHealth();
-
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        Healthbar.value = CalculateHealth();
-		Healthbar2.value = CalculateHealth();
-
-		if (playerInititiveSlider.activeSelf)
-		{	
-			Inititivebar.value = CalculateInititive();
-		}
-
-       // testbutton.interactable = true;
-
-		if (turnManager.Ui == true)
+		if (turnManager.state == turnManageScript.BattleState.BATTLE && !doOnce)
 		{
-			playerInititiveSlider.SetActive(true);
-			//playerActionBar.SetActive(false);
-		}
-		if (turnManager.Ui == false)
-		{	
-			playerInititiveSlider.SetActive(false);
-			//playerActionBar.SetActive(true);
+			BattleUI.SetActive(true);
+			doOnce = true;
 		}
 
+		Healthbar.value = CalculateHealth();
+			Healthbar2.value = CalculateHealth();
+
+			if (playerInititiveSlider.activeSelf)
+			{
+				Inititivebar.value = CalculateInititive();
+			}
+
+			// testbutton.interactable = true;
+
+			if (turnManager.Ui == true)
+			{
+				playerInititiveSlider.SetActive(true);
+				//playerActionBar.SetActive(false);
+			}
+			if (turnManager.Ui == false)
+			{
+				playerInititiveSlider.SetActive(false);
+				//playerActionBar.SetActive(true);
+			}
+		//}
+		//else {
+			//BattleUI.SetActive(false);
+		//}
 	}
 
 	float CalculateInititive()
