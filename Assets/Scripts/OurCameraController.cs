@@ -7,23 +7,24 @@ public class OurCameraController : MonoBehaviour
     // Where we the camera is focused. Where we are looking
     Transform focus = null;
 
-    public float rotateSpeed = 5.0f;
+    public float xSpeed = 60.0f;
+    public float ySpeed = 60.0f;
 
-    public float xSpeed = 120.0f;
-    public float ySpeed = 120.0f;
-
-    public const float yMinAngle = 30.0f;
-    public const float yMaxAngle = 85.0f;
+    public float yMinAngle = 30.0f;
+    public float yMaxAngle = 85.0f;
 
     // How far away we want our camera to be from focused point
-    float targetDistance = 5.0f;
-    public float minDistance = 1.0f;
-    public float maxDistance = 15.0f;
+    float targetDistance = 25.0f;
+    public float minDistance = 10.0f;
+    public float maxDistance = 100.0f;
 
     public float positionLerpSpeed = 0.2f;
 
     // If we want our camera to do an initial look around/movement before we start
-    bool battleReady = false;
+    [Tooltip("A series of Transforms that the Camera will move between, before the start of battle.")]
+    public Transform[] entryPositions;
+
+    bool battleReady = true;
 
     public bool invertY = true;
 
@@ -38,8 +39,17 @@ public class OurCameraController : MonoBehaviour
     void Start()
     {
         Vector3 angles = transform.eulerAngles;
-        x = angles.x;
+        x = 0.0f;
         y = angles.y;
+
+        if (entryPositions.Length > 0)
+        {
+            battleReady = false;
+        }
+        else
+        {
+            battleReady = true;
+        }
     }
 
     private void Awake()
@@ -55,45 +65,44 @@ public class OurCameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        targetDistance = Mathf.Clamp(targetDistance - Input.mouseScrollDelta.y*5, minDistance, maxDistance);
-
-        if (focus != null)
+        if (battleReady)
         {
-            // Hide and lock cursor when right mouse button pressed
-            if (Input.GetMouseButtonDown(1))
+            targetDistance = Mathf.Clamp(targetDistance - Input.mouseScrollDelta.y * 1.2f, minDistance, maxDistance);
+            //Debug.Log("TargetDistance: " + targetDistance);
+            if (focus != null)
             {
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-
-            // Unlock and show cursor when right mouse button released
-            if (Input.GetMouseButtonUp(1))
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-            }
-
-            Quaternion rotation = Quaternion.Euler(y, x, 0);
-            if (Input.GetMouseButton(1))
-            {
-                x += Input.GetAxis("Mouse X") * xSpeed * Time.unscaledDeltaTime;
-                y -= Input.GetAxis("Mouse Y") * ySpeed * Time.unscaledDeltaTime * (invertY ? 1.0f : -1.0f);
-
-                
-
-                
-
-                if (Physics.Linecast(focus.position, transform.position, out RaycastHit hit))
+                // Hide and lock cursor when right mouse button pressed
+                if (Input.GetMouseButtonDown(1))
                 {
-                    targetDistance -= hit.distance;
+                    Cursor.lockState = CursorLockMode.Locked;
                 }
 
-            }
-            y = ClampAngle(y, yMinAngle, yMaxAngle);
-            Vector3 negDistance = new Vector3(0.0f, 0.0f, -targetDistance);
-            Vector3 position = rotation * negDistance + focus.position;
+                // Unlock and show cursor when right mouse button released
+                if (Input.GetMouseButtonUp(1))
+                {
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, 0.2f);
-            transform.position = Vector3.Slerp(transform.position, position, 0.2f);
+                Quaternion rotation = Quaternion.Euler(y, x, 0);
+                if (Input.GetMouseButton(1))
+                {
+                    x += Input.GetAxis("Mouse X") * xSpeed * Time.unscaledDeltaTime;
+                    y -= Input.GetAxis("Mouse Y") * ySpeed * Time.unscaledDeltaTime * (invertY ? 1.0f : -1.0f);
+
+                    if (Physics.Linecast(focus.position, transform.position, out RaycastHit hit))
+                    {
+                        targetDistance -= hit.distance;
+                    }
+
+                }
+                y = ClampAngle(y, yMinAngle, yMaxAngle);
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -targetDistance);
+                Vector3 position = rotation * negDistance + focus.position;
+
+                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, positionLerpSpeed);
+                transform.position = Vector3.Slerp(transform.position, position, positionLerpSpeed);
+            }
         }
     }
 

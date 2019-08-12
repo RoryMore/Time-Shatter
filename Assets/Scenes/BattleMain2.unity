@@ -1330,11 +1330,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617ffeb7e5b8ba2448c17da705f8aded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateSpeed: 5
-  minDistance: 1
-  maxDistance: 15
-  positionLerpSpeed: 0.2
-  invertY: 0
+  xSpeed: 60
+  ySpeed: 60
+  minDistance: 10
+  maxDistance: 100
+  positionLerpSpeed: 0.4
+  invertY: 1
 --- !u!1 &1199552836
 GameObject:
   m_ObjectHideFlags: 0
@@ -2540,11 +2541,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 483602526}
     m_Modifications:
-    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerAbilities
-      objectReference: {fileID: 0}
     - target: {fileID: 7760009501327630564, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2599,6 +2595,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerAbilities
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d7657471c7c4d4c970ce8f7ef8a50e, type: 3}
