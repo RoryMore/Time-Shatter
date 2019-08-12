@@ -79,7 +79,7 @@ public class EnemyScript : MonoBehaviour
         enemyManager.healList.Add(this.gameObject);
 
         //hitParticles.transform.position = hitPoint;
-        hitParticles.Play();
+        //hitParticles.Play();
 
         
 

@@ -41,11 +41,6 @@ public class UI : MonoBehaviour
 			Inititivebar.value = CalculateInititive();
 		}
 
-	
-
-
-		
-
 		if (turnManager.Ui == true)
 		{
 			playerInititiveSlider.SetActive(true);

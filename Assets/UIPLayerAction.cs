@@ -21,6 +21,7 @@ public class UIPLayerAction : MonoBehaviour
 	void Start()
     {
 		player = FindObjectOfType<PlayerScript>();
+
 		turnManager = FindObjectOfType<turnManageScript>();
 	}
 
