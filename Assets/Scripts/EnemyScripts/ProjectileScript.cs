@@ -34,7 +34,7 @@ public class ProjectileScript : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            player.GetComponent<PlayerScript>().TakeDamage(damage);
+            //player.GetComponent<PlayerScript>().TakeDamage(damage);
             DestroyProjectile();
         }
     }

@@ -8,11 +8,13 @@ public class RangedEnemyScript : EnemyScript
     // Start is called before the first frame update
 
     public float rangedAttackRange;
+    public float rangedDamage;
 
     public GameObject bolt;
+    PlayerAttack ourAttack;
 
-    
-    
+
+
 
     void Awake()
     {
@@ -35,10 +37,11 @@ public class RangedEnemyScript : EnemyScript
 
 
 
+
         currentHealth = startingHealth;
 
-        
-        
+        ourAttack = GetComponent<PlayerAttack>();
+
     }
 
 
@@ -62,8 +65,9 @@ public class RangedEnemyScript : EnemyScript
         {
 
             float distance = Vector3.Distance(transform.position, player.transform.position);
-
-            if (distance < rangedAttackRange)
+            
+            //If we are too close, run away
+            if (distance < rangedAttackRange -5)
             {
                 nav.SetDestination(Vector3.MoveTowards(transform.position, player.transform.position, -nav.speed));
             }
@@ -71,7 +75,7 @@ public class RangedEnemyScript : EnemyScript
             {
                 nav.SetDestination(Vector3.MoveTowards(transform.position, player.transform.position, nav.speed));
             }
-            else if (distance < nav.stoppingDistance && distance > rangedAttackRange)
+            else if (distance <= nav.stoppingDistance && distance >= rangedAttackRange)
             {
                 nav.SetDestination(transform.position);
             }
@@ -91,7 +95,7 @@ public class RangedEnemyScript : EnemyScript
     //TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
     public void Turn()
     {
-        //enemyCooldown -= 1f * Time.deltaTime;
+        enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
 
     }
@@ -106,16 +110,38 @@ public class RangedEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= rangedAttackRange && enemyCooldown <= 0.0f)
         {
-            //player.TakeDamage(meleeDamage);
+            //Use the more complicated but nicer turn method that means that slow time will affect it as well.
+            //FaceTarget(player.transform);
+            transform.LookAt(player.transform);
             nav.enabled = false;
+            timeSpentDoingAction += Time.fixedDeltaTime;
+
+            ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+
+            if (timeSpentDoingAction >= ourAttack.actionSpeed)
+            {
+                Instantiate(bolt, transform.position, Quaternion.identity);
+                player.TakeDamage(rangedDamage);
+                Debug.Log("FIRE!");
+
+                //Play Animation
+                enemyCooldown = 6.0f;
+                timeSpentDoingAction = 0.0f;
+                nav.enabled = true;
+            }
+            //Debug.Log("ATTACK!");
+          
+
+            //player.TakeDamage(meleeDamage);
+           
             //Play Animation
             //Face towards player!
 
             
-            Debug.Log("FIRE!");
-            Instantiate(bolt, transform.position, Quaternion.identity);
-            enemyCooldown = 6.0f;
-            nav.enabled = true;
+           
+           
+            
+            
 
         }
         //If its the range enemy turn BUT we are out of range, we go into defence stance!

@@ -21,6 +21,8 @@ public class EnemyScript : MonoBehaviour
 
     public float timeSpentDoingAction = 0.0f;
 
+    public float turnSpeed = 1.0f;
+
     //public AudioClip deathClip;
 
 
@@ -89,9 +91,15 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    public void FaceTarget(Transform target)
+    {
+        var step = turnSpeed * Time.deltaTime;
 
+        // Rotate our transform a step closer to the target's.
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, step);
+    }
 
-    void Death()
+    public void Death()
     {
         isDead = true;
 

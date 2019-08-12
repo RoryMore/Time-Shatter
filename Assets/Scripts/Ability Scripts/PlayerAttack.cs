@@ -34,8 +34,8 @@ public class PlayerAttack : Ability
         // If there were to be diff equipped weapons
         //GameObject pRef = GameObject.FindGameObjectWithTag("Player");
         //magnitude = pRef.equippedWep.damage;
-        type = Type.WeaponAttack;
-        attackType = AttackType.Cone;
+        //type = Type.WeaponAttack;
+        //attackType = AttackType.Cone;
 
         //actionSpeed = 2.0f;
         //range = 5.0f;

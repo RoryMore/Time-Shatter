@@ -30,6 +30,7 @@ public class MeleeEnemyScript : EnemyScript
         //enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
         initiativeSpeed = 1.5f;
         currentHealth = startingHealth;
+        
 
         ourAttack = GetComponent<PlayerAttack>();
 
@@ -58,11 +59,13 @@ public class MeleeEnemyScript : EnemyScript
     {
         if(currentHealth > 0 && player.currentHealth > 0)
         {
+            anim.SetBool("isWalking", true);
             //If we're close enough to smack, stop moving
             if (Vector3.Distance(transform.position, player.gameObject.transform.position) < meleeAttackRange)
             {
                 nav.SetDestination(transform.position);
-                transform.LookAt(player.transform);
+                //transform.LookAt(player.transform);
+                FaceTarget(player.transform);
 
             }
             else
@@ -75,6 +78,7 @@ public class MeleeEnemyScript : EnemyScript
         else
         {
             nav.enabled = false;
+            anim.SetBool("isWalking", false);
         }
     }
 
@@ -94,6 +98,7 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
+            //anim.SetBool("isAttacking", true);
             timeSpentDoingAction += Time.fixedDeltaTime;
 
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
@@ -106,6 +111,7 @@ public class MeleeEnemyScript : EnemyScript
                 //Play Animation
                 enemyCooldown = 6.0f;
                 timeSpentDoingAction = 0.0f;
+                //anim.SetBool("isAttacking", false);
             }
             //Debug.Log("ATTACK!");
         }
