@@ -7,13 +7,14 @@ public class turnManageScript : MonoBehaviour
     //This may or may not be required. It could simply be for managing the actual 
     //UI bar element instead of facilitating turns, which seems more efficient to do inside of each character
 
-    private float fixedUpdateCount = 0;
     private float updateFixedUpdateCountPerSecond;
-    private float turnCounter = 0;
+    public float turnCounter = 0;
     public float slowMotionCount;
     private float normalSpeedCount = 1.0f;
-    public float playerTurnCounter;
-    private float battleStart = 0;
+	public bool Ui  = false;
+	public bool actionUi = false;
+   // public float playerTurnCounter;
+    public float battleStart = 0;
     bool start = false;
 
     public enum BattleState
@@ -49,7 +50,9 @@ public class turnManageScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        fixedUpdateCount += 1;
+       // fixedUpdateCount += 1;
+
+        
 
         switch (state)
         {
@@ -66,6 +69,9 @@ public class turnManageScript : MonoBehaviour
                     {
                         state = BattleState.BATTLE;
                     }
+
+					Ui = false;
+					actionUi = false;
                     break;
                 }
             case BattleState.BATTLE:
@@ -77,7 +83,8 @@ public class turnManageScript : MonoBehaviour
                     if (player.isTakingAction == true)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
-                        turnCounter = 0;
+						Ui = false;
+						actionUi = true;
                         soundManager.state = SoundManager.MusicState.SLOWMOTION;
                         if (player.isExecutingAbility == true)
                         {
@@ -87,6 +94,8 @@ public class turnManageScript : MonoBehaviour
                     else if (player.isTakingAction == false)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
+						Ui = true;
+						actionUi = false;
                         soundManager.state = SoundManager.MusicState.BATTLE;
                         //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
                     }
@@ -99,7 +108,9 @@ public class turnManageScript : MonoBehaviour
                     soundManager.state = SoundManager.MusicState.BATTLE;
                     if (player.isExecutingAbility == false)
                     {
-
+						Ui = false;
+						actionUi = true;
+                        turnCounter = 0;
                         state = BattleState.BATTLE;
 
                     }
@@ -114,27 +125,25 @@ public class turnManageScript : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (player.isTakingAction == false)
+        {
+            if (state == BattleState.BATTLE)
+             {
+               turnCounter += Time.deltaTime;
+
+              }
+            }
+    }
+
     IEnumerator Loop()
     {
         while (true)
         {
             yield return new WaitForSeconds(1);
-            updateFixedUpdateCountPerSecond = fixedUpdateCount;
-            fixedUpdateCount = 0;
-            if (player.isTakingAction == false)
-            {
-                if (state == BattleState.BATTLE)
-                {
-                    turnCounter += 1;
-                   // Debug.Log("YEEEEEEEEEEEEEEEEEEEE");
-                }
-            }
-
+         
             battleStart += 1;
-
-            Debug.Log(Time.timeScale);
-
-            Debug.Log("TurnManagerScript: turnCounter = " + turnCounter);
 
         }
 

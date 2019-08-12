@@ -8,11 +8,11 @@ public class RangedEnemyScript : EnemyScript
     // Start is called before the first frame update
 
     public float rangedAttackRange;
-    public int rangedDamage;
 
     public GameObject bolt;
 
-    turnManageScript turnManger;
+    
+    
 
     void Awake()
     {
@@ -25,9 +25,16 @@ public class RangedEnemyScript : EnemyScript
 
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
         turnManger = GameObject.Find("TurnManager").GetComponent<turnManageScript>();
+        enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+
+        //There own "turn start" number
+        enemyCooldown = 6.0f;
+        //enemyCooldown = 3.0f + Random.Range(1.0f, 3.0f);
+        //Speed of movement
+        initiativeSpeed = 1.2f;
 
 
-        enemyCooldown = 3.0f + Random.Range(1.0f, 3.0f);
+
         currentHealth = startingHealth;
 
         
@@ -84,7 +91,7 @@ public class RangedEnemyScript : EnemyScript
     //TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
     public void Turn()
     {
-        enemyCooldown -= 1f * Time.deltaTime;
+        //enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
 
     }
@@ -114,7 +121,8 @@ public class RangedEnemyScript : EnemyScript
         //If its the range enemy turn BUT we are out of range, we go into defence stance!
         else if (rangedAttackRange <= distance && enemyCooldown <= 0.0f)
         {
-            enemyCooldown = 6.0f;
+            //If they have an another ability it can activate here given enough time has gone by for a cooldown
+            HoldTurn();
             //Debug.Log("Somehow I am actually out of ranged");
         }
         else if (rangedAttackRange <= distance && 0.0f <= enemyCooldown)
