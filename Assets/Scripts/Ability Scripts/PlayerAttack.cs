@@ -27,25 +27,40 @@ public class PlayerAttack : Ability
     {
         //line = GetComponent<LineRenderer>();
 
-        coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
+        
 
-        if (coneRangeIndicator == null)
-        {
-            Debug.LogAssertion("coneRangeIndicator failed to be set");
-        }
+        
         // If there were to be diff equipped weapons
         //GameObject pRef = GameObject.FindGameObjectWithTag("Player");
         //magnitude = pRef.equippedWep.damage;
-        type = Type.WeaponAttack;
-        attackType = AttackType.Cone;
+        //type = Type.WeaponAttack;
+        //attackType = AttackType.Cone;
 
-        actionSpeed = 2.0f;
-        range = 5.0f;
-        magnitude = 20.0f;
+        //actionSpeed = 2.0f;
+        //range = 5.0f;
+        //magnitude = 20.0f;
 
         turnsBeenOnCooldown = cooldown;
 
-        coneRangeIndicator.Init(angle);
+        switch (attackType)
+        {
+            case AttackType.Cone:
+                coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
+                if (coneRangeIndicator == null)
+                {
+                    Debug.LogAssertion("coneRangeIndicator failed to be set");
+                }
+                coneRangeIndicator.Init(angle);
+                break;
+
+            case AttackType.Forward:
+
+                break;
+            default:
+                break;
+        }
+
+        
     }
 
     // Update is called once per frame

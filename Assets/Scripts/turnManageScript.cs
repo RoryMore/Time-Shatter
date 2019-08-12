@@ -11,7 +11,7 @@ public class turnManageScript : MonoBehaviour
     public float turnCounter = 0;
     public float slowMotionCount;
     private float normalSpeedCount = 1.0f;
-	public bool Ui  = false;
+	public bool Ui  = true;
 	public bool actionUi = false;
    // public float playerTurnCounter;
     public float battleStart = 0;
@@ -60,7 +60,8 @@ public class turnManageScript : MonoBehaviour
                 {
                     //Time.timeScale = 0.1f;
 
-                   if (battleStart >= 4.0f)
+
+                    if (battleStart >= 4.0f)
                     {
                         start = true;
                     }
@@ -68,10 +69,11 @@ public class turnManageScript : MonoBehaviour
                     if (start == true)
                     {
                         state = BattleState.BATTLE;
+                        Ui = true;
+                        actionUi = false;
                     }
 
-					Ui = false;
-					actionUi = false;
+					
                     break;
                 }
             case BattleState.BATTLE:
@@ -79,25 +81,31 @@ public class turnManageScript : MonoBehaviour
                     if (turnCounter >= player.initiativeSpeed)
                     {
                         player.isTakingAction = true;
+                        turnCounter = 0;
+                        Ui = false;
+                        actionUi = true;
                     }
                     if (player.isTakingAction == true)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
-						Ui = false;
-						actionUi = true;
+						//Ui = false;
+						//actionUi = true;
                         soundManager.state = SoundManager.MusicState.SLOWMOTION;
-                        if (player.isExecutingAbility == true)
-                        {
-                            state = BattleState.ACTION;
-                        }
+                        //if (player.isExecutingAbility == true)
+                        //{
+                            //state = BattleState.AC1TION;
+                            //actionUi = true;
+                        //}
                     }
                     else if (player.isTakingAction == false)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
-						Ui = true;
-						actionUi = false;
                         soundManager.state = SoundManager.MusicState.BATTLE;
                         //Debug.Log("TurnManager: timeScale = " + Time.timeScale);
+                        if (player.isExecutingAbility)
+                        {
+                            state = BattleState.ACTION;
+                        }
                     }
 
                     break;
@@ -106,10 +114,11 @@ public class turnManageScript : MonoBehaviour
                 {
                     Time.timeScale = Mathf.Lerp(Time.timeScale, normalSpeedCount, Time.deltaTime / 0.1f);
                     soundManager.state = SoundManager.MusicState.BATTLE;
+
                     if (player.isExecutingAbility == false)
                     {
-						Ui = false;
-						actionUi = true;
+						Ui = true;
+						actionUi = false;
                         turnCounter = 0;
                         state = BattleState.BATTLE;
 
@@ -129,12 +138,15 @@ public class turnManageScript : MonoBehaviour
     {
         if (player.isTakingAction == false)
         {
-            if (state == BattleState.BATTLE)
-             {
-               turnCounter += Time.deltaTime;
+            if (player.isExecutingAbility == false)
+            {
+                if (state == BattleState.BATTLE)
+                {
+                    turnCounter += Time.deltaTime;
 
-              }
+                }
             }
+        }
     }
 
     IEnumerator Loop()
