@@ -1616,7 +1616,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1793460562}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6, y: 0.53, z: -0.75}
+  m_LocalPosition: {x: 0, y: 1.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 158475390}
@@ -2517,6 +2517,18 @@ PrefabInstance:
       propertyPath: meleeEnemy
       value: 
       objectReference: {fileID: 2175682744204913291, guid: d6c6539f095a6f54fb80c37be40176ef,
+        type: 3}
+    - target: {fileID: 203417203827445708, guid: bf7def225f7180641a269a4c2692f0b5,
+        type: 3}
+      propertyPath: rangedEnemy
+      value: 
+      objectReference: {fileID: 3900139872837363944, guid: 143a668570f04064380e7800f3c42ab3,
+        type: 3}
+    - target: {fileID: 203417203827445708, guid: bf7def225f7180641a269a4c2692f0b5,
+        type: 3}
+      propertyPath: healerEnemy
+      value: 
+      objectReference: {fileID: 7372194004551994952, guid: 5435db22baf05574cb890f32657634e8,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf7def225f7180641a269a4c2692f0b5, type: 3}

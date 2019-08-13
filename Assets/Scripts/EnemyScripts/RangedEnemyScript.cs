@@ -21,7 +21,7 @@ public class RangedEnemyScript : EnemyScript
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
         hitParticles = GetComponentInChildren<ParticleSystem>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
+        
         nav = GetComponent<NavMeshAgent>();
 
 
@@ -49,7 +49,7 @@ public class RangedEnemyScript : EnemyScript
     {
         if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
         {
-
+            
             Turn();
             Movement();
             RangedAttack();
@@ -69,25 +69,34 @@ public class RangedEnemyScript : EnemyScript
             //If we are too close, run away
             if (distance < rangedAttackRange -5)
             {
+                anim.SetBool("isWalking", true);
                 nav.SetDestination(Vector3.MoveTowards(transform.position, player.transform.position, -nav.speed));
+                
             }
             else if (distance > nav.stoppingDistance)
             {
+                anim.SetBool("isWalking", true);
                 nav.SetDestination(Vector3.MoveTowards(transform.position, player.transform.position, nav.speed));
+                
             }
             else if (distance <= nav.stoppingDistance && distance >= rangedAttackRange)
             {
+                anim.SetBool("isWalking", false);
                 nav.SetDestination(transform.position);
+                
             }
             else
             {
+                anim.SetBool("isWalking", true);
                 nav.SetDestination(player.transform.position);
+                
             }
 
 
         }
         else
         {
+            anim.SetBool("isWalking", false);
             nav.enabled = false;
         }
     }
@@ -114,9 +123,11 @@ public class RangedEnemyScript : EnemyScript
             //FaceTarget(player.transform);
             transform.LookAt(player.transform);
             nav.enabled = false;
+            anim.SetBool("isWalking", false);
             timeSpentDoingAction += Time.fixedDeltaTime;
 
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+            anim.SetBool("isAttacking", true);
 
             if (timeSpentDoingAction >= ourAttack.actionSpeed)
             {
@@ -127,7 +138,10 @@ public class RangedEnemyScript : EnemyScript
                 //Play Animation
                 enemyCooldown = 6.0f;
                 timeSpentDoingAction = 0.0f;
+
+                anim.SetBool("isAttacking", false);
                 nav.enabled = true;
+                anim.SetBool("isWalking", true);
             }
             //Debug.Log("ATTACK!");
           

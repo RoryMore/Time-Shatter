@@ -29,7 +29,7 @@ public class EnemyScript : MonoBehaviour
     public Animator anim;
     //AudioSource enemyAudio;
     public ParticleSystem hitParticles;
-    public CapsuleCollider capsuleCollider;
+    //public CapsuleCollider capsuleCollider;
 
     public NavMeshAgent nav;
 
@@ -103,7 +103,7 @@ public class EnemyScript : MonoBehaviour
     {
         isDead = true;
 
-        capsuleCollider.isTrigger = true;
+        
 
         anim.SetTrigger("Dead");
         enemyManager.healList.Remove(this.gameObject);

@@ -23,9 +23,8 @@ public class HealerEnemyScript : EnemyScript
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
         hitParticles = GetComponentInChildren<ParticleSystem>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
+        
         nav = GetComponent<NavMeshAgent>();
-
 
         player = GameObject.Find("Player").GetComponent<PlayerScript>();
 
@@ -71,7 +70,7 @@ public class HealerEnemyScript : EnemyScript
             target = enemyManager.initiativeList[(int)Random.Range(0, enemyManager.initiativeList.Count)];
             firstTargetAqquired = true;
 
-            Heal();
+            //Heal();
         }
         //From this moment on, we only look for the injured
         // When enemies take damage, 
@@ -83,12 +82,13 @@ public class HealerEnemyScript : EnemyScript
             {
                 nav.SetDestination(transform.position);
                 FaceTarget(target.transform);
+                anim.SetBool("isWalking", false);
 
             }
             else
             {
                 nav.SetDestination(target.transform.position);
-
+                anim.SetBool("isWalking", true);
             }
 
             
@@ -97,6 +97,7 @@ public class HealerEnemyScript : EnemyScript
         else
         {
             nav.enabled = false;
+            anim.SetBool("isWalking", false);
         }
     }
 
@@ -131,8 +132,12 @@ public class HealerEnemyScript : EnemyScript
                 if (Vector3.Distance(transform.position, target.transform.position) < healRange && enemyCooldown <= 0.0f)
                 {
                     //Heal Target
+                    anim.SetBool("isWalking", false);
+                    anim.SetBool("isAttacking", true);
                     target.GetComponent<EnemyScript>().currentHealth += healMagnitude;
                     enemyManager.healList.Remove(target);
+                    //Delay
+                    anim.SetBool("isAttacking", false);
                     enemyCooldown = 6.0f;
                 }
                 //Out of range
@@ -150,11 +155,10 @@ public class HealerEnemyScript : EnemyScript
                     else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
                     {
 
-
                         timeSpentDoingAction += Time.fixedDeltaTime;
 
                         ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
-
+                        anim.SetBool("isAttacking", true);
                         if (timeSpentDoingAction >= ourAttack.actionSpeed)
                         {
 
@@ -163,6 +167,7 @@ public class HealerEnemyScript : EnemyScript
                             //Play Animation
                             enemyCooldown = 6.0f;
                             timeSpentDoingAction = 0.0f;
+                            anim.SetBool("isAttacking", false);
                         }
 
 
@@ -186,6 +191,7 @@ public class HealerEnemyScript : EnemyScript
         //If no one at all needs healing and we are in range, simply attack!
         else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
         {
+            anim.SetBool("isAttacking", true);
             timeSpentDoingAction += Time.fixedDeltaTime;
 
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
@@ -198,6 +204,7 @@ public class HealerEnemyScript : EnemyScript
                 //Play Animation
                 enemyCooldown = 6.0f;
                 timeSpentDoingAction = 0.0f;
+                anim.SetBool("isAttacking", false);
             }
         }
 

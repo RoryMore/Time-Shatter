@@ -1387,7 +1387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d060ba5ab51351d4bb2eaeec0edfa2da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 2
+  actionSpeed: 5
   range: 5
   magnitude: 10
   buffDuration: 0
@@ -1425,7 +1425,6 @@ MonoBehaviour:
   turnSpeed: 0.5
   anim: {fileID: 0}
   hitParticles: {fileID: 0}
-  capsuleCollider: {fileID: 0}
   nav: {fileID: 0}
   player: {fileID: 0}
   enemyManager: {fileID: 0}
