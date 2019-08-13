@@ -8,14 +8,10 @@ public class EnemyManager : MonoBehaviour
     public GameObject rangedEnemy;
     public GameObject healerEnemy;
 
-    
-
     public List<GameObject> initiativeList;
     public List<GameObject> healList;
 
     public List<GameObject> spawnPoints;
-
-
     
     // Start is called before the first frame update
     void Start()

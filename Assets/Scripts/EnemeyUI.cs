@@ -12,17 +12,17 @@ public class EnemeyUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        enemyScript = GetComponent<EnemyScript>();
+       // enemyScript = GetComponent<EnemyScript>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //enemySlider.value = CalculateInitative();
+       // enemySlider.value = CalculateInitative();
     }
 
-    float CalculateInitative()
-    {
-        return enemyScript.initiativeSpeed / enemyScript.enemyCooldown;
-    }
+   //float CalculateInitative()
+   // {
+       //return enemyScript.initiativeSpeed / enemyScript.enemyCooldown;
+   // }
 }

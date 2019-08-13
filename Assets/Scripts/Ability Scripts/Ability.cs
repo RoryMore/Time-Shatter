@@ -49,7 +49,7 @@ public class Ability : MonoBehaviour
 
     [Tooltip("How long you have to wait (in turns) before you can cast the ability again")]
     public int cooldown;
-    [HideInInspector] public int turnsBeenOnCooldown;
+    public int turnsBeenOnCooldown;
 
     public Type type;
 
