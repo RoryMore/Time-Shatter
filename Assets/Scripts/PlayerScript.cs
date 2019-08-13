@@ -11,6 +11,7 @@ public class PlayerScript : MonoBehaviour
     public float currentHealth;
 
     float baseMoveSpeed;
+    float currentMoveSpeed;
     // Current moveSpeed is the navmeshAgent.speed variable
 
     public float baseInitiativeSpeed = 3.0f;
@@ -82,12 +83,15 @@ public class PlayerScript : MonoBehaviour
     // This is to show max distances you can select targets
     ConeRangeIndicator abilityRangeCircle;
 
+    public AnimationClip meleeAnimClip;
+
     // Start is called before the first frame update
     void Start()
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
 
         baseMoveSpeed = navmeshAgent.speed;
+        currentMoveSpeed = navmeshAgent.speed;
 
         turnManager = FindObjectOfType<turnManageScript>();
 
@@ -110,10 +114,10 @@ public class PlayerScript : MonoBehaviour
 
         initiativeSpeed = baseInitiativeSpeed;
 
-		//isTakingAction = true;
-		//actionSelection = true;
-		//SelectAbility(attackID);
-		finishedLoading = true;
+        //isTakingAction = true;
+        //actionSelection = true;
+        //SelectAbility(attackID);
+        finishedLoading = true;
     }
 
     private void Update()
@@ -143,6 +147,8 @@ public class PlayerScript : MonoBehaviour
                 }
                 CheckIsRunning();
                 anim.SetBool("isRunning", running);
+                anim.SetFloat("doingAction", timeSpentDoingAction);
+                
                 //TestTakingDamage();
                 CheckDamage();
             }
@@ -160,13 +166,18 @@ public class PlayerScript : MonoBehaviour
     {
         //Damage related aspect
         //Any visual damage cues here
+        anim.SetBool("gotHit", damaged);
+        if (damaged)
+        {
+            damaged = false;
+        }
     }
 
     void CheckIsRunning()
     {
         //Animation stuff
-        if (navmeshAgent.enabled == true)
-        {
+        //if (navmeshAgent.enabled == true)
+        //{
             if (navmeshAgent.remainingDistance <= navmeshAgent.stoppingDistance)
             {
                 running = false;
@@ -175,7 +186,7 @@ public class PlayerScript : MonoBehaviour
             {
                 running = true;
             }
-        }
+        //}
     }
 
     void Movement()
@@ -263,6 +274,7 @@ public class PlayerScript : MonoBehaviour
                 isTakingAction = false;
                 isExecutingAbility = true;
 
+                navmeshAgent.speed = 0.0f;
                 navmeshAgent.enabled = false;
                 Debug.Log("PlayerScript: Attack Action rotation chosen");
                 running = false;
@@ -279,7 +291,7 @@ public class PlayerScript : MonoBehaviour
                 lookRotation.x = transform.rotation.x;
                 lookRotation.z = transform.rotation.z;
                 
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.02f) * (1.0f + (1.0f - Time.timeScale))));
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, (Time.fixedDeltaTime / 0.25f));
             }
 
             // While choosing where to attack, show where we will be attacking
@@ -304,6 +316,9 @@ public class PlayerScript : MonoBehaviour
             // Draw a range indicator based on weapon attack type
             if (selectedAbility == attackAbility)
             {
+                float animSpeed = meleeAnimClip.length;
+                anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+                anim.SetBool("meleeAttack", true);
                 attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
             }
             else if (selectedAbility == rangedBeamAbility)
@@ -327,6 +342,7 @@ public class PlayerScript : MonoBehaviour
             }
 
             // Stop player attack animation
+            anim.SetBool("meleeAttack", false);
             EndAction();
         }
     }
@@ -342,7 +358,8 @@ public class PlayerScript : MonoBehaviour
         //navmeshAgent.enabled = false;
         if (isTakingAction && !isExecutingAbility)
         {
-            navmeshAgent.speed = navmeshAgent.speed * 0.4f;
+            currentMoveSpeed = currentMoveSpeed * 0.4f;
+            navmeshAgent.speed = currentMoveSpeed;
         }
         
         actionSelection = true;
@@ -368,6 +385,7 @@ public class PlayerScript : MonoBehaviour
     void Item()
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.speed = 0.0f;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -388,6 +406,7 @@ public class PlayerScript : MonoBehaviour
 
         isTakingAction = false;
         isExecutingAbility = true;
+        navmeshAgent.speed = 0.0f;
         navmeshAgent.enabled = false;
 
         // Cast time anim
@@ -434,6 +453,7 @@ public class PlayerScript : MonoBehaviour
                             isTakingAction = false;
                             isExecutingAbility = true;
 
+                            navmeshAgent.speed = 0.0f;
                             navmeshAgent.enabled = false;
                         }
                     }
@@ -483,6 +503,7 @@ public class PlayerScript : MonoBehaviour
                         isTakingAction = false;
                         isExecutingAbility = true;
 
+                        navmeshAgent.speed = 0.0f;
                         navmeshAgent.enabled = false;
                     }
                 }
@@ -554,6 +575,7 @@ public class PlayerScript : MonoBehaviour
 
                             isTakingAction = false;
                             isExecutingAbility = true;
+                            navmeshAgent.speed = 0.0f;
                             navmeshAgent.enabled = false;
                         }
                     }
@@ -631,6 +653,7 @@ public class PlayerScript : MonoBehaviour
 
                             isTakingAction = false;
                             isExecutingAbility = true;
+                            navmeshAgent.speed = 0.0f;
                             navmeshAgent.enabled = false;
                         }
                     }
@@ -696,6 +719,7 @@ public class PlayerScript : MonoBehaviour
 
         isTakingAction = false;
         isExecutingAbility = true;
+        navmeshAgent.speed = 0.0f;
         navmeshAgent.enabled = false;
 
         // Cast time anim
@@ -829,7 +853,8 @@ public class PlayerScript : MonoBehaviour
 
         timeSpentDoingAction = 0.0f;
         navmeshAgent.enabled = true;
-        
+        navmeshAgent.speed = currentMoveSpeed;
+
         // - CLEAR SPELL TARGETTING -----------
         // Clear NetherSwap targeting
         netherSwapAbility.target1 = null;
@@ -919,7 +944,8 @@ public class PlayerScript : MonoBehaviour
                     }
                     else if (ability.id == defendID)
                     {
-                        navmeshAgent.speed = baseMoveSpeed;
+                        currentMoveSpeed = baseMoveSpeed;
+                        navmeshAgent.speed = currentMoveSpeed;
                     }
                     // Currently no way to swap back the enemyCooldown values on the initiativeSwap debuff.
                     // Permanently changes the enemies enemyCooldown values with eachother
