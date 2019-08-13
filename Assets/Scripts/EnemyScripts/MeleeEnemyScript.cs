@@ -11,13 +11,15 @@ public class MeleeEnemyScript : EnemyScript
 
     PlayerAttack ourAttack;
 
+    bool isAttacking = false;
+    
 
     void Awake()
     {
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
         hitParticles = GetComponentInChildren<ParticleSystem>();
-
+        
         nav = GetComponent<NavMeshAgent>();
 
 
@@ -30,7 +32,7 @@ public class MeleeEnemyScript : EnemyScript
         //enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
         initiativeSpeed = 1.5f;
         currentHealth = startingHealth;
-
+        
 
         ourAttack = GetComponent<PlayerAttack>();
 
@@ -57,9 +59,9 @@ public class MeleeEnemyScript : EnemyScript
 
     public void Movement()
     {
-        if (currentHealth > 0 && player.currentHealth > 0)
+        if(currentHealth > 0 && player.currentHealth > 0)
         {
-
+            
             //If we're close enough to smack, stop moving
             if (Vector3.Distance(transform.position, player.gameObject.transform.position) < meleeAttackRange)
             {
@@ -90,9 +92,9 @@ public class MeleeEnemyScript : EnemyScript
     {
         enemyCooldown -= 1f * Time.deltaTime;
         //Debug.Log("Enemy Cooldown Counter: " + enemyCooldown);
-
+       
     }
-
+    
     public void MeleeAttack()
     {
 
@@ -100,6 +102,10 @@ public class MeleeEnemyScript : EnemyScript
 
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
+        {
+            isAttacking = true;
+        }
+        if (isAttacking == true)
         {
             anim.SetBool("isAttacking", true);
             timeSpentDoingAction += Time.fixedDeltaTime;
@@ -117,7 +123,7 @@ public class MeleeEnemyScript : EnemyScript
                 anim.SetBool("isAttacking", false);
                 //anim.SetBool("isAttacking", false);
             }
-            //Debug.Log("ATTACK!");
+            
         }
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!
         else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)

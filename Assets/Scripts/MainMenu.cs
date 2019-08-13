@@ -37,7 +37,6 @@ public class MainMenu : MonoBehaviour
 	public void PlayGame()
     {
 		FadeToLevel(1);
-		Debug.Log("PlayClicked");
         //SceneManager.LoadScene("MainScene");
     }
 
