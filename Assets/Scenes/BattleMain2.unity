@@ -248,6 +248,24 @@ PrefabInstance:
       propertyPath: spawnPoints.Array.data[4]
       value: 
       objectReference: {fileID: 2115887661}
+    - target: {fileID: 203417203827445708, guid: bf7def225f7180641a269a4c2692f0b5,
+        type: 3}
+      propertyPath: healerEnemy
+      value: 
+      objectReference: {fileID: 7372194004551994952, guid: 5435db22baf05574cb890f32657634e8,
+        type: 3}
+    - target: {fileID: 203417203827445708, guid: bf7def225f7180641a269a4c2692f0b5,
+        type: 3}
+      propertyPath: meleeEnemy
+      value: 
+      objectReference: {fileID: 8123214128917312585, guid: d6c6539f095a6f54fb80c37be40176ef,
+        type: 3}
+    - target: {fileID: 203417203827445708, guid: bf7def225f7180641a269a4c2692f0b5,
+        type: 3}
+      propertyPath: rangedEnemy
+      value: 
+      objectReference: {fileID: 3900139872837363944, guid: 143a668570f04064380e7800f3c42ab3,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf7def225f7180641a269a4c2692f0b5, type: 3}
 --- !u!1 &157711228
@@ -2383,11 +2401,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 176073995}
     m_Modifications:
-    - target: {fileID: 2709648689663942311, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
-        type: 3}
-      propertyPath: m_Name
-      value: BlackFade
-      objectReference: {fileID: 0}
     - target: {fileID: 2709648689663942308, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2492,6 +2505,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2709648689663942311, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
+        type: 3}
+      propertyPath: m_Name
+      value: BlackFade
       objectReference: {fileID: 0}
     - target: {fileID: 2709648689663942312, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
         type: 3}
