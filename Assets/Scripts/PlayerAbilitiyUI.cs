@@ -17,36 +17,48 @@ public class PlayerAbilitiyUI : MonoBehaviour
 
 
 	PlayerScript player;
+    turnManageScript turnManager;
+
+
+    //attack
+    public Button attackButton;
+    public Button waitButton;
 
 	//Defend
 	public Image backgroundWhiteDefend;
 	public Image mainIconDefend;
-    bool defendCD;
+    public Button defendButton;
+    //bool defendCD;
 
 	//Haste
 	public Image backgroundHaste;
 	public Image iconHaste;
-    bool hasteCD;
+    public Button hasteButton;
+   // bool hasteCD;
 
     //Slow
     public Image backgroundSlow;
 	public Image iconSlow;
-    bool slowCD;
+    public Button slowButton;
+    //bool slowCD;
 
     //Blink
     public Image backgroundBlink;
 	public Image iconBlink;
-    bool blinkCD;
+    public Button blinkButton;
+    //  bool blinkCD;
 
     //NetherSwap
     public Image backgroundNSwap;
 	public Image iconNSwap;
-    bool netherCD;
+    public Button netherButton;
+   // bool netherCD;
 
     //InitiativeSwap
     public Image backgroundISwap;
 	public Image iconISwap;
-    bool initiativeCD;
+    public Button initiativeButton;
+   // bool initiativeCD;
 
 
     bool gotAbility = false;
@@ -56,8 +68,9 @@ public class PlayerAbilitiyUI : MonoBehaviour
 	void Awake()
 	{
 		player = FindObjectOfType<PlayerScript>();
-		
-	}
+        turnManager = FindObjectOfType<turnManageScript>();
+
+    }
 	// Start is called before the first frame update
 	void Start()
     {
@@ -87,8 +100,9 @@ public class PlayerAbilitiyUI : MonoBehaviour
 			backgroundWhiteDefend.fillAmount = testCDPercent;
 			mainIconDefend.fillAmount = testCDPercent;
 
-			//Haste
-			backgroundHaste.fillAmount = CalculateDefendCooldown(hasteAbility.turnsBeenOnCooldown, hasteAbility.cooldown);
+
+            //Haste
+            backgroundHaste.fillAmount = CalculateDefendCooldown(hasteAbility.turnsBeenOnCooldown, hasteAbility.cooldown);
 			iconHaste.fillAmount = CalculateDefendCooldown(hasteAbility.turnsBeenOnCooldown, hasteAbility.cooldown);
 
 			//Slow
@@ -106,15 +120,157 @@ public class PlayerAbilitiyUI : MonoBehaviour
 			//InitiativeSwap
 			backgroundISwap.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
 			iconISwap.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
-		}
 
 
+            //Defend Button Check
+            if ((player.isTakingAction))
+            {
+                if (CheckIfOnCooldown(defendAbility.turnsBeenOnCooldown, defendAbility.cooldown) == true)
+                {
+                    defendButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    defendButton.gameObject.SetActive(true);
+                }
+
+                //haste
+                if (CheckIfOnCooldown(hasteAbility.turnsBeenOnCooldown, hasteAbility.cooldown) == true)
+                {
+                    hasteButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    hasteButton.gameObject.SetActive(true);
+                }
+
+                //slow
+                if (CheckIfOnCooldown(slowAbility.turnsBeenOnCooldown, slowAbility.cooldown) == true)
+                {
+                    slowButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    slowButton.gameObject.SetActive(true);
+                }
+
+                //Blink
+                if (CheckIfOnCooldown(blinkAbility.turnsBeenOnCooldown, blinkAbility.cooldown) == true)
+                {
+                    blinkButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    blinkButton.gameObject.SetActive(true);
+                }
+
+                //NetherSwap
+                if (CheckIfOnCooldown(netherSwapAbility.turnsBeenOnCooldown, netherSwapAbility.cooldown) == true)
+                {
+                    netherButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    netherButton.gameObject.SetActive(true);
+                }
+
+                //InitiativeSwap
+                if (CheckIfOnCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown) == true)
+                {
+                    initiativeButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    initiativeButton.gameObject.SetActive(true);
+                }
+
+                attackButton.gameObject.SetActive(true);
+                waitButton.gameObject.SetActive(true);
+            }
+            else if (!player.isTakingAction)
+            {
+                defendButton.gameObject.SetActive(false);
+                hasteButton.gameObject.SetActive(false);
+                slowButton.gameObject.SetActive(false);
+                blinkButton.gameObject.SetActive(false);
+                netherButton.gameObject.SetActive(false);
+                initiativeButton.gameObject.SetActive(false);
+                attackButton.gameObject.SetActive(false);
+                waitButton.gameObject.SetActive(false);
+            }
+
+        }
 
 	}
 
-	//when white image == 1 is when on max cooldown
+    public void defendClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.defendID);
+        }
 
-	float CalculateDefendCooldown(float turnsCD, float CD)
+    }
+
+    public void hasteClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.hasteID);
+        }
+    }
+
+    public void slowClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.slowID);
+        }
+    }
+
+    public void blinkClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.blinkID);
+        }
+    }
+
+    public void netherClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.netherSwapID);
+        }
+    }
+
+    public void IntSwapClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.initiativeSwapID);
+        }
+    }
+
+    public void attackClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.attackID);
+        }
+    }
+
+    public void waitClick()
+    {
+        if (player.selectedAbility == null)
+        {
+            player.SelectAbility(player.waitID);
+        }
+    }
+
+    //when white image == 1 is when on max cooldown
+
+    float CalculateDefendCooldown(float turnsCD, float CD)
 	{
 		return (1.0f - (float)turnsCD / (float)CD);
 		//return (1.0f - (float)defendAbility.turnsBeenOnCooldown / (float)defendAbility.cooldown);
