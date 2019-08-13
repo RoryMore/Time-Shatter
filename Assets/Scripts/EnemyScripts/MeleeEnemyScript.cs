@@ -17,7 +17,7 @@ public class MeleeEnemyScript : EnemyScript
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
         hitParticles = GetComponentInChildren<ParticleSystem>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
+        
         nav = GetComponent<NavMeshAgent>();
 
 
@@ -30,6 +30,7 @@ public class MeleeEnemyScript : EnemyScript
         //enemyCooldown = 2.0f + Random.Range(1.0f, 4.0f);
         initiativeSpeed = 1.5f;
         currentHealth = startingHealth;
+        
 
         ourAttack = GetComponent<PlayerAttack>();
 
@@ -58,6 +59,7 @@ public class MeleeEnemyScript : EnemyScript
     {
         if(currentHealth > 0 && player.currentHealth > 0)
         {
+            
             //If we're close enough to smack, stop moving
             if (Vector3.Distance(transform.position, player.gameObject.transform.position) < meleeAttackRange)
             {
@@ -75,6 +77,7 @@ public class MeleeEnemyScript : EnemyScript
         else
         {
             nav.enabled = false;
+            anim.SetBool("isWalking", false);
         }
     }
 
@@ -94,6 +97,7 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
+            anim.SetBool("isAttacking", true);
             timeSpentDoingAction += Time.fixedDeltaTime;
 
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
@@ -122,3 +126,27 @@ public class MeleeEnemyScript : EnemyScript
     }
 
 }
+
+            if (Vector3.Distance(transform.position, player.gameObject.transform.position) < meleeAttackRange)
+            {
+                nav.SetDestination(transform.position);
+                //transform.LookAt(player.transform);
+                FaceTarget(player.transform);
+                anim.SetBool("isWalking", false);
+
+            else
+            {
+                //GameObject.Find("Player")
+                nav.SetDestination(player.transform.position);
+                anim.SetBool("isWalking", true);
+
+            if (timeSpentDoingAction >= ourAttack.actionSpeed)
+            {
+
+                player.TakeDamage(meleeDamage);
+
+                //Play Animation
+                enemyCooldown = 6.0f;
+                timeSpentDoingAction = 0.0f;
+                anim.SetBool("isAttacking", false);
+                //anim.SetBool("isAttacking", false);

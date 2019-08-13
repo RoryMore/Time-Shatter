@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 7322378996482242412}
   - component: {fileID: 7322378996482242415}
   - component: {fileID: 7322378996482242414}
+  - component: {fileID: -4457190853072148346}
+  - component: {fileID: -8354391103029214075}
   m_Layer: 0
   m_Name: HealerEnemy
   m_TagString: EnemyTeleSlowInitswappable
@@ -144,16 +146,63 @@ MonoBehaviour:
   startingHealth: 100
   currentHealth: 0
   enemyCooldown: 0
+  initiativeSpeed: 0
   enemyTakingAction: 0
   turnsHeld: 0
+  timeSpentDoingAction: 0
+  turnSpeed: 0.5
   anim: {fileID: 0}
   hitParticles: {fileID: 0}
   capsuleCollider: {fileID: 0}
   nav: {fileID: 0}
   player: {fileID: 0}
+  enemyManager: {fileID: 0}
+  turnManger: {fileID: 0}
   isDead: 0
   isSinking: 0
   healRange: 5
   attackRange: 20
   healMagnitude: 10
   damageMagnitude: 2
+--- !u!114 &-4457190853072148346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7322378996482242409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d060ba5ab51351d4bb2eaeec0edfa2da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionSpeed: 8
+  range: 16
+  magnitude: 2
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 0
+  turnsBeenOnCooldown: 0
+  type: 0
+  id: 0
+  attackWidth: 0
+  attackType: 1
+  angle: 20
+--- !u!114 &-8354391103029214075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7322378996482242409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20010bd794f8d8b4bba3b1f2b03b67ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quality: 15
+  indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}

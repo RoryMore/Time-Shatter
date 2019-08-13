@@ -21,13 +21,15 @@ public class EnemyScript : MonoBehaviour
 
     public float timeSpentDoingAction = 0.0f;
 
+    public float turnSpeed = 1.0f;
+
     //public AudioClip deathClip;
 
 
     public Animator anim;
     //AudioSource enemyAudio;
     public ParticleSystem hitParticles;
-    public CapsuleCollider capsuleCollider;
+    //public CapsuleCollider capsuleCollider;
 
     public NavMeshAgent nav;
 
@@ -89,13 +91,19 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    public void FaceTarget(Transform target)
+    {
+        var step = turnSpeed * Time.deltaTime;
 
+        // Rotate our transform a step closer to the target's.
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, step);
+    }
 
-    void Death()
+    public void Death()
     {
         isDead = true;
 
-        capsuleCollider.isTrigger = true;
+        
 
         anim.SetTrigger("Dead");
         enemyManager.healList.Remove(this.gameObject);
