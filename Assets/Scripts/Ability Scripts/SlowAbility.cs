@@ -18,13 +18,6 @@ public class SlowAbility : Ability
         isDebuffActive = false;
     }
 
-		turnsBuffed = 0;
-		isBuffActive = false;
-
-		turnsDebuffed = 0;
-		isDebuffActive = false;
-	}
-
     // Update is called once per frame
     void Update()
     {
