@@ -16,6 +16,7 @@ public class HealerEnemyScript : EnemyScript
     PlayerAttack ourAttack;
 
     bool firstTargetAqquired = false;
+    bool isAttacking = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -57,7 +58,7 @@ public class HealerEnemyScript : EnemyScript
         {
             Movement();
             Heal();
-            //MeleeAttack();
+            Attack();
             Turn();
         }
     }
@@ -108,6 +109,31 @@ public class HealerEnemyScript : EnemyScript
 
     }
 
+    void Attack()
+    {
+        if (isAttacking == true)
+        {
+
+            timeSpentDoingAction += Time.fixedDeltaTime;
+            
+            ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+            anim.SetBool("isAttacking", true);
+            if (timeSpentDoingAction >= ourAttack.actionSpeed)
+            {
+            
+                if (ourAttack.ShouldEnemyInPositionBeDamaged(player.transform.position) == true)
+                {
+                    player.TakeDamage(damageMagnitude);
+                }
+            
+                //Play Animation
+                enemyCooldown = 6.0f;
+                timeSpentDoingAction = 0.0f;
+                anim.SetBool("isAttacking", false);
+                isAttacking = false;
+            }
+        }
+    }
     void Heal()
     {
         //If the heal list isnt empty
@@ -155,22 +181,7 @@ public class HealerEnemyScript : EnemyScript
                     else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
                     {
 
-                        timeSpentDoingAction += Time.fixedDeltaTime;
-
-                        ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
-                        anim.SetBool("isAttacking", true);
-                        if (timeSpentDoingAction >= ourAttack.actionSpeed)
-                        {
-
-                            player.TakeDamage(damageMagnitude);
-
-                            //Play Animation
-                            enemyCooldown = 6.0f;
-                            timeSpentDoingAction = 0.0f;
-                            anim.SetBool("isAttacking", false);
-                        }
-
-
+                        isAttacking = true;
 
                     }
 
@@ -191,61 +202,11 @@ public class HealerEnemyScript : EnemyScript
         //If no one at all needs healing and we are in range, simply attack!
         else if ((Vector3.Distance(transform.position, target.transform.position) < attackRange && enemyCooldown <= 0.0f))
         {
-            anim.SetBool("isAttacking", true);
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            isAttacking = true;
 
-            ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
-
-            if (timeSpentDoingAction >= ourAttack.actionSpeed)
-            {
-
-                player.TakeDamage(damageMagnitude);
-
-                //Play Animation
-                enemyCooldown = 6.0f;
-                timeSpentDoingAction = 0.0f;
-                anim.SetBool("isAttacking", false);
-            }
         }
 
 
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-//TEMPORARY FUNCTION FOR WHEN JASMINE FINISHES HER TURN COUNTER
-
-
-//public void MeleeAttack()
-//{
-
-//    float distance = Vector3.Distance(transform.position, player.transform.position);
-
-//    //We are ready to make our attack, and we are in range. ATTACK!
-//    if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
-//    {
-//        player.TakeDamage(meleeDamage);
-//        //Play Animation
-//        enemyCooldown = 6.0f;
-//        //Debug.Log("ATTACK!");
-//    }
-//    //If its the melee enemy turn BUT we are out of range, we go into defence stance!
-//    else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)
-//    {
-//        enemyCooldown = 6.0f;
-//        //Debug.Log("She's too far!");
-//    }
-//    else if (meleeAttackRange <= distance && 0.0f <= enemyCooldown)
-//    {
-//        //Debug.Log("");
-//    }
-//}
