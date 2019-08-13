@@ -28,7 +28,7 @@ public class Ability : MonoBehaviour
     [Tooltip("How long (in seconds) the ability takes to cast before the effect happens")]
     public float actionSpeed;
 
-    [Tooltip("The maximum distance the ability can be cast at")]
+    [Tooltip("The maximum distance the ability can be cast at.")]
     public float range;
 
     [Tooltip("The 'strength/effectiveness' of the ability")]
@@ -49,7 +49,7 @@ public class Ability : MonoBehaviour
 
     [Tooltip("How long you have to wait (in turns) before you can cast the ability again")]
     public int cooldown;
-    [HideInInspector] public int turnsBeenOnCooldown;
+    public int turnsBeenOnCooldown;
 
     public Type type;
 

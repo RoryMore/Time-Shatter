@@ -15,6 +15,7 @@ TagManager:
   - EnemyTeleInitswappable
   - EnemySlowInitswappable
   - EnemyTeleSlowInitswappable
+  - PlayerIntSlider
   layers:
   - Default
   - TransparentFX
