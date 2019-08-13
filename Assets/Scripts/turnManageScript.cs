@@ -85,6 +85,7 @@ public class turnManageScript : MonoBehaviour
                         Ui = false;
                         actionUi = true;
                     }
+                    
                     if (player.isTakingAction == true)
                     {
                         Time.timeScale = Mathf.Lerp(Time.timeScale, slowMotionCount, Time.deltaTime / 0.01f);
@@ -105,6 +106,12 @@ public class turnManageScript : MonoBehaviour
                         if (player.isExecutingAbility)
                         {
                             state = BattleState.ACTION;
+                        }
+                        if (player.playerWaited)
+                        {
+                            player.playerWaited = false;
+                            Ui = true;
+                            actionUi = false;
                         }
                     }
 

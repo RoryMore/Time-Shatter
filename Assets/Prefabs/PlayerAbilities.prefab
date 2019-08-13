@@ -114,9 +114,10 @@ MonoBehaviour:
   turnsBeenOnCooldown: 0
   type: 0
   id: 0
-  attackWidth: 0
+  attackWidth: 1
   attackType: 1
   angle: 35
+  forwardAttackRange: 12
 --- !u!114 &863015739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f309d0839b04149a6d5810cc7c99f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mesh: {fileID: 0}
   indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
 --- !u!1 &1137851733871096209
 GameObject:

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RectangleRangeIndicator : MonoBehaviour
 {
-    Mesh mesh;
+    [HideInInspector] public Mesh mesh;
     Mesh castTimeMesh;
     public Material indicatorMaterial;
 
@@ -13,6 +13,11 @@ public class RectangleRangeIndicator : MonoBehaviour
 
     Vector3[] vertices;
     int[] triangles;
+
+    public Vector3 corner1;
+    public Vector3 corner2;
+    public Vector3 corner3;
+    public Vector3 corner4;
 
     // Start is called before the first frame update
     void Start()
@@ -156,6 +161,11 @@ public class RectangleRangeIndicator : MonoBehaviour
             triangles[6 * i + 4] = b;
             triangles[6 * i + 5] = a;
 
+            corner1 = vertices[a];
+            corner2 = vertices[b];
+            corner3 = vertices[c];
+            corner4 = vertices[d];
+
             //angleCurrent += angleDelta;
             //angleNext += angleDelta;
         }
@@ -168,10 +178,13 @@ public class RectangleRangeIndicator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
 
+        // Bounds should be automatically recalculated when setting triangles
+        mesh.RecalculateBounds();
+
         Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
     }
 
-    public void DrawCastTimeIndicator(float attackWidth, float minRange, float drawDistance)
+    public void DrawCastTimeIndicator(float attackWidth, float minRange, float drawPercent, float maxRange)
     {
         float angleLookAt = GetForwardAngle();
 
@@ -208,13 +221,13 @@ public class RectangleRangeIndicator : MonoBehaviour
             //posNextMax = transform.position + sphereNext * maxRange;
 
             posCurrentMin = transform.position;
-            posCurrentMin.z -= halfAttackWidth;
+            posCurrentMin.z -= (halfAttackWidth * drawPercent);
 
             posCurrentMax = transform.position;
-            posCurrentMax.z -= halfAttackWidth;
+            posCurrentMax.z -= (halfAttackWidth * drawPercent);
             //if (Mathf.Sign(transform.position.x) > 0)
             //{
-            posCurrentMax.x += drawDistance;
+            posCurrentMax.x += maxRange;
             //}
             //else
             //{
@@ -222,13 +235,13 @@ public class RectangleRangeIndicator : MonoBehaviour
             //}
 
             posNextMin = transform.position;
-            posNextMin.z += halfAttackWidth;
+            posNextMin.z += (halfAttackWidth * drawPercent);
 
             posNextMax = transform.position;
-            posNextMax.z += halfAttackWidth;
+            posNextMax.z += (halfAttackWidth * drawPercent);
             //if (Mathf.Sign(transform.position.x) > 0)
             //{
-            posNextMax.x += drawDistance;
+            posNextMax.x += maxRange;
             //}
             //else
             //{

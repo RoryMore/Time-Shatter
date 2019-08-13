@@ -11,8 +11,7 @@ public class PlayerAttack : Ability
     public enum AttackType
     {
         Forward,
-        Cone,
-        Radius
+        Cone
     };
 
     public AttackType attackType;
@@ -51,22 +50,23 @@ public class PlayerAttack : Ability
 
         switch (attackType)
         {
-            case AttackType.Cone:
-                coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
-                if (coneRangeIndicator == null)
-                {
-                    Debug.LogAssertion("coneRangeIndicator failed to be set");
-                }
-                coneRangeIndicator.Init(angle);
-                break;
+        case AttackType.Cone:
+            coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
+            if (coneRangeIndicator == null)
+            {
+                Debug.LogAssertion("coneRangeIndicator failed to be set");
+            }
+            coneRangeIndicator.Init(angle);
+        break;
 
-            case AttackType.Forward:
-                rectangleRangeIndicator = transform.GetComponent<RectangleRangeIndicator>();
-                if (rectangleRangeIndicator == null)
-                {
-                    Debug.LogAssertion("rectangleRangeIndicator failed to be set");
-                }
-                rectangleRangeIndicator.Init();
+        case AttackType.Forward:
+
+            rectangleRangeIndicator = transform.GetComponent<RectangleRangeIndicator>();
+            if (rectangleRangeIndicator == null)
+            {
+                Debug.LogAssertion("rectangleRangeIndicator failed to be set");
+            }
+            rectangleRangeIndicator.Init();
                 break;
             default:
                 break;
@@ -105,10 +105,10 @@ public class PlayerAttack : Ability
         }
         else if (attackType == AttackType.Forward)
         {
-            float drawPercentage = (timeSpentCasting / actionSpeed) * range;
+            float drawPercentage = (timeSpentCasting / actionSpeed);
 
             rectangleRangeIndicator.DrawIndicator(attackWidth, 0.0f, range);
-            rectangleRangeIndicator.DrawCastTimeIndicator(attackWidth, 0.0f, drawPercentage);
+            rectangleRangeIndicator.DrawCastTimeIndicator(attackWidth, 0.0f, drawPercentage, range);
         }
     }
 
@@ -141,7 +141,15 @@ public class PlayerAttack : Ability
         }
         else if (attackType == AttackType.Forward)
         {
-            return false;
+            if (rectangleRangeIndicator.mesh.bounds.SqrDistance(position) <= 0.5f)
+            {
+                Debug.Log("Straight Attack DAMAGED THEM!!!!!!!!!");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         Debug.Log("PlayerAttackScript: This Return path shouldn't be reached. Didn't discern whether enemy should be damaged or not");
         return false;

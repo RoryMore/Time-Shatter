@@ -32,6 +32,7 @@ public class PlayerScript : MonoBehaviour
     bool actionSelection = false;
     public bool isExecutingAbility = false;
 
+    public bool playerWaited = false;
        
     public float initiativeEntrySpeed = 3.0f;
 
@@ -240,7 +241,7 @@ public class PlayerScript : MonoBehaviour
             // Rotate player towards point
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //RaycastHit hit;
-
+            
             if (Physics.Raycast(ray, out RaycastHit hit, 200))
             {
                 Vector3 dir = (hit.point - transform.position).normalized;
@@ -275,7 +276,7 @@ public class PlayerScript : MonoBehaviour
             {
                 if (attackAbility.ShouldEnemyInPositionBeDamaged(enemies[i].transform.position))
                 {
-                    //Debug.Log("DAMAGED ENEMIES HERE.");
+                    Debug.Log("DAMAGED ENEMIES HERE.");
                     enemies[i].TakeDamage(Mathf.RoundToInt(attackAbility.magnitude), enemies[i].transform.position);
                 }
             }
@@ -595,6 +596,8 @@ public class PlayerScript : MonoBehaviour
 
     void Wait()
     {
+        playerWaited = true;
+
         timeSpentDoingAction += Time.fixedDeltaTime;
 
         actionSelection = true;
