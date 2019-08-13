@@ -31,6 +31,7 @@ public class PlayerScript : MonoBehaviour
     public bool isTakingAction = false;
     bool actionSelection = false;
     public bool isExecutingAbility = false;
+	public bool finishedLoading = false;
 
        
     public float initiativeEntrySpeed = 3.0f;
@@ -94,9 +95,10 @@ public class PlayerScript : MonoBehaviour
 
         initiativeSpeed = baseInitiativeSpeed;
 
-        //isTakingAction = true;
-        //actionSelection = true;
-        //SelectAbility(attackID);
+		//isTakingAction = true;
+		//actionSelection = true;
+		//SelectAbility(attackID);
+		finishedLoading = true;
     }
 
     private void Update()
@@ -787,7 +789,7 @@ public class PlayerScript : MonoBehaviour
                     }
                     else if (ability.id == slowID)
                     {
-                        slowAbility.targettedEnemy.enemyCooldown = slowAbility.targettedEnemy.enemyCooldown * selectedAbility.magnitude;
+
                         slowAbility.targettedEnemy = null;
                     }
                     else if (ability.id == waitID)

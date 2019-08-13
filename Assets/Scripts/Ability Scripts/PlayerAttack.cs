@@ -42,7 +42,13 @@ public class PlayerAttack : Ability
 
         turnsBeenOnCooldown = cooldown;
 
-        switch (attackType)
+		turnsBuffed = 0;
+		isBuffActive = false;
+
+		turnsDebuffed = 0;
+		isDebuffActive = false;
+
+		switch (attackType)
         {
             case AttackType.Cone:
                 coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
