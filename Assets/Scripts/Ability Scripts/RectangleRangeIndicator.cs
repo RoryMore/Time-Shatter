@@ -14,10 +14,10 @@ public class RectangleRangeIndicator : MonoBehaviour
     Vector3[] vertices;
     int[] triangles;
 
-    public Vector3 corner1;
-    public Vector3 corner2;
-    public Vector3 corner3;
-    public Vector3 corner4;
+    [HideInInspector] public Vector3 corner1;
+    [HideInInspector] public Vector3 corner2;
+    [HideInInspector] public Vector3 corner3;
+    [HideInInspector] public Vector3 corner4;
 
     // Start is called before the first frame update
     void Start()

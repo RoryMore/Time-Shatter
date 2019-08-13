@@ -50,23 +50,24 @@ public class PlayerAttack : Ability
 
         switch (attackType)
         {
-        case AttackType.Cone:
-            coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
-            if (coneRangeIndicator == null)
-            {
-                Debug.LogAssertion("coneRangeIndicator failed to be set");
-            }
-            coneRangeIndicator.Init(angle);
-        break;
+            case AttackType.Cone:
+                coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
+                if (coneRangeIndicator == null)
+                {
+                    Debug.LogAssertion("coneRangeIndicator failed to be set");
+                }
+                coneRangeIndicator.Init(angle);
+            break;
 
-        case AttackType.Forward:
+            case AttackType.Forward:
 
-            rectangleRangeIndicator = transform.GetComponent<RectangleRangeIndicator>();
-            if (rectangleRangeIndicator == null)
-            {
-                Debug.LogAssertion("rectangleRangeIndicator failed to be set");
-            }
-            rectangleRangeIndicator.Init();
+                rectangleRangeIndicator = transform.GetComponent<RectangleRangeIndicator>();
+                if (rectangleRangeIndicator == null)
+                {
+                    Debug.LogAssertion("rectangleRangeIndicator failed to be set");
+                }
+                rectangleRangeIndicator.Init();
+
                 break;
             default:
                 break;
@@ -117,6 +118,7 @@ public class PlayerAttack : Ability
         // Depending on our 'attackType' we calculate hits slightly differently
         if (attackType == AttackType.Cone)
         {
+
             float forwardAngle = 90 - Mathf.Rad2Deg * Mathf.Atan2(transform.forward.z, transform.forward.x);
 
             float positionAngle = Vector3.Angle(position - transform.position, transform.forward);
@@ -141,9 +143,11 @@ public class PlayerAttack : Ability
         }
         else if (attackType == AttackType.Forward)
         {
-            if (rectangleRangeIndicator.mesh.bounds.SqrDistance(position) <= 0.5f)
+            //Debug.Log("Player calculating if attack damages with Forward!");
+            Vector3 meshYPosition = new Vector3(position.x, rectangleRangeIndicator.mesh.bounds.center.y, position.z);
+            if (rectangleRangeIndicator.mesh.bounds.Contains(meshYPosition))
             {
-                Debug.Log("Straight Attack DAMAGED THEM!!!!!!!!!");
+                //Debug.Log("Straight Attack DAMAGED THEM!!!!!!!!!");
                 return true;
             }
             else

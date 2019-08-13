@@ -67,7 +67,6 @@ GameObject:
   - component: {fileID: 8663733970314540905}
   - component: {fileID: 8463534892645255302}
   - component: {fileID: 863015739}
-  - component: {fileID: 8725501835255362174}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Untagged
@@ -117,7 +116,6 @@ MonoBehaviour:
   attackWidth: 1
   attackType: 1
   angle: 35
-  forwardAttackRange: 12
 --- !u!114 &863015739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,20 +128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20010bd794f8d8b4bba3b1f2b03b67ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
---- !u!114 &8725501835255362174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536419064913879406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67f309d0839b04149a6d5810cc7c99f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mesh: {fileID: 0}
   indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
 --- !u!1 &1137851733871096209
 GameObject:
@@ -245,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpeed: 0.75
-  range: 4
+  range: 5
   magnitude: 0
   buffDuration: 0
   turnsBuffed: 0
@@ -302,7 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpeed: 2
-  range: 5
+  range: 7
   magnitude: 5
   buffDuration: 0
   turnsBuffed: 0
@@ -360,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpeed: 2
-  range: 4
+  range: 12
   magnitude: 12
   buffDuration: 0
   turnsBuffed: 0
@@ -466,9 +450,88 @@ Transform:
   - {fileID: 3414491577744749289}
   - {fileID: 5182041467457773462}
   - {fileID: 346201867}
+  - {fileID: 8934595957995934801}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7826073748557233664
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8934595957995934801}
+  - component: {fileID: 8888268807557738507}
+  - component: {fileID: 8600246479592791710}
+  m_Layer: 0
+  m_Name: RangeBeamAttack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8934595957995934801
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7826073748557233664}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7760009501327630564}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8888268807557738507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7826073748557233664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d060ba5ab51351d4bb2eaeec0edfa2da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionSpeed: 4
+  range: 13
+  magnitude: 10
+  buffDuration: 0
+  turnsBuffed: 0
+  isBuffActive: 0
+  debuffDuration: 0
+  turnsDebuffed: 0
+  isDebuffActive: 0
+  cooldown: 2
+  turnsBeenOnCooldown: 0
+  type: 0
+  id: 0
+  attackWidth: 1
+  attackType: 0
+  angle: 0
+--- !u!114 &8600246479592791710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7826073748557233664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67f309d0839b04149a6d5810cc7c99f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 0}
+  indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
+  corner1: {x: 0, y: 0, z: 0}
+  corner2: {x: 0, y: 0, z: 0}
+  corner3: {x: 0, y: 0, z: 0}
+  corner4: {x: 0, y: 0, z: 0}
 --- !u!1 &8108334643017484612
 GameObject:
   m_ObjectHideFlags: 0
@@ -513,7 +576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpeed: 1
-  range: 6
+  range: 7.5
   magnitude: 0.5
   buffDuration: 0
   turnsBuffed: 0
