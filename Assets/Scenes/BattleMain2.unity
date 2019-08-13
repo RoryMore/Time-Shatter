@@ -949,7 +949,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1039415993
@@ -2220,7 +2220,7 @@ PrefabInstance:
     - target: {fileID: 6912156560172415807, guid: 4038a5d4150f60c49afc95e9aeb5566a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.631
+      value: 0.665
       objectReference: {fileID: 0}
     - target: {fileID: 6912156560172415807, guid: 4038a5d4150f60c49afc95e9aeb5566a,
         type: 3}
@@ -2267,7 +2267,19 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6912156560172415795, guid: 4038a5d4150f60c49afc95e9aeb5566a,
+        type: 3}
+      propertyPath: meleeAnimClip
+      value: 
+      objectReference: {fileID: 1827226128182048838, guid: bed0d11a1cba81f49a5b31481259b41a,
+        type: 3}
+    - target: {fileID: 6912156560172415806, guid: 4038a5d4150f60c49afc95e9aeb5566a,
+        type: 3}
+      propertyPath: m_Mass
+      value: 0.02
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6912156560172415806, guid: 4038a5d4150f60c49afc95e9aeb5566a, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4038a5d4150f60c49afc95e9aeb5566a, type: 3}
 --- !u!1 &1702579219 stripped
 GameObject:
