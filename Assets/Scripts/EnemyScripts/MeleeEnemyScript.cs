@@ -10,6 +10,8 @@ public class MeleeEnemyScript : EnemyScript
     public int meleeDamage;
 
     PlayerAttack ourAttack;
+
+    bool isAttacking = false;
     
 
     void Awake()
@@ -101,6 +103,10 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
+            isAttacking = true;
+        }
+        if (isAttacking == true)
+        {
             anim.SetBool("isAttacking", true);
             timeSpentDoingAction += Time.fixedDeltaTime;
 
@@ -117,7 +123,7 @@ public class MeleeEnemyScript : EnemyScript
                 anim.SetBool("isAttacking", false);
                 //anim.SetBool("isAttacking", false);
             }
-            //Debug.Log("ATTACK!");
+            
         }
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!
         else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)
