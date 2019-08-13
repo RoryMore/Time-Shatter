@@ -11,8 +11,7 @@ public class PlayerAttack : Ability
     public enum AttackType
     {
         Forward,
-        Cone,
-        Radius
+        Cone
     };
 
     public AttackType attackType;
@@ -21,6 +20,7 @@ public class PlayerAttack : Ability
     public float angle;
 
     ConeRangeIndicator coneRangeIndicator = null;
+    RectangleRangeIndicator rectangleRangeIndicator = null;
 
     // Start is called before the first frame update
     void Start()
@@ -42,13 +42,13 @@ public class PlayerAttack : Ability
 
         turnsBeenOnCooldown = cooldown;
 
-		turnsBuffed = 0;
-		isBuffActive = false;
+        turnsBuffed = 0;
+        isBuffActive = false;
 
-		turnsDebuffed = 0;
-		isDebuffActive = false;
+        turnsDebuffed = 0;
+        isDebuffActive = false;
 
-		switch (attackType)
+        switch (attackType)
         {
             case AttackType.Cone:
                 coneRangeIndicator = transform.GetComponent<ConeRangeIndicator>();
@@ -57,9 +57,16 @@ public class PlayerAttack : Ability
                     Debug.LogAssertion("coneRangeIndicator failed to be set");
                 }
                 coneRangeIndicator.Init(angle);
-                break;
+            break;
 
             case AttackType.Forward:
+
+                rectangleRangeIndicator = transform.GetComponent<RectangleRangeIndicator>();
+                if (rectangleRangeIndicator == null)
+                {
+                    Debug.LogAssertion("rectangleRangeIndicator failed to be set");
+                }
+                rectangleRangeIndicator.Init();
 
                 break;
             default:
@@ -81,16 +88,28 @@ public class PlayerAttack : Ability
         {
             coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
         }
+        else if (attackType == AttackType.Forward)
+        {
+            rectangleRangeIndicator.DrawIndicator(attackWidth, 0.0f, range);
+        }
     }
 
     public void DrawCastTimeRangeIndicator(float timeSpentCasting)
     {
+        //float drawPercentage = (timeSpentCasting / actionSpeed) * range;
         if (attackType == AttackType.Cone)
         {
             float drawPercentage = (timeSpentCasting / actionSpeed) * range;
 
             coneRangeIndicator.DrawIndicator(angle, 0.0f, range);
             coneRangeIndicator.DrawCastTimeIndicator(angle, 0.0f, drawPercentage);
+        }
+        else if (attackType == AttackType.Forward)
+        {
+            float drawPercentage = (timeSpentCasting / actionSpeed);
+
+            rectangleRangeIndicator.DrawIndicator(attackWidth, 0.0f, range);
+            rectangleRangeIndicator.DrawCastTimeIndicator(attackWidth, 0.0f, drawPercentage, range);
         }
     }
 
@@ -99,6 +118,7 @@ public class PlayerAttack : Ability
         // Depending on our 'attackType' we calculate hits slightly differently
         if (attackType == AttackType.Cone)
         {
+
             float forwardAngle = 90 - Mathf.Rad2Deg * Mathf.Atan2(transform.forward.z, transform.forward.x);
 
             float positionAngle = Vector3.Angle(position - transform.position, transform.forward);
@@ -120,6 +140,20 @@ public class PlayerAttack : Ability
                 return false;
             }
 
+        }
+        else if (attackType == AttackType.Forward)
+        {
+            //Debug.Log("Player calculating if attack damages with Forward!");
+            Vector3 meshYPosition = new Vector3(position.x, rectangleRangeIndicator.mesh.bounds.center.y, position.z);
+            if (rectangleRangeIndicator.mesh.bounds.Contains(meshYPosition))
+            {
+                //Debug.Log("Straight Attack DAMAGED THEM!!!!!!!!!");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         Debug.Log("PlayerAttackScript: This Return path shouldn't be reached. Didn't discern whether enemy should be damaged or not");
         return false;

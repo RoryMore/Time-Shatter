@@ -23,7 +23,7 @@ public class PlayerScript : MonoBehaviour
     //float strength;
 
     // Name can be changed to whatever. 
-    //Purpose would be a to increase/decrease how powerful non-melee/physical attacks would be
+    //Purpose would be a to increase/decrease how powerful non-melee/spell/ability attacks would be
     //float spellPower; 
 
     //public float timeLeftUntilAction = 6.0f;
@@ -33,10 +33,11 @@ public class PlayerScript : MonoBehaviour
     public bool isExecutingAbility = false;
 	public bool finishedLoading = false;
 
+    public bool playerWaited = false;
        
     public float initiativeEntrySpeed = 3.0f;
 
-    //Animator anim;
+    Animator anim;
     //AudioSource playerAudio;
 
     // -Abilities -------------------------------------------
@@ -52,6 +53,7 @@ public class PlayerScript : MonoBehaviour
     public int netherSwapID;
     public int initiativeSwapID;
     public int waitID;
+    public int rangedBeamID;
 
     PlayerAttack attackAbility;
     Ability defendAbility;
@@ -61,6 +63,7 @@ public class PlayerScript : MonoBehaviour
     BlinkAbility blinkAbility;
     InitiativeSwapAbility initiativeSwapAbility;
     Ability waitAbility;
+    PlayerAttack rangedBeamAbility;
     // -------------------------------------------------------
 
     bool isDead;
@@ -74,6 +77,11 @@ public class PlayerScript : MonoBehaviour
 
     EnemyScript[] enemies;
 
+    OurCameraController cameraController;
+
+    // This is to show max distances you can select targets
+    ConeRangeIndicator abilityRangeCircle;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -83,13 +91,20 @@ public class PlayerScript : MonoBehaviour
 
         turnManager = FindObjectOfType<turnManageScript>();
 
+        cameraController = FindObjectOfType<OurCameraController>();
+
+        anim = GetComponent<Animator>();
+
+        abilityRangeCircle = GetComponent<ConeRangeIndicator>();
+        abilityRangeCircle.Init(180.0f);
     }
 
     void Awake()
     {
-        PopulateEnemiesList();
         PopulateAbilitiesList();
-        //anim = GetComponent <Animator> ();
+        PopulateEnemiesList();
+        Debug.Log("Size of Enemies Array: " + enemies.Length);
+        
         //playerAudio = GetComponent <AudioSource> ();
         currentHealth = maxHealth;
 
@@ -103,6 +118,13 @@ public class PlayerScript : MonoBehaviour
 
     private void Update()
     {
+        // Make sure we populate our enemy array
+        if (enemies.Length == 0)
+        {
+            PopulateEnemiesList();
+            Debug.Log("Size of Enemies Array: " + enemies.Length);
+        }
+
         if (isDead)
         {
             Death();
@@ -119,7 +141,8 @@ public class PlayerScript : MonoBehaviour
                 {
                     Movement();
                 }
-
+                CheckIsRunning();
+                anim.SetBool("isRunning", running);
                 //TestTakingDamage();
                 CheckDamage();
             }
@@ -139,6 +162,22 @@ public class PlayerScript : MonoBehaviour
         //Any visual damage cues here
     }
 
+    void CheckIsRunning()
+    {
+        //Animation stuff
+        if (navmeshAgent.enabled == true)
+        {
+            if (navmeshAgent.remainingDistance <= navmeshAgent.stoppingDistance)
+            {
+                running = false;
+            }
+            else
+            {
+                running = true;
+            }
+        }
+    }
+
     void Movement()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -151,17 +190,6 @@ public class PlayerScript : MonoBehaviour
                 navmeshAgent.destination = hit.point;
             }
         }
-
-        //Animation stuff
-        if (navmeshAgent.remainingDistance <= navmeshAgent.stoppingDistance)
-        {
-            running = false;
-        }
-        else
-        {
-            running = true;
-        }
-
         //animator.SetBool("running", running);
         
     }
@@ -222,6 +250,7 @@ public class PlayerScript : MonoBehaviour
         float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, 0.5f * Time.fixedDeltaTime);
 
         navmeshAgent.destination = new Vector3(finalDestX, finalDestY, finalDestZ);
+        navmeshAgent.speed = Mathf.Lerp(navmeshAgent.speed, 0.0f, 0.5f * Time.fixedDeltaTime);
 
     }
 
@@ -236,12 +265,13 @@ public class PlayerScript : MonoBehaviour
 
                 navmeshAgent.enabled = false;
                 Debug.Log("PlayerScript: Attack Action rotation chosen");
+                running = false;
             }
 
             // Rotate player towards point
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //RaycastHit hit;
-
+            
             if (Physics.Raycast(ray, out RaycastHit hit, 200))
             {
                 Vector3 dir = (hit.point - transform.position).normalized;
@@ -253,7 +283,15 @@ public class PlayerScript : MonoBehaviour
             }
 
             // While choosing where to attack, show where we will be attacking
-            attackAbility.DrawRangeIndicator();
+            if (selectedAbility == attackAbility)
+            {
+                attackAbility.DrawRangeIndicator();
+            }
+            else if (selectedAbility == rangedBeamAbility)
+            {
+                rangedBeamAbility.DrawRangeIndicator();
+            }
+            
             
         }
         else
@@ -264,7 +302,14 @@ public class PlayerScript : MonoBehaviour
             // Set player to attack animate
 
             // Draw a range indicator based on weapon attack type
-            attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+            if (selectedAbility == attackAbility)
+            {
+                attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+            }
+            else if (selectedAbility == rangedBeamAbility)
+            {
+                rangedBeamAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
+            }
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
@@ -276,7 +321,7 @@ public class PlayerScript : MonoBehaviour
             {
                 if (attackAbility.ShouldEnemyInPositionBeDamaged(enemies[i].transform.position))
                 {
-                    //Debug.Log("DAMAGED ENEMIES HERE.");
+                    Debug.Log("DAMAGED ENEMIES HERE.");
                     enemies[i].TakeDamage(Mathf.RoundToInt(attackAbility.magnitude), enemies[i].transform.position);
                 }
             }
@@ -346,6 +391,7 @@ public class PlayerScript : MonoBehaviour
         navmeshAgent.enabled = false;
 
         // Cast time anim
+        running = false;
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
@@ -368,30 +414,40 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hit, 200))
+                if (Physics.Raycast(ray, out RaycastHit hit, 500))
                 {
                     if (IsValidSlowTarget(hit.collider.gameObject))
                     {
                         // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
                         // making it unviable to slow down both types of objects initiativeSpeeds.
                         // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
-                        
+
                         // This isn't impossible to do, however it is just a nuisance to implement the effect
                         // of the ability by doing multiple checks here and in the debuff part of the abilities section,
                         // and possible tweaking SlowAbility a little bit
-                        slowAbility.targettedEnemy = hit.collider.gameObject.GetComponent<EnemyScript>();
-                        isTakingAction = false;
-                        isExecutingAbility = true;
 
-                        navmeshAgent.enabled = false;
+                        // Check if target is in range
+                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                        if (distanceFromPlayer <= selectedAbility.range)
+                        {
+                            slowAbility.targettedEnemy = hit.collider.gameObject.GetComponent<EnemyScript>();
+                            isTakingAction = false;
+                            isExecutingAbility = true;
+
+                            navmeshAgent.enabled = false;
+                        }
                     }
+                    
                 }
             }
+
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
         }
         // We have a target
         else
         {
             timeSpentDoingAction += Time.fixedDeltaTime;
+            running = false;
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
@@ -409,19 +465,26 @@ public class PlayerScript : MonoBehaviour
 
         if (isTakingAction)
         {
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Input.GetMouseButtonDown(0))
             {
                 if (Physics.Raycast(ray, out RaycastHit hit, 400))
                 {
-                    blinkAbility.blinkLocation = hit.point;
-                    blinkAbility.blinkLocation.y += 0.5f;
+                    // Is target in range
+                    float distanceFromPlayer = Vector3.Distance(hit.point, transform.position);
+                    if (distanceFromPlayer <= selectedAbility.range)
+                    {
+                        blinkAbility.blinkLocation = hit.point;
+                        blinkAbility.blinkLocation.y += 0.5f;
 
-                    isTakingAction = false;
-                    isExecutingAbility = true;
+                        isTakingAction = false;
+                        isExecutingAbility = true;
 
-                    navmeshAgent.enabled = false;
+                        navmeshAgent.enabled = false;
+                    }
                 }
             }
         }
@@ -430,6 +493,7 @@ public class PlayerScript : MonoBehaviour
             timeSpentDoingAction += Time.fixedDeltaTime;
 
             // Animate cast-time
+            running = false;
         }
         
 
@@ -450,6 +514,8 @@ public class PlayerScript : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (initiativeSwapAbility.target1 == null)
         {
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+
             if (Input.GetMouseButtonDown(0))
             {
                 if (Physics.Raycast(ray, out RaycastHit hit, 400))
@@ -457,14 +523,21 @@ public class PlayerScript : MonoBehaviour
                     // Check validity of target
                     if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
                     {
-                        initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
-                        Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
+                        // Is target in range
+                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                        if (distanceFromPlayer <= selectedAbility.range)
+                        {
+                            initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
+                            Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
+                        }
                     }
                 }
             }
         }
         else if (initiativeSwapAbility.target2 == null)
         {
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+
             if (Input.GetMouseButtonDown(0))
             {
                 if (Physics.Raycast(ray, out RaycastHit hit, 400))
@@ -472,12 +545,17 @@ public class PlayerScript : MonoBehaviour
                     // Check validity of target
                     if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
                     {
-                        initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
-                        Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
+                        // Is target in range
+                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                        if (distanceFromPlayer <= selectedAbility.range)
+                        {
+                            initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
+                            Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
 
-                        isTakingAction = false;
-                        isExecutingAbility = true;
-                        navmeshAgent.enabled = false;
+                            isTakingAction = false;
+                            isExecutingAbility = true;
+                            navmeshAgent.enabled = false;
+                        }
                     }
                 }
             }
@@ -485,6 +563,7 @@ public class PlayerScript : MonoBehaviour
         else
         {
             timeSpentDoingAction += Time.fixedDeltaTime;
+            running = false;
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
@@ -511,6 +590,7 @@ public class PlayerScript : MonoBehaviour
         // Do we have a First target?
         if (netherSwapAbility.target1 == null)
         {
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
             if (Input.GetMouseButtonDown(0))
             {
                 if (Physics.Raycast(ray, out RaycastHit hit, 400))
@@ -518,9 +598,14 @@ public class PlayerScript : MonoBehaviour
                     // Check validity of target
                     if (IsValidNetherSwapTarget(hit.collider.gameObject))
                     {
-                        // Set First target
-                        netherSwapAbility.target1 = hit.collider.gameObject.transform;
-                        Debug.Log("PlayerScript: NetherSwap Target 1: SET");
+                        // Is target in range
+                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                        if (distanceFromPlayer <= selectedAbility.range)
+                        {
+                            // Set First target
+                            netherSwapAbility.target1 = hit.collider.gameObject.transform;
+                            Debug.Log("PlayerScript: NetherSwap Target 1: SET");
+                        }
                     }
                 }
             }
@@ -528,6 +613,7 @@ public class PlayerScript : MonoBehaviour
         // Do we have a Second target?
         else if (netherSwapAbility.target2 == null)
         {
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
             if (Input.GetMouseButtonDown(0))
             {
                 if (Physics.Raycast(ray, out RaycastHit hit, 400))
@@ -535,13 +621,18 @@ public class PlayerScript : MonoBehaviour
                     // Check validity of target
                     if (IsValidNetherSwapTarget(hit.collider.gameObject))
                     {
-                        // Set Second target
-                        netherSwapAbility.target2 = hit.collider.gameObject.transform;
-                        Debug.Log("PlayerScript: NetherSwap Target 2: SET");
+                        // Is target in range
+                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                        if (distanceFromPlayer <= selectedAbility.range)
+                        {
+                            // Set Second target
+                            netherSwapAbility.target2 = hit.collider.gameObject.transform;
+                            Debug.Log("PlayerScript: NetherSwap Target 2: SET");
 
-                        isTakingAction = false;
-                        isExecutingAbility = true;
-                        navmeshAgent.enabled = false;
+                            isTakingAction = false;
+                            isExecutingAbility = true;
+                            navmeshAgent.enabled = false;
+                        }
                     }
                 }
             }
@@ -555,6 +646,7 @@ public class PlayerScript : MonoBehaviour
                 timeSpentDoingAction += Time.fixedDeltaTime;
 
                 // Animate cast time
+                running = false;
 
                 if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
                 {
@@ -596,6 +688,8 @@ public class PlayerScript : MonoBehaviour
 
     void Wait()
     {
+        playerWaited = true;
+
         timeSpentDoingAction += Time.fixedDeltaTime;
 
         actionSelection = true;
@@ -624,6 +718,7 @@ public class PlayerScript : MonoBehaviour
             switch (selectedAbility.type)
             {
                 case Ability.Type.WeaponAttack:
+
                     Attack();
                     break;
 
@@ -718,6 +813,11 @@ public class PlayerScript : MonoBehaviour
         {
             Debug.Log("PlayerScript: Attempted to select Wait");
             SelectAbility(waitID);
+        }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("PlayerScript: Attempted to select RangedBeam");
+            SelectAbility(rangedBeamID);
         }
     }
 
@@ -864,8 +964,21 @@ public class PlayerScript : MonoBehaviour
             switch (child.GetComponent<Ability>().type)
             {
                 case Ability.Type.WeaponAttack:
-                    attackID = abilityId;
-                    attackAbility = (PlayerAttack)child.GetComponent<Ability>();
+                    PlayerAttack tempAttack = (PlayerAttack)child.GetComponent<Ability>();
+                    switch (tempAttack.attackType)
+                    {
+                        case PlayerAttack.AttackType.Cone:
+                            attackID = abilityId;
+                            attackAbility = tempAttack;
+                            break;
+
+                        case PlayerAttack.AttackType.Forward:
+                            rangedBeamID = abilityId;
+                            rangedBeamAbility = tempAttack;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
 
                 case Ability.Type.Defend:
