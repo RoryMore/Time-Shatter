@@ -21,29 +21,35 @@ public class PlayerAbilitiyUI : MonoBehaviour
 	//Defend
 	public Image backgroundWhiteDefend;
 	public Image mainIconDefend;
+    bool defendCD;
 
 	//Haste
 	public Image backgroundHaste;
 	public Image iconHaste;
+    bool hasteCD;
 
-	//Slow
-	public Image backgroundSlow;
+    //Slow
+    public Image backgroundSlow;
 	public Image iconSlow;
+    bool slowCD;
 
-	//Blink
-	public Image backgroundBlink;
+    //Blink
+    public Image backgroundBlink;
 	public Image iconBlink;
+    bool blinkCD;
 
-	//NetherSwap
-	public Image backgroundNSwap;
+    //NetherSwap
+    public Image backgroundNSwap;
 	public Image iconNSwap;
+    bool netherCD;
 
-	//InitiativeSwap
-	public Image backgroundISwap;
+    //InitiativeSwap
+    public Image backgroundISwap;
 	public Image iconISwap;
+    bool initiativeCD;
 
 
-	bool gotAbility = false;
+    bool gotAbility = false;
 
 	public float testCDPercent;
 
@@ -101,6 +107,9 @@ public class PlayerAbilitiyUI : MonoBehaviour
 			backgroundISwap.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
 			iconISwap.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
 		}
+
+
+
 	}
 
 	//when white image == 1 is when on max cooldown
@@ -110,5 +119,17 @@ public class PlayerAbilitiyUI : MonoBehaviour
 		return (1.0f - (float)turnsCD / (float)CD);
 		//return (1.0f - (float)defendAbility.turnsBeenOnCooldown / (float)defendAbility.cooldown);
 	}
+
+    bool CheckIfOnCooldown(float turnsCD, float CD)
+    {
+        if (turnsCD == CD)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 		   
 }
