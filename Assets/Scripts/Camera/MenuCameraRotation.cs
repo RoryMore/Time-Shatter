@@ -21,7 +21,7 @@ public class MenuCameraRotation : MonoBehaviour
     {
         Vector3 angles = transform.eulerAngles;
         x = angles.x;
-        y = focus.position.y * 0.5f;
+        y = focus.position.y * 1.725f;
     }
 
     // Update is called once per frame

@@ -93,8 +93,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20010bd794f8d8b4bba3b1f2b03b67ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quality: 15
   indicatorMaterial: {fileID: 2100000, guid: d46f987fcc2b5c548832810edbd5ea9c, type: 2}
+--- !u!136 &203492524909310897
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3900139872837363944}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &4972529905574195681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -102,16 +115,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
+    - target: {fileID: -6057140222963153312, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
         type: 3}
-      propertyPath: m_Name
-      value: RangedEnemyBeta Variant
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
-        type: 3}
-      propertyPath: m_TagString
-      value: EnemyTeleSlowInitswappable
-      objectReference: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2d4eaa02e236bc64cb1aad6dfd0b497d, type: 2}
     - target: {fileID: -4216859302048453862, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -167,11 +175,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -6057140222963153312, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
+    - target: {fileID: -927199367670048503, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
         type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 2d4eaa02e236bc64cb1aad6dfd0b497d, type: 2}
+      propertyPath: m_Name
+      value: RangedEnemyBeta Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 7503f1f6a12547e49ab9860c00d3f3ef,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyTeleSlowInitswappable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7503f1f6a12547e49ab9860c00d3f3ef, type: 3}
 --- !u!1 &3900139872837363944 stripped
