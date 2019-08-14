@@ -1130,7 +1130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617ffeb7e5b8ba2448c17da705f8aded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  focus: {fileID: 1039415995}
+  originalFocalPoint: {fileID: 1039415995}
   xSpeed: 60
   ySpeed: 60
   yMinAngle: 30
@@ -1141,9 +1141,9 @@ MonoBehaviour:
   entryPositions: []
   invertY: 1
   deathZoomMinDistance: 6
-  deathZoomStartLerpSpeed: 0.4
+  deathZoomStartLerpSpeed: 0.2
   deathZoomEndLerpSpeed: 0.02
-  deathZoomStartToEndTime: 2
+  deathZoomStartToEndTime: 5
 --- !u!1 &1199552836
 GameObject:
   m_ObjectHideFlags: 0
@@ -2400,6 +2400,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 176073995}
     m_Modifications:
+    - target: {fileID: 2709648689663942311, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
+        type: 3}
+      propertyPath: m_Name
+      value: BlackFade
+      objectReference: {fileID: 0}
     - target: {fileID: 2709648689663942308, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2504,11 +2509,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2709648689663942311, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
-        type: 3}
-      propertyPath: m_Name
-      value: BlackFade
       objectReference: {fileID: 0}
     - target: {fileID: 2709648689663942312, guid: cdcb8b47be7a8794cb1c5ea2c2bee8fe,
         type: 3}

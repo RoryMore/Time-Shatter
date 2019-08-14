@@ -5,7 +5,8 @@ using UnityEngine;
 public class OurCameraController : MonoBehaviour
 {
     // Where we the camera is focused. Where we are looking
-    public Transform focus = null;
+    public Transform originalFocalPoint = null;
+    Transform focus = null;
 
     public float xSpeed = 60.0f;
     public float ySpeed = 60.0f;
@@ -48,6 +49,8 @@ public class OurCameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        focus = originalFocalPoint;
+
         Vector3 angles = transform.eulerAngles;
         x = 0.0f;
         y = angles.y;
@@ -135,6 +138,11 @@ public class OurCameraController : MonoBehaviour
                 transform.position = Vector3.Slerp(transform.position, position, positionLerpSpeed);
             }
         }
+    }
+
+    public void ResetFocus()
+    {
+        focus = originalFocalPoint;
     }
 
     public void SetFocus(Transform t)
