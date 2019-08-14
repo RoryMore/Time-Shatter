@@ -3534,6 +3534,7 @@ GameObject:
   - component: {fileID: 6084940474786261797}
   - component: {fileID: 6299417080921586657}
   - component: {fileID: 6630713726347660966}
+  - component: {fileID: 2054393668156358694}
   m_Layer: 0
   m_Name: MeleeEnemyBeta
   m_TagString: EnemyTeleSlowInitswappable
@@ -3698,6 +3699,19 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!65 &2054393668156358694
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123214128917312585}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 4.290185, z: 1.3444004}
+  m_Center: {x: 0, y: 1.6450922, z: -0.1722002}
 --- !u!1 &8286401315584801714
 GameObject:
   m_ObjectHideFlags: 0
