@@ -16,7 +16,7 @@ public class MeleeEnemyScript : EnemyScript
     {
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
-        hitParticles = GetComponentInChildren<ParticleSystem>();
+        hitParticles = GetComponent<ParticleSystem>();
 
         nav = GetComponent<NavMeshAgent>();
 
@@ -39,18 +39,20 @@ public class MeleeEnemyScript : EnemyScript
 
     void Update()
     {
-        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        if (isDead != true)
         {
-            Movement();
-            MeleeAttack();
-            Turn();
-        }
-        if (Input.GetKeyDown("g") == true)
-        {
-            print("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY");
-            TakeDamage(10, this.gameObject.transform.position);
-        }
+            if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+            {
+                Movement();
+                MeleeAttack();
+                Turn();
+            }
+            if (Input.GetKeyDown("g") == true)
+            {
 
+                TakeDamage(10, transform.position);
+            }
+        }
 
     }
 

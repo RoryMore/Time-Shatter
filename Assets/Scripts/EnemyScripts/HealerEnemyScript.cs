@@ -23,7 +23,7 @@ public class HealerEnemyScript : EnemyScript
     {
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
-        hitParticles = GetComponentInChildren<ParticleSystem>();
+        hitParticles = GetComponent<ParticleSystem>();
         
         nav = GetComponent<NavMeshAgent>();
 
@@ -54,12 +54,15 @@ public class HealerEnemyScript : EnemyScript
     // Update is called once per frame
     void Update()
     {
-        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        if (isDead != true)
         {
-            Movement();
-            Heal();
-            Attack();
-            Turn();
+            if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+            {
+                Movement();
+                Heal();
+                Attack();
+                Turn();
+            }
         }
     }
 

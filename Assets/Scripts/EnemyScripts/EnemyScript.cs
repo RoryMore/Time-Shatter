@@ -32,6 +32,7 @@ public class EnemyScript : MonoBehaviour
     //public CapsuleCollider capsuleCollider;
 
     public NavMeshAgent nav;
+    
 
     public PlayerScript player;
     public EnemyManager enemyManager;
@@ -74,14 +75,17 @@ public class EnemyScript : MonoBehaviour
         if (isDead)
             return;
 
+        hitParticles.transform.position = hitPoint;
+        hitParticles.Play();
+
         //Audio Cue
         //enemyAudio.Play();
 
         currentHealth -= amount;
         enemyManager.healList.Add(this.gameObject);
+        anim.SetTrigger("damaged");
 
-        //hitParticles.transform.position = hitPoint;
-        //hitParticles.Play();
+
 
         
 
@@ -107,6 +111,8 @@ public class EnemyScript : MonoBehaviour
 
         anim.SetTrigger("Dead");
         enemyManager.healList.Remove(this.gameObject);
+        enemyManager.initiativeList.Remove(this.gameObject);
+        nav.enabled = false;
 
         //enemyAudio.clip = deathClip;
         //enemyAudio.Play();

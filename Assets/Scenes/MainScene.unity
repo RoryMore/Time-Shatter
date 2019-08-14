@@ -508,6 +508,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 1424856428, guid: 6b13c45d89ef9cf4e9302a84d9bef1f4, type: 3}
+      propertyPath: controlMenu
+      value: 
+      objectReference: {fileID: 842540223}
     - target: {fileID: 3780400424581042958, guid: 6b13c45d89ef9cf4e9302a84d9bef1f4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -658,10 +662,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1424856428, guid: 6b13c45d89ef9cf4e9302a84d9bef1f4, type: 3}
-      propertyPath: controlMenu
-      value: 
-      objectReference: {fileID: 842540223}
     - target: {fileID: 7456021388566243712, guid: 6b13c45d89ef9cf4e9302a84d9bef1f4,
         type: 3}
       propertyPath: m_IsActive

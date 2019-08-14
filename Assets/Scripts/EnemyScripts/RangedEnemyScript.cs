@@ -22,7 +22,7 @@ public class RangedEnemyScript : EnemyScript
     {
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
-        hitParticles = GetComponentInChildren<ParticleSystem>();
+        hitParticles = GetComponent<ParticleSystem>();
         
         nav = GetComponent<NavMeshAgent>();
 
@@ -49,13 +49,17 @@ public class RangedEnemyScript : EnemyScript
 
     void Update()
     {
-        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        if (isDead != true)
         {
-            
-            Turn();
-            Movement();
-            RangedAttack();
 
+            if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+            {
+
+                Turn();
+                Movement();
+                RangedAttack();
+
+            }
         }
 
     }
