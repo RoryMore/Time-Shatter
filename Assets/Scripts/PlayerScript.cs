@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PlayerScript : MonoBehaviour
 {
     public float maxHealth = 100.0f;
-    public float currentHealth;
+    public float currentHealth = 1.0f;
 
     float baseMoveSpeed;
     float currentMoveSpeed;
@@ -67,7 +67,7 @@ public class PlayerScript : MonoBehaviour
     PlayerAttack rangedBeamAbility;
     // -------------------------------------------------------
 
-    bool isDead;
+    public bool isDead;
     bool damaged;
     //For animation
     public bool running = false;
@@ -101,6 +101,12 @@ public class PlayerScript : MonoBehaviour
 
         abilityRangeCircle = GetComponent<ConeRangeIndicator>();
         abilityRangeCircle.Init(180.0f);
+
+        currentHealth = maxHealth;
+
+        initiativeSpeed = baseInitiativeSpeed;
+
+        isDead = false;
     }
 
     void Awake()
@@ -110,9 +116,7 @@ public class PlayerScript : MonoBehaviour
         Debug.Log("Size of Enemies Array: " + enemies.Length);
         
         //playerAudio = GetComponent <AudioSource> ();
-        currentHealth = maxHealth;
-
-        initiativeSpeed = baseInitiativeSpeed;
+        
 
         //isTakingAction = true;
         //actionSelection = true;
@@ -128,6 +132,8 @@ public class PlayerScript : MonoBehaviour
             PopulateEnemiesList();
             Debug.Log("Size of Enemies Array: " + enemies.Length);
         }
+
+        CheckIsDead();
 
         if (isDead)
         {
@@ -160,6 +166,19 @@ public class PlayerScript : MonoBehaviour
     void FixedUpdate()
     {
 
+    }
+
+    void CheckIsDead()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        if (currentHealth <= 0.0f)
+        {
+            isDead = true;
+        }
     }
 
     void CheckDamage()
@@ -232,7 +251,7 @@ public class PlayerScript : MonoBehaviour
 
         //playerAudio.Play ();
 
-        if (currentHealth <= 0 && !isDead)
+        if (currentHealth <= 0.0f)
         {
             isDead = true;
         }
@@ -256,12 +275,12 @@ public class PlayerScript : MonoBehaviour
         //playerAudio.Play ();
 
         // Make the player stop over a short amount of time. Can just make the player stop in their tracks immediately, but smoothing things tend to be nicer
-        float finalDestX = Mathf.Lerp(navmeshAgent.destination.x, transform.position.x, 0.5f * Time.fixedDeltaTime);
-        float finalDestY = Mathf.Lerp(navmeshAgent.destination.y, transform.position.y, 0.5f * Time.fixedDeltaTime);
-        float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, 0.5f * Time.fixedDeltaTime);
+        float finalDestX = Mathf.Lerp(navmeshAgent.destination.x, transform.position.x, Time.unscaledDeltaTime / 0.5f);
+        float finalDestY = Mathf.Lerp(navmeshAgent.destination.y, transform.position.y, Time.unscaledDeltaTime / 0.5f);
+        float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, Time.unscaledDeltaTime / 0.5f);
 
         navmeshAgent.destination = new Vector3(finalDestX, finalDestY, finalDestZ);
-        navmeshAgent.speed = Mathf.Lerp(navmeshAgent.speed, 0.0f, 0.5f * Time.fixedDeltaTime);
+        navmeshAgent.speed = Mathf.Lerp(navmeshAgent.speed, 0.0f, Time.unscaledDeltaTime / 0.5f);
 
     }
 
