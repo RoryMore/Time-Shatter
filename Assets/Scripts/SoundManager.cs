@@ -23,8 +23,7 @@ public class SoundManager : MonoBehaviour
 		BATTLE,
 		SLOWMOTION,
 		MAINMENU,
-		START,
-        PAUSED
+		START
 	}
 
 	public MusicState state;
@@ -71,13 +70,6 @@ public class SoundManager : MonoBehaviour
 					mainMenuMusic.volume = 0.7f;
 					break;
 				}
-            /*case MusicState.PAUSED:
-                {
-                    MuteAllAudio();
-                    battleAmbient.volume = Mathf.Lerp(battleAmbient.volume, 1.7f, Time.deltaTime / 0.2f);
-                    //battleMusic.pitch = Mathf.Lerp(battleMusic.pitch, 0.8f, Time.deltaTime / 0.05f);
-                    break;
-                }*/
 		}
     }
 
