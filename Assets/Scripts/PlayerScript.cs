@@ -8,9 +8,10 @@ using UnityEngine.UI;
 public class PlayerScript : MonoBehaviour
 {
     public float maxHealth = 100.0f;
-    public float currentHealth;
+    public float currentHealth = 1.0f;
 
     float baseMoveSpeed;
+    float currentMoveSpeed;
     // Current moveSpeed is the navmeshAgent.speed variable
 
     public float baseInitiativeSpeed = 3.0f;
@@ -66,7 +67,7 @@ public class PlayerScript : MonoBehaviour
     PlayerAttack rangedBeamAbility;
     // -------------------------------------------------------
 
-    bool isDead;
+    public bool isDead;
     bool damaged;
     //For animation
     public bool running = false;
@@ -82,12 +83,15 @@ public class PlayerScript : MonoBehaviour
     // This is to show max distances you can select targets
     ConeRangeIndicator abilityRangeCircle;
 
+    public AnimationClip meleeAnimClip;
+
     // Start is called before the first frame update
     void Start()
     {
         navmeshAgent = GetComponent<NavMeshAgent>();
 
         baseMoveSpeed = navmeshAgent.speed;
+        currentMoveSpeed = navmeshAgent.speed;
 
         turnManager = FindObjectOfType<turnManageScript>();
 
@@ -97,6 +101,12 @@ public class PlayerScript : MonoBehaviour
 
         abilityRangeCircle = GetComponent<ConeRangeIndicator>();
         abilityRangeCircle.Init(180.0f);
+
+        currentHealth = maxHealth;
+
+        initiativeSpeed = baseInitiativeSpeed;
+
+        isDead = false;
     }
 
     void Awake()
@@ -106,14 +116,12 @@ public class PlayerScript : MonoBehaviour
         Debug.Log("Size of Enemies Array: " + enemies.Length);
         
         //playerAudio = GetComponent <AudioSource> ();
-        currentHealth = maxHealth;
+        
 
-        initiativeSpeed = baseInitiativeSpeed;
-
-		//isTakingAction = true;
-		//actionSelection = true;
-		//SelectAbility(attackID);
-		finishedLoading = true;
+        //isTakingAction = true;
+        //actionSelection = true;
+        //SelectAbility(attackID);
+        finishedLoading = true;
     }
 
     private void Update()
@@ -124,6 +132,8 @@ public class PlayerScript : MonoBehaviour
             PopulateEnemiesList();
             Debug.Log("Size of Enemies Array: " + enemies.Length);
         }
+
+        CheckIsDead();
 
         if (isDead)
         {
@@ -143,6 +153,8 @@ public class PlayerScript : MonoBehaviour
                 }
                 CheckIsRunning();
                 anim.SetBool("isRunning", running);
+                anim.SetFloat("doingAction", timeSpentDoingAction);
+                
                 //TestTakingDamage();
                 CheckDamage();
             }
@@ -156,17 +168,39 @@ public class PlayerScript : MonoBehaviour
 
     }
 
+    void CheckIsDead()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        if (currentHealth <= 0.0f)
+        {
+            isDead = true;
+        }
+        else
+        {
+            isDead = false;
+        }
+    }
+
     void CheckDamage()
     {
         //Damage related aspect
         //Any visual damage cues here
+        anim.SetBool("gotHit", damaged);
+        if (damaged)
+        {
+            damaged = false;
+        }
     }
 
     void CheckIsRunning()
     {
         //Animation stuff
-        if (navmeshAgent.enabled == true)
-        {
+        //if (navmeshAgent.enabled == true)
+        //{
             if (navmeshAgent.remainingDistance <= navmeshAgent.stoppingDistance)
             {
                 running = false;
@@ -175,7 +209,7 @@ public class PlayerScript : MonoBehaviour
             {
                 running = true;
             }
-        }
+        //}
     }
 
     void Movement()
@@ -221,7 +255,7 @@ public class PlayerScript : MonoBehaviour
 
         //playerAudio.Play ();
 
-        if (currentHealth <= 0 && !isDead)
+        if (currentHealth <= 0.0f)
         {
             isDead = true;
         }
@@ -245,12 +279,12 @@ public class PlayerScript : MonoBehaviour
         //playerAudio.Play ();
 
         // Make the player stop over a short amount of time. Can just make the player stop in their tracks immediately, but smoothing things tend to be nicer
-        float finalDestX = Mathf.Lerp(navmeshAgent.destination.x, transform.position.x, 0.5f * Time.fixedDeltaTime);
-        float finalDestY = Mathf.Lerp(navmeshAgent.destination.y, transform.position.y, 0.5f * Time.fixedDeltaTime);
-        float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, 0.5f * Time.fixedDeltaTime);
+        float finalDestX = Mathf.Lerp(navmeshAgent.destination.x, transform.position.x, Time.unscaledDeltaTime / 0.5f);
+        float finalDestY = Mathf.Lerp(navmeshAgent.destination.y, transform.position.y, Time.unscaledDeltaTime / 0.5f);
+        float finalDestZ = Mathf.Lerp(navmeshAgent.destination.z, transform.position.z, Time.unscaledDeltaTime / 0.5f);
 
         navmeshAgent.destination = new Vector3(finalDestX, finalDestY, finalDestZ);
-        navmeshAgent.speed = Mathf.Lerp(navmeshAgent.speed, 0.0f, 0.5f * Time.fixedDeltaTime);
+        navmeshAgent.speed = Mathf.Lerp(navmeshAgent.speed, 0.0f, Time.unscaledDeltaTime / 0.5f);
 
     }
 
@@ -263,6 +297,7 @@ public class PlayerScript : MonoBehaviour
                 isTakingAction = false;
                 isExecutingAbility = true;
 
+                navmeshAgent.speed = 0.0f;
                 navmeshAgent.enabled = false;
                 Debug.Log("PlayerScript: Attack Action rotation chosen");
                 running = false;
@@ -279,7 +314,7 @@ public class PlayerScript : MonoBehaviour
                 lookRotation.x = transform.rotation.x;
                 lookRotation.z = transform.rotation.z;
                 
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, ((Time.deltaTime / 0.02f) * (1.0f + (1.0f - Time.timeScale))));
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, (Time.fixedDeltaTime / 0.25f));
             }
 
             // While choosing where to attack, show where we will be attacking
@@ -304,6 +339,9 @@ public class PlayerScript : MonoBehaviour
             // Draw a range indicator based on weapon attack type
             if (selectedAbility == attackAbility)
             {
+                float animSpeed = meleeAnimClip.length;
+                anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+                anim.SetBool("meleeAttack", true);
                 attackAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
             }
             else if (selectedAbility == rangedBeamAbility)
@@ -327,6 +365,7 @@ public class PlayerScript : MonoBehaviour
             }
 
             // Stop player attack animation
+            anim.SetBool("meleeAttack", false);
             EndAction();
         }
     }
@@ -342,7 +381,8 @@ public class PlayerScript : MonoBehaviour
         //navmeshAgent.enabled = false;
         if (isTakingAction && !isExecutingAbility)
         {
-            navmeshAgent.speed = navmeshAgent.speed * 0.4f;
+            currentMoveSpeed = currentMoveSpeed * 0.4f;
+            navmeshAgent.speed = currentMoveSpeed;
         }
         
         actionSelection = true;
@@ -368,6 +408,7 @@ public class PlayerScript : MonoBehaviour
     void Item()
     {
         timeSpentDoingAction += Time.fixedDeltaTime;
+        navmeshAgent.speed = 0.0f;
         navmeshAgent.enabled = false;
         actionSelection = true;
 
@@ -388,6 +429,7 @@ public class PlayerScript : MonoBehaviour
 
         isTakingAction = false;
         isExecutingAbility = true;
+        navmeshAgent.speed = 0.0f;
         navmeshAgent.enabled = false;
 
         // Cast time anim
@@ -411,37 +453,59 @@ public class PlayerScript : MonoBehaviour
 
         if (slowAbility.targettedEnemy == null)
         {
-            if (Input.GetMouseButtonDown(0))
+            // Check if there are valid targets within range
+            int targetsInRange = 0;
+            for (int i = 0; i < enemies.Length; i++)
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hit, 500))
+                float distanceFromPlayer = Vector3.Distance(enemies[i].transform.position, transform.position);
+                if (distanceFromPlayer <= selectedAbility.range)
                 {
-                    if (IsValidSlowTarget(hit.collider.gameObject))
+                    if (IsValidSlowTarget(enemies[i].gameObject))
                     {
-                        // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
-                        // making it unviable to slow down both types of objects initiativeSpeeds.
-                        // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
-
-                        // This isn't impossible to do, however it is just a nuisance to implement the effect
-                        // of the ability by doing multiple checks here and in the debuff part of the abilities section,
-                        // and possible tweaking SlowAbility a little bit
-
-                        // Check if target is in range
-                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                        if (distanceFromPlayer <= selectedAbility.range)
-                        {
-                            slowAbility.targettedEnemy = hit.collider.gameObject.GetComponent<EnemyScript>();
-                            isTakingAction = false;
-                            isExecutingAbility = true;
-
-                            navmeshAgent.enabled = false;
-                        }
+                        targetsInRange++;
                     }
-                    
                 }
             }
+            if (targetsInRange <= 0)
+            {
+                selectedAbility = null;
+            }
 
-            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+            if (selectedAbility != null)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    if (Physics.Raycast(ray, out RaycastHit hit, 500))
+                    {
+                        if (IsValidSlowTarget(hit.collider.gameObject))
+                        {
+                            // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
+                            // making it unviable to slow down both types of objects initiativeSpeeds.
+                            // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
+
+                            // This isn't impossible to do, however it is just a nuisance to implement the effect
+                            // of the ability by doing multiple checks here and in the debuff part of the abilities section,
+                            // and possible tweaking SlowAbility a little bit
+
+                            // Check if target is in range
+                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                            if (distanceFromPlayer <= selectedAbility.range)
+                            {
+                                slowAbility.targettedEnemy = hit.collider.gameObject.GetComponent<EnemyScript>();
+                                isTakingAction = false;
+                                isExecutingAbility = true;
+
+                                navmeshAgent.speed = 0.0f;
+                                navmeshAgent.enabled = false;
+                            }
+                        }
+
+                    }
+                }
+
+                abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+            }
         }
         // We have a target
         else
@@ -483,6 +547,7 @@ public class PlayerScript : MonoBehaviour
                         isTakingAction = false;
                         isExecutingAbility = true;
 
+                        navmeshAgent.speed = 0.0f;
                         navmeshAgent.enabled = false;
                     }
                 }
@@ -514,21 +579,42 @@ public class PlayerScript : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (initiativeSwapAbility.target1 == null)
         {
-            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
-
-            if (Input.GetMouseButtonDown(0))
+            // Check if there are valid targets within range
+            int targetsInRange = 0;
+            for (int i = 0; i < enemies.Length; i++)
             {
-                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                float distanceFromPlayer = Vector3.Distance(enemies[i].transform.position, transform.position);
+                if (distanceFromPlayer <= selectedAbility.range)
                 {
-                    // Check validity of target
-                    if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+                    if (IsValidInitiativeSwapTarget(enemies[i].gameObject))
                     {
-                        // Is target in range
-                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                        if (distanceFromPlayer <= selectedAbility.range)
+                        targetsInRange++;
+                    }
+                }
+            }
+            if (targetsInRange <= 2)
+            {
+                selectedAbility = null;
+            }
+
+            if (selectedAbility != null)
+            {
+                abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                    {
+                        // Check validity of target
+                        if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
                         {
-                            initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
-                            Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
+                            // Is target in range
+                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                            if (distanceFromPlayer <= selectedAbility.range)
+                            {
+                                initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
+                                Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
+                            }
                         }
                     }
                 }
@@ -536,25 +622,50 @@ public class PlayerScript : MonoBehaviour
         }
         else if (initiativeSwapAbility.target2 == null)
         {
-            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
-
-            if (Input.GetMouseButtonDown(0))
+            // Check if there are valid targets within range
+            int targetsInRange = 0;
+            for (int i = 0; i < enemies.Length; i++)
             {
-                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                float distanceFromPlayer = Vector3.Distance(enemies[i].transform.position, transform.position);
+                if (distanceFromPlayer <= selectedAbility.range)
                 {
-                    // Check validity of target
-                    if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+                    if (IsValidInitiativeSwapTarget(enemies[i].gameObject))
                     {
-                        // Is target in range
-                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                        if (distanceFromPlayer <= selectedAbility.range)
+                        if (enemies[i] != initiativeSwapAbility.target1)
                         {
-                            initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
-                            Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
+                            targetsInRange++;
+                        }
+                    }
+                }
+            }
+            if (targetsInRange <= 0)
+            {
+                selectedAbility = null;
+            }
 
-                            isTakingAction = false;
-                            isExecutingAbility = true;
-                            navmeshAgent.enabled = false;
+            if (selectedAbility != null)
+            {
+                abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                    {
+                        // Check validity of target
+                        if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+                        {
+                            // Is target in range
+                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                            if (distanceFromPlayer <= selectedAbility.range)
+                            {
+                                initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
+                                Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
+
+                                isTakingAction = false;
+                                isExecutingAbility = true;
+                                navmeshAgent.speed = 0.0f;
+                                navmeshAgent.enabled = false;
+                            }
                         }
                     }
                 }
@@ -590,21 +701,42 @@ public class PlayerScript : MonoBehaviour
         // Do we have a First target?
         if (netherSwapAbility.target1 == null)
         {
-            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
-            if (Input.GetMouseButtonDown(0))
+            // Check if there are valid targets within range
+            int targetsInRange = 0;
+            for (int i = 0; i < enemies.Length; i++)
             {
-                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                float distanceFromPlayer = Vector3.Distance(enemies[i].transform.position, transform.position);
+                if (distanceFromPlayer <= selectedAbility.range)
                 {
-                    // Check validity of target
-                    if (IsValidNetherSwapTarget(hit.collider.gameObject))
+                    if (IsValidNetherSwapTarget(enemies[i].gameObject))
                     {
-                        // Is target in range
-                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                        if (distanceFromPlayer <= selectedAbility.range)
+                        targetsInRange++;
+                    }
+                }
+            }
+            if (targetsInRange <= 2)
+            {
+                selectedAbility = null;
+            }
+
+            if (selectedAbility != null)
+            {
+                abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                    {
+                        // Check validity of target
+                        if (IsValidNetherSwapTarget(hit.collider.gameObject))
                         {
-                            // Set First target
-                            netherSwapAbility.target1 = hit.collider.gameObject.transform;
-                            Debug.Log("PlayerScript: NetherSwap Target 1: SET");
+                            // Is target in range
+                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                            if (distanceFromPlayer <= selectedAbility.range)
+                            {
+                                // Set First target
+                                netherSwapAbility.target1 = hit.collider.gameObject.transform;
+                                Debug.Log("PlayerScript: NetherSwap Target 1: SET");
+                            }
                         }
                     }
                 }
@@ -613,25 +745,50 @@ public class PlayerScript : MonoBehaviour
         // Do we have a Second target?
         else if (netherSwapAbility.target2 == null)
         {
-            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
-            if (Input.GetMouseButtonDown(0))
+            // Check if there are valid targets within range
+            int targetsInRange = 0;
+            for (int i = 0; i < enemies.Length; i++)
             {
-                if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                float distanceFromPlayer = Vector3.Distance(enemies[i].transform.position, transform.position);
+                if (distanceFromPlayer <= selectedAbility.range)
                 {
-                    // Check validity of target
-                    if (IsValidNetherSwapTarget(hit.collider.gameObject))
+                    if (IsValidNetherSwapTarget(enemies[i].gameObject))
                     {
-                        // Is target in range
-                        float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                        if (distanceFromPlayer <= selectedAbility.range)
+                        if (enemies[i].transform != netherSwapAbility.target1)
                         {
-                            // Set Second target
-                            netherSwapAbility.target2 = hit.collider.gameObject.transform;
-                            Debug.Log("PlayerScript: NetherSwap Target 2: SET");
+                            targetsInRange++;
+                        }
+                    }
+                }
+            }
+            if (targetsInRange <= 0)
+            {
+                selectedAbility = null;
+            }
 
-                            isTakingAction = false;
-                            isExecutingAbility = true;
-                            navmeshAgent.enabled = false;
+            if (selectedAbility != null)
+            {
+                abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
+                    {
+                        // Check validity of target
+                        if (IsValidNetherSwapTarget(hit.collider.gameObject))
+                        {
+                            // Is target in range
+                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+                            if (distanceFromPlayer <= selectedAbility.range)
+                            {
+                                // Set Second target
+                                netherSwapAbility.target2 = hit.collider.gameObject.transform;
+                                Debug.Log("PlayerScript: NetherSwap Target 2: SET");
+
+                                isTakingAction = false;
+                                isExecutingAbility = true;
+                                navmeshAgent.speed = 0.0f;
+                                navmeshAgent.enabled = false;
+                            }
                         }
                     }
                 }
@@ -696,6 +853,7 @@ public class PlayerScript : MonoBehaviour
 
         isTakingAction = false;
         isExecutingAbility = true;
+        navmeshAgent.speed = 0.0f;
         navmeshAgent.enabled = false;
 
         // Cast time anim
@@ -829,7 +987,8 @@ public class PlayerScript : MonoBehaviour
 
         timeSpentDoingAction = 0.0f;
         navmeshAgent.enabled = true;
-        
+        navmeshAgent.speed = currentMoveSpeed;
+
         // - CLEAR SPELL TARGETTING -----------
         // Clear NetherSwap targeting
         netherSwapAbility.target1 = null;
@@ -919,7 +1078,8 @@ public class PlayerScript : MonoBehaviour
                     }
                     else if (ability.id == defendID)
                     {
-                        navmeshAgent.speed = baseMoveSpeed;
+                        currentMoveSpeed = baseMoveSpeed;
+                        navmeshAgent.speed = currentMoveSpeed;
                     }
                     // Currently no way to swap back the enemyCooldown values on the initiativeSwap debuff.
                     // Permanently changes the enemies enemyCooldown values with eachother
