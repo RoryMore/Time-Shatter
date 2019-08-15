@@ -115,6 +115,7 @@ public class OurCameraController : MonoBehaviour
                     Cursor.lockState = CursorLockMode.None;
                 }
 
+                float distance = targetDistance;
                 Quaternion rotation = Quaternion.Euler(y, x, 0);
                 if (!playerScript.isDead)
                 {
@@ -125,13 +126,17 @@ public class OurCameraController : MonoBehaviour
 
                         if (Physics.Linecast(focus.position, transform.position, out RaycastHit hit))
                         {
-                            targetDistance -= hit.distance;
+                            if (!hit.collider.gameObject.tag.Contains("Enemy"))
+                            {
+                                //targetDistance -= hit.distance;
+                                distance = targetDistance - hit.distance;
+                            }
                         }
 
                     }
                 }
                 y = ClampAngle(y, yMinAngle, yMaxAngle);
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -targetDistance);
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
                 Vector3 position = rotation * negDistance + focus.position;
 
                 transform.rotation = Quaternion.Lerp(transform.rotation, rotation, positionLerpSpeed);

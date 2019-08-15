@@ -439,16 +439,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6912156560172415807}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: 793e1331cae279142b3e6ea57eaa25a5,
-        type: 3}
-      propertyPath: m_Name
-      value: character_export
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: 793e1331cae279142b3e6ea57eaa25a5,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 793e1331cae279142b3e6ea57eaa25a5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -504,6 +494,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 793e1331cae279142b3e6ea57eaa25a5,
+        type: 3}
+      propertyPath: m_Name
+      value: character_export
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 793e1331cae279142b3e6ea57eaa25a5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 793e1331cae279142b3e6ea57eaa25a5, type: 3}
 --- !u!4 &1982168867740433814 stripped
@@ -519,16 +519,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6912156560172415807}
     m_Modifications:
-    - target: {fileID: 451312729861326311, guid: 6ae5a783694f4714d8515d12c9e5853b,
-        type: 3}
-      propertyPath: m_Name
-      value: P_Select_Pink
-      objectReference: {fileID: 0}
-    - target: {fileID: 451312729861326311, guid: 6ae5a783694f4714d8515d12c9e5853b,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5999488807690452757, guid: 6ae5a783694f4714d8515d12c9e5853b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -584,6 +574,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 451312729861326311, guid: 6ae5a783694f4714d8515d12c9e5853b,
+        type: 3}
+      propertyPath: m_Name
+      value: P_Select_Pink
+      objectReference: {fileID: 0}
+    - target: {fileID: 451312729861326311, guid: 6ae5a783694f4714d8515d12c9e5853b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ae5a783694f4714d8515d12c9e5853b, type: 3}
 --- !u!1 &7667617527968436123 stripped
@@ -605,11 +605,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6912156560172415807}
     m_Modifications:
-    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerAbilities
-      objectReference: {fileID: 0}
     - target: {fileID: 7760009501327630564, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -665,6 +660,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7760009501327630570, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerAbilities
+      objectReference: {fileID: 0}
     - target: {fileID: 1438715778989561442, guid: e7d7657471c7c4d4c970ce8f7ef8a50e,
         type: 3}
       propertyPath: range
@@ -685,11 +685,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6912156560172415807}
     m_Modifications:
-    - target: {fileID: 2525354661738256573, guid: c9216341edc41154b95403581b388f0c,
-        type: 3}
-      propertyPath: m_Name
-      value: P_Slash_Player
-      objectReference: {fileID: 0}
     - target: {fileID: 2525354661738256574, guid: c9216341edc41154b95403581b388f0c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -744,6 +739,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2525354661738256573, guid: c9216341edc41154b95403581b388f0c,
+        type: 3}
+      propertyPath: m_Name
+      value: P_Slash_Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c9216341edc41154b95403581b388f0c, type: 3}

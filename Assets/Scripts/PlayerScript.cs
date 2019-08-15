@@ -356,7 +356,7 @@ public class PlayerScript : MonoBehaviour
         else
         {
             //navmeshAgent.enabled = true;
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            timeSpentDoingAction += Time.deltaTime;
 
             // Set player to attack animate
 
@@ -526,9 +526,6 @@ public class PlayerScript : MonoBehaviour
                         hoverTargetObject.SetActive(true);
 
                         hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
-
-                        var main = hoverTargetParticle.main;
-                        // Figure out how to make particles play outside of Time.timeScale
 
                         if (Input.GetMouseButtonDown(0))
                         {
