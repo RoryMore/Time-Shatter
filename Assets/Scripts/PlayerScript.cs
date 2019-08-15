@@ -502,10 +502,13 @@ public class PlayerScript : MonoBehaviour
                         }
 
                     }
+                    
                 }
 
                 abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
             }
+
+            abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
         }
         // We have a target
         else
