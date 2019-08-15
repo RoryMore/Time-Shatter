@@ -10,13 +10,13 @@ public class MeleeEnemyScript : EnemyScript
     public int meleeDamage;
 
     PlayerAttack ourAttack;
-
+    bool isAttacking = false;
 
     void Awake()
     {
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
-        hitParticles = GetComponentInChildren<ParticleSystem>();
+        hitParticles = GetComponent<ParticleSystem>();
 
         nav = GetComponent<NavMeshAgent>();
 
@@ -39,18 +39,20 @@ public class MeleeEnemyScript : EnemyScript
 
     void Update()
     {
-        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        if (isDead != true)
         {
-            Movement();
-            MeleeAttack();
-            Turn();
-        }
-        if (Input.GetKeyDown("g") == true)
-        {
-            print("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY");
-            TakeDamage(10, this.gameObject.transform.position);
-        }
+            if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+            {
+                Movement();
+                MeleeAttack();
+                Turn();
+            }
+            if (Input.GetKeyDown("g") == true)
+            {
 
+                TakeDamage(10, transform.position);
+            }
+        }
 
     }
 
@@ -101,6 +103,10 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
+            
+        }
+        if (isAttacking == true)
+        {
             anim.SetBool("isAttacking", true);
             timeSpentDoingAction += Time.fixedDeltaTime;
 
@@ -108,8 +114,10 @@ public class MeleeEnemyScript : EnemyScript
 
             if (timeSpentDoingAction >= ourAttack.actionSpeed)
             {
-
-                player.TakeDamage(meleeDamage);
+                if (ourAttack.ShouldEnemyInPositionBeDamaged(player.transform.position) == true)
+                {
+                    player.TakeDamage(meleeDamage);
+                }
 
                 //Play Animation
                 enemyCooldown = 6.0f;
@@ -117,8 +125,8 @@ public class MeleeEnemyScript : EnemyScript
                 anim.SetBool("isAttacking", false);
                 //anim.SetBool("isAttacking", false);
             }
-            //Debug.Log("ATTACK!");
         }
+        //Debug.Log("ATTACK!");
         //If its the melee enemy turn BUT we are out of range, we go into defence stance!
         else if (meleeAttackRange <= distance && enemyCooldown <= 0.0f)
         {

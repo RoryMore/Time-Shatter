@@ -13,6 +13,8 @@ public class RangedEnemyScript : EnemyScript
     public GameObject bolt;
     PlayerAttack ourAttack;
 
+    bool isAttacking = false;
+    bool isFirstRound = true;
 
 
 
@@ -20,7 +22,7 @@ public class RangedEnemyScript : EnemyScript
     {
         anim = GetComponent<Animator>();
         //enemyAudio = GetComponent<AudioSource>();
-        hitParticles = GetComponentInChildren<ParticleSystem>();
+        hitParticles = GetComponent<ParticleSystem>();
         
         nav = GetComponent<NavMeshAgent>();
 
@@ -47,13 +49,17 @@ public class RangedEnemyScript : EnemyScript
 
     void Update()
     {
-        if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+        if (isDead != true)
         {
-            
-            Turn();
-            Movement();
-            RangedAttack();
 
+            if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
+            {
+
+                Turn();
+                Movement();
+                RangedAttack();
+
+            }
         }
 
     }
@@ -119,9 +125,19 @@ public class RangedEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= rangedAttackRange && enemyCooldown <= 0.0f)
         {
+            isAttacking = true;
+        }
+
+        if (isAttacking == true)
+        {
+            if (isFirstRound == true)
+            {
+                transform.LookAt(player.transform);
+                isFirstRound = false;
+            }
             //Use the more complicated but nicer turn method that means that slow time will affect it as well.
             //FaceTarget(player.transform);
-            transform.LookAt(player.transform);
+
             nav.enabled = false;
             anim.SetBool("isWalking", false);
             timeSpentDoingAction += Time.fixedDeltaTime;
@@ -132,7 +148,12 @@ public class RangedEnemyScript : EnemyScript
             if (timeSpentDoingAction >= ourAttack.actionSpeed)
             {
                 Instantiate(bolt, transform.position, Quaternion.identity);
-                player.TakeDamage(rangedDamage);
+
+
+                if (ourAttack.ShouldEnemyInPositionBeDamaged(player.transform.position) == true)
+                {
+                    player.TakeDamage(rangedDamage);
+                }
                 Debug.Log("FIRE!");
 
                 //Play Animation
@@ -142,20 +163,9 @@ public class RangedEnemyScript : EnemyScript
                 anim.SetBool("isAttacking", false);
                 nav.enabled = true;
                 anim.SetBool("isWalking", true);
+                isAttacking = false;
+                isFirstRound = true;
             }
-            //Debug.Log("ATTACK!");
-          
-
-            //player.TakeDamage(meleeDamage);
-           
-            //Play Animation
-            //Face towards player!
-
-            
-           
-           
-            
-            
 
         }
         //If its the range enemy turn BUT we are out of range, we go into defence stance!
