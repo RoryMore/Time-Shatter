@@ -106,7 +106,7 @@ public class PlayerScript : MonoBehaviour
 
         initiativeSpeed = baseInitiativeSpeed;
 
-        isDead = false;
+        isDead = false; // This is setting the bool isDead to false
     }
 
     void Awake()
@@ -466,6 +466,7 @@ public class PlayerScript : MonoBehaviour
                     }
                 }
             }
+            //Debug.Log("Slow targets in range: " + targetsInRange);
             if (targetsInRange <= 0)
             {
                 selectedAbility = null;
