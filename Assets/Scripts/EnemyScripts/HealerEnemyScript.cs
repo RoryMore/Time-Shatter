@@ -43,13 +43,14 @@ public class HealerEnemyScript : EnemyScript
         initiativeSpeed = 1.0f;
         currentHealth = startingHealth;
 
-
-        
-        
-        
+		ourAttack = GetComponent<PlayerAttack>();
 
 
-    }
+
+
+
+
+	}
 
     // Update is called once per frame
     void Update()
@@ -117,7 +118,7 @@ public class HealerEnemyScript : EnemyScript
         if (isAttacking == true)
         {
 
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            timeSpentDoingAction += Time.deltaTime;
             
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
             anim.SetBool("isAttacking", true);

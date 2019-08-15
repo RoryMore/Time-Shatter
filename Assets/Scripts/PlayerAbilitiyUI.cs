@@ -58,10 +58,13 @@ public class PlayerAbilitiyUI : MonoBehaviour
     public Image backgroundISwap;
 	public Image iconISwap;
     public Button initiativeButton;
-   // bool initiativeCD;
+	// bool initiativeCD;
 
+	public Image backgroundRange;
+	public Image rangeIcon;
+	public Button rangeButton;
 
-    bool gotAbility = false;
+	bool gotAbility = false;
 
 	public float testCDPercent;
 
@@ -121,9 +124,12 @@ public class PlayerAbilitiyUI : MonoBehaviour
 			backgroundISwap.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
 			iconISwap.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
 
+			backgroundRange.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
+			rangeIcon.fillAmount = CalculateDefendCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown);
 
-            //Defend Button Check
-            if ((player.isTakingAction))
+
+			//Defend Button Check
+			if ((player.isTakingAction))
             {
                 if (CheckIfOnCooldown(defendAbility.turnsBeenOnCooldown, defendAbility.cooldown) == true)
                 {
@@ -184,7 +190,16 @@ public class PlayerAbilitiyUI : MonoBehaviour
                     initiativeButton.gameObject.SetActive(true);
                 }
 
-                attackButton.gameObject.SetActive(true);
+				if (CheckIfOnCooldown(initiativeSwapAbility.turnsBeenOnCooldown, initiativeSwapAbility.cooldown) == true)
+				{
+					rangeButton.gameObject.SetActive(false);
+				}
+				else
+				{
+					rangeButton.gameObject.SetActive(true);
+				}
+
+				attackButton.gameObject.SetActive(true);
                 waitButton.gameObject.SetActive(true);
             }
             else if (!player.isTakingAction)
@@ -197,7 +212,9 @@ public class PlayerAbilitiyUI : MonoBehaviour
                 initiativeButton.gameObject.SetActive(false);
                 attackButton.gameObject.SetActive(false);
                 waitButton.gameObject.SetActive(false);
-            }
+				rangeButton.gameObject.SetActive(false);
+
+			}
 
         }
 
@@ -268,9 +285,17 @@ public class PlayerAbilitiyUI : MonoBehaviour
         }
     }
 
-    //when white image == 1 is when on max cooldown
+	public void waitrange()
+	{
+		if (player.selectedAbility == null)
+		{
+			player.SelectAbility(player.rangedBeamID);
+		}
+	}
 
-    float CalculateDefendCooldown(float turnsCD, float CD)
+	//when white image == 1 is when on max cooldown
+
+	float CalculateDefendCooldown(float turnsCD, float CD)
 	{
 		return (1.0f - (float)turnsCD / (float)CD);
 		//return (1.0f - (float)defendAbility.turnsBeenOnCooldown / (float)defendAbility.cooldown);

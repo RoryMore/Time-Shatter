@@ -135,6 +135,7 @@ public class turnManageScript : MonoBehaviour
                 }
             case BattleState.END:
                 {
+
                     break;
                 }
         }

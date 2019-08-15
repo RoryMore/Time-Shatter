@@ -4746,7 +4746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7406d83294c60094f8435b4f1474afda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 100
+  startingHealth: 70
   currentHealth: 0
   enemyCooldown: 0
   initiativeSpeed: 0
@@ -4763,7 +4763,7 @@ MonoBehaviour:
   isDead: 0
   isSinking: 0
   rangedAttackRange: 20
-  rangedDamage: 5
+  rangedDamage: 30
   bolt: {fileID: 5806749824183763328, guid: c477bf154c7b5b940a8ceffc329328ac, type: 3}
 --- !u!114 &1092770394630512370
 MonoBehaviour:
@@ -4777,7 +4777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d060ba5ab51351d4bb2eaeec0edfa2da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionSpeed: 8
+  actionSpeed: 5
   range: 20
   magnitude: 2
   buffDuration: 0
@@ -4792,7 +4792,7 @@ MonoBehaviour:
   id: 0
   attackWidth: 0
   attackType: 1
-  angle: 20
+  angle: 30
 --- !u!195 &2431057429456958601
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -4803,7 +4803,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

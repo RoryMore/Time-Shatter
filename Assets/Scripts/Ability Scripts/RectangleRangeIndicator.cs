@@ -294,7 +294,9 @@ public class RectangleRangeIndicator : MonoBehaviour
         castTimeMesh.vertices = vertices;
         castTimeMesh.triangles = triangles;
 
-        Graphics.DrawMesh(castTimeMesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
+		castTimeMesh.RecalculateBounds();
+
+		Graphics.DrawMesh(castTimeMesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
     }
 
     float GetForwardAngle()

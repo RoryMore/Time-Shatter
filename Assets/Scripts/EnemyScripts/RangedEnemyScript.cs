@@ -140,7 +140,7 @@ public class RangedEnemyScript : EnemyScript
 
             nav.enabled = false;
             anim.SetBool("isWalking", false);
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            timeSpentDoingAction += Time.deltaTime;
 
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
             anim.SetBool("isAttacking", true);

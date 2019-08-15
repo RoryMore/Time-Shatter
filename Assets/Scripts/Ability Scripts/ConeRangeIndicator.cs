@@ -106,10 +106,10 @@ public class ConeRangeIndicator : MonoBehaviour
             vertices[d] = posNextMin;
 
             triangles[6 * i] = a;
-            triangles[6 * i + 1] = b;
+            triangles[6 * i + 1] = b;	// b
             triangles[6 * i + 2] = c;
             triangles[6 * i + 3] = c;
-            triangles[6 * i + 4] = d;
+            triangles[6 * i + 4] = d;	// d
             triangles[6 * i + 5] = a;
 
             angleCurrent += angleDelta;
@@ -124,7 +124,10 @@ public class ConeRangeIndicator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
 
-        Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
+		// Bounds should be automatically recalculated when setting triangles
+		mesh.RecalculateBounds();
+
+		Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
     }
 
     public void DrawCastTimeIndicator(float angle, float minRange, float drawDistance)
@@ -189,10 +192,11 @@ public class ConeRangeIndicator : MonoBehaviour
 
         castTimeMesh.vertices = vertices;
         castTimeMesh.triangles = triangles;
-        //castTimeMesh.uv = uv;
-        //castTimeMesh.normals = normals;
+		//castTimeMesh.uv = uv;
+		//castTimeMesh.normals = normals;
+		castTimeMesh.RecalculateBounds();
 
-        Graphics.DrawMesh(castTimeMesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
+		Graphics.DrawMesh(castTimeMesh, Vector3.zero, Quaternion.identity, indicatorMaterial, 0);
     }
 
     float GetForwardAngle()

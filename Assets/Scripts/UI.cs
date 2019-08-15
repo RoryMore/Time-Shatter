@@ -14,6 +14,7 @@ public class UI : MonoBehaviour
 
 	public GameObject playerInititiveSlider;
 	public GameObject BattleUI;
+	public GameObject Lose;
 
 	bool doOnce = false;
 	//public GameObject playerActionBar;
@@ -62,8 +63,14 @@ public class UI : MonoBehaviour
 			}
 		//}
 		//else {
-			//BattleUI.SetActive(false);
+		//BattleUI.SetActive(false);
 		//}
+
+		if (player.isDead == true)
+		{
+			BattleUI.SetActive(false);
+			Lose.SetActive(true);
+		}
 	}
 
 	float CalculateInititive()

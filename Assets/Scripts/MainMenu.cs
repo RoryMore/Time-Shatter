@@ -7,6 +7,7 @@ public class MainMenu : MonoBehaviour
 {
 	public AudioSource MainMenuMusic;
 	public Animator animator;
+	public GameObject controls;
 
 	private int levelToLoad;
 
@@ -35,11 +36,11 @@ public class MainMenu : MonoBehaviour
 	}
 
 	public void PlayGame()
-    {
+	{
 		FadeToLevel(1);
 		Debug.Log("PlayClicked");
-        //SceneManager.LoadScene("MainScene");
-    }
+		//SceneManager.LoadScene("MainScene");
+	}
 
 	public void FadeToLevel(int levelIndex)
 	{
@@ -51,8 +52,25 @@ public class MainMenu : MonoBehaviour
 
 	public void OnFadeComplete()
 	{
-		SceneManager.LoadScene("MainScene");
+		SceneManager.LoadScene("BattleMain2");
 		SceneState = Scene.BATTLESCENE;
 	}
 
+	public void controlCLick()
+	{
+		controls.SetActive(true);
+	}
+
+	public void exit()
+	{
+		Application.Quit();
+#if UNITY_EDITOR
+		UnityEditor.EditorApplication.isPlaying = false;
+#endif
+	}
+
+	public void clickreturn()
+		{
+		controls.SetActive(false);
+	}
 }

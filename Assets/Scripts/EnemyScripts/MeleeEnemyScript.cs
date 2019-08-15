@@ -111,7 +111,7 @@ public class MeleeEnemyScript : EnemyScript
         if (isAttacking == true)
         {
             anim.SetBool("isAttacking", true);
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            timeSpentDoingAction += Time.deltaTime;
 
             ourAttack.DrawCastTimeRangeIndicator(timeSpentDoingAction);
 

@@ -8,6 +8,8 @@ public class PauseMenu : MonoBehaviour
 	public GameObject gameplayUi;
 	public GameObject pauseMenu;
     public GameObject controlMenu;
+	public GameObject win;
+	public GameObject lose;
 
 	//public AudioSource MainMenuMusic;
 	public Animator animator;
@@ -33,7 +35,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (!isPaused)
         {
-            if (Input.GetKeyDown(KeyCode.P))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 gameplayUi.SetActive(false);
                 pauseMenu.SetActive(true);
@@ -62,6 +64,7 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenu.SetActive(true);
         controlMenu.SetActive(false);
+
     }
 
     public void clickControls()
@@ -83,6 +86,9 @@ public class PauseMenu : MonoBehaviour
 		//FadeToLevel(0);
 		Time.timeScale = 1.0f;
 		SceneManager.LoadScene("MainMenu");
+		pauseMenu.SetActive(false);
+		win.SetActive(false);
+		lose.SetActive(false);
 		//SceneManager.LoadScene("MainScene");
 	}
 

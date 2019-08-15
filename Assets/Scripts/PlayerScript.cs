@@ -81,7 +81,7 @@ public class PlayerScript : MonoBehaviour
     OurCameraController cameraController;
 
     // This is to show max distances you can select targets
-    ConeRangeIndicator abilityRangeCircle;
+    public ConeRangeIndicator abilityRangeCircle;
 
     public AnimationClip meleeAnimClip;
     public AnimationClip rangedAnimClip;
@@ -112,7 +112,7 @@ public class PlayerScript : MonoBehaviour
 
         anim = GetComponent<Animator>();
 
-        abilityRangeCircle = GetComponent<ConeRangeIndicator>();
+        //abilityRangeCircle = GetComponent<ConeRangeIndicator>();
         abilityRangeCircle.Init(180.0f);
 
         currentHealth = maxHealth;
@@ -396,8 +396,8 @@ public class PlayerScript : MonoBehaviour
                     }
                     else if (selectedAbility == rangedBeamAbility)
                     {
-                        
-                    }
+						meleeParticles.Play();
+					}
                 }
             }
 
@@ -669,23 +669,32 @@ public class PlayerScript : MonoBehaviour
             {
                 abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
 
-                if (Input.GetMouseButtonDown(0))
-                {
-                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
-                    {
-                        // Check validity of target
-                        if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
-                        {
-                            // Is target in range
-                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                            if (distanceFromPlayer <= selectedAbility.range)
-                            {
-                                initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
-                                Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
-                            }
-                        }
+				if (Physics.Raycast(ray, out RaycastHit hit, 400))
+				{
+						// Check validity of target
+					if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+					{
+						hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
+
+						hoverTargetObject.SetActive(true);
+
+						if (Input.GetMouseButtonDown(0))
+						{
+							// Is target in range
+							float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+							if (distanceFromPlayer <= selectedAbility.range)
+							{
+								initiativeSwapAbility.target1 = hit.collider.gameObject.GetComponent<EnemyScript>();
+								Debug.Log("PlayerScript: InitiativeSwap Target 1: SET");
+							}
+						}
+						
                     }
-                }
+					else
+					{
+						hoverTargetObject.SetActive(false);
+					}
+				}
             }
         }
         else if (initiativeSwapAbility.target2 == null)
@@ -715,27 +724,35 @@ public class PlayerScript : MonoBehaviour
             {
                 abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
 
-                if (Input.GetMouseButtonDown(0))
-                {
-                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
-                    {
-                        // Check validity of target
-                        if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
-                        {
-                            // Is target in range
-                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                            if (distanceFromPlayer <= selectedAbility.range)
-                            {
-                                initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
-                                Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
+				if (Physics.Raycast(ray, out RaycastHit hit, 400))
+				{
+					// Check validity of target
+					if (IsValidInitiativeSwapTarget(hit.collider.gameObject))
+					{
+						hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
 
-                                isTakingAction = false;
-                                isExecutingAbility = true;
-                                navmeshAgent.speed = 0.0f;
-                                navmeshAgent.enabled = false;
-                            }
-                        }
-                    }
+						hoverTargetObject.SetActive(true);
+
+						if (Input.GetMouseButtonDown(0))
+						{
+							// Is target in range
+							float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+							if (distanceFromPlayer <= selectedAbility.range)
+							{
+								initiativeSwapAbility.target2 = hit.collider.gameObject.GetComponent<EnemyScript>();
+								Debug.Log("PlayerScript: InitiativeSwap Target 2: SET");
+
+								isTakingAction = false;
+								isExecutingAbility = true;
+								navmeshAgent.speed = 0.0f;
+								navmeshAgent.enabled = false;
+							}
+						}
+					}
+					else
+					{
+						hoverTargetObject.SetActive(false);
+					}
                 }
             }
         }
@@ -795,23 +812,32 @@ public class PlayerScript : MonoBehaviour
             if (selectedAbility != null)
             {
                 abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
-                if (Input.GetMouseButtonDown(0))
-                {
-                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
-                    {
-                        // Check validity of target
-                        if (IsValidNetherSwapTarget(hit.collider.gameObject))
-                        {
-                            // Is target in range
-                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                            if (distanceFromPlayer <= selectedAbility.range)
-                            {
-                                // Set First target
-                                netherSwapAbility.target1 = hit.collider.gameObject.transform;
-                                Debug.Log("PlayerScript: NetherSwap Target 1: SET");
-                            }
-                        }
-                    }
+				if (Physics.Raycast(ray, out RaycastHit hit, 400))
+				{
+					// Check validity of target
+					if (IsValidNetherSwapTarget(hit.collider.gameObject))
+					{
+						hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
+
+						hoverTargetObject.SetActive(true);
+
+						if (Input.GetMouseButtonDown(0))
+						{
+
+							// Is target in range
+							float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+							if (distanceFromPlayer <= selectedAbility.range)
+							{
+								// Set First target
+								netherSwapAbility.target1 = hit.collider.gameObject.transform;
+								Debug.Log("PlayerScript: NetherSwap Target 1: SET");
+							}
+						}
+					}
+					else
+					{
+						hoverTargetObject.SetActive(false);
+					}
                 }
             }
         }
@@ -842,28 +868,38 @@ public class PlayerScript : MonoBehaviour
             if (selectedAbility != null)
             {
                 abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
-                if (Input.GetMouseButtonDown(0))
-                {
-                    if (Physics.Raycast(ray, out RaycastHit hit, 400))
-                    {
-                        // Check validity of target
-                        if (IsValidNetherSwapTarget(hit.collider.gameObject))
-                        {
-                            // Is target in range
-                            float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
-                            if (distanceFromPlayer <= selectedAbility.range)
-                            {
-                                // Set Second target
-                                netherSwapAbility.target2 = hit.collider.gameObject.transform;
-                                Debug.Log("PlayerScript: NetherSwap Target 2: SET");
 
-                                isTakingAction = false;
-                                isExecutingAbility = true;
-                                navmeshAgent.speed = 0.0f;
-                                navmeshAgent.enabled = false;
-                            }
-                        }
-                    }
+				if (Physics.Raycast(ray, out RaycastHit hit, 400))
+				{
+					// Check validity of target
+					if (IsValidNetherSwapTarget(hit.collider.gameObject))
+					{
+						hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
+
+						hoverTargetObject.SetActive(true);
+
+						if (Input.GetMouseButtonDown(0))
+						{
+
+							// Is target in range
+							float distanceFromPlayer = Vector3.Distance(hit.collider.gameObject.transform.position, transform.position);
+							if (distanceFromPlayer <= selectedAbility.range)
+							{
+								// Set Second target
+								netherSwapAbility.target2 = hit.collider.gameObject.transform;
+								Debug.Log("PlayerScript: NetherSwap Target 2: SET");
+
+								isTakingAction = false;
+								isExecutingAbility = true;
+								navmeshAgent.speed = 0.0f;
+								navmeshAgent.enabled = false;
+							}
+						}
+					}
+					else
+					{
+						hoverTargetObject.SetActive(false);
+					}
                 }
             }
         }
@@ -1048,7 +1084,7 @@ public class PlayerScript : MonoBehaviour
             Debug.Log("PlayerScript: Attempted to select Wait");
             SelectAbility(waitID);
         }
-        else if (Input.GetKeyDown(KeyCode.R))
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             Debug.Log("PlayerScript: Attempted to select RangedBeam");
             SelectAbility(rangedBeamID);

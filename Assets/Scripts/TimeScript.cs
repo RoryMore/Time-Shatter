@@ -6,17 +6,27 @@ public class TimeScript : MonoBehaviour
 {
 
 	public bool isRewinding = false;
+	bool startRewinding;
+
+	IsDeadGameReset isdead;
 
 	List<PointInTime> pointsInTime;
 	// Start is called before the first frame update
 	void Start()
 	{
+
+		isdead = FindObjectOfType<IsDeadGameReset>();
 		pointsInTime = new List<PointInTime>();
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
+		if (isdead.start == true) 
+			StartRewind();
+		if (isdead.start == false)
+			StopRewind();
+
 		if (Input.GetKeyDown(KeyCode.Return))
 			StartRewind();
 		if (Input.GetKeyUp(KeyCode.Return))
