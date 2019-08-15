@@ -15,7 +15,7 @@ public class OurCameraController : MonoBehaviour
     public float yMaxAngle = 85.0f;
 
     // How far away we want our camera to be from focused point
-    float targetDistance = 25.0f;
+    public float targetDistance = 25.0f;
     public float minDistance = 10.0f;
     public float maxDistance = 100.0f;
 
@@ -123,10 +123,10 @@ public class OurCameraController : MonoBehaviour
                         x += Input.GetAxis("Mouse X") * xSpeed * Time.unscaledDeltaTime;
                         y -= Input.GetAxis("Mouse Y") * ySpeed * Time.unscaledDeltaTime * (invertY ? 1.0f : -1.0f);
 
-                        if (Physics.Linecast(focus.position, transform.position, out RaycastHit hit))
-                        {
-                            targetDistance -= hit.distance;
-                        }
+                        //if (Physics.Linecast(focus.position, transform.position, out RaycastHit hit))
+                        //{
+                            //targetDistance -= hit.distance;
+                        //}
 
                     }
                 }
