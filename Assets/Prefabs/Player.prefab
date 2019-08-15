@@ -170,9 +170,7 @@ MonoBehaviour:
   initiativeSwapID: 0
   waitID: 0
   rangedBeamID: 0
-  isDead: 0
   running: 0
-  meleeAnimClip: {fileID: 0}
 --- !u!54 &6912156560172415806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -288,36 +286,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -6798783316884074078, guid: 516858e4bc386f84eb1acbfa8fc5a3fb,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b98f8c2ab0522584c8469e83873041d7, type: 2}
-    - target: {fileID: 7217018916369533401, guid: 516858e4bc386f84eb1acbfa8fc5a3fb,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b98f8c2ab0522584c8469e83873041d7, type: 2}
-    - target: {fileID: -1521188297522644312, guid: 516858e4bc386f84eb1acbfa8fc5a3fb,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b98f8c2ab0522584c8469e83873041d7, type: 2}
-    - target: {fileID: 6839155350504645952, guid: 516858e4bc386f84eb1acbfa8fc5a3fb,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b98f8c2ab0522584c8469e83873041d7, type: 2}
-    - target: {fileID: -4002473788825098415, guid: 516858e4bc386f84eb1acbfa8fc5a3fb,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b98f8c2ab0522584c8469e83873041d7, type: 2}
-    - target: {fileID: 5526801843948638787, guid: 516858e4bc386f84eb1acbfa8fc5a3fb,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b98f8c2ab0522584c8469e83873041d7, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 516858e4bc386f84eb1acbfa8fc5a3fb, type: 3}
 --- !u!4 &8529125097410607957 stripped

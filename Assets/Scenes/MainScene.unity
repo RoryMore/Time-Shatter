@@ -413,7 +413,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617ffeb7e5b8ba2448c17da705f8aded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalFocalPoint: {fileID: 1220689011}
   xSpeed: 60
   ySpeed: 60
   yMinAngle: 30
@@ -423,10 +422,6 @@ MonoBehaviour:
   positionLerpSpeed: 0.2
   entryPositions: []
   invertY: 1
-  deathZoomMinDistance: 10
-  deathZoomStartLerpSpeed: 0.4
-  deathZoomEndLerpSpeed: 0.02
-  deathZoomStartToEndTime: 2
 --- !u!1001 &544914649
 PrefabInstance:
   m_ObjectHideFlags: 0

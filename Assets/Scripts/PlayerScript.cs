@@ -466,7 +466,6 @@ public class PlayerScript : MonoBehaviour
                     }
                 }
             }
-            //Debug.Log("Slow targets in range: " + targetsInRange);
             if (targetsInRange <= 0)
             {
                 selectedAbility = null;
