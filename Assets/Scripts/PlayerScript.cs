@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -523,9 +523,9 @@ public class PlayerScript : MonoBehaviour
                 {
                     if (IsValidSlowTarget(hit.collider.gameObject))
                     {
-                        hoverTargetObject.SetActive(true);
-
                         hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
+
+                        hoverTargetObject.SetActive(true);
 
                         if (Input.GetMouseButtonDown(0))
                         {
@@ -566,10 +566,7 @@ public class PlayerScript : MonoBehaviour
         // We have a target
         else
         {
-            if (hoverTargetParticle.isPlaying)
-            {
-                hoverTargetParticle.Stop();
-            }
+            hoverTargetObject.SetActive(false);
 
             timeSpentDoingAction += Time.fixedDeltaTime;
             running = false;
