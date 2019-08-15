@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -84,6 +84,19 @@ public class PlayerScript : MonoBehaviour
     ConeRangeIndicator abilityRangeCircle;
 
     public AnimationClip meleeAnimClip;
+    public AnimationClip rangedAnimClip;
+    public AnimationClip castAnimClip;
+
+    public ParticleSystem meleeParticles;
+
+    // The enemies should have their own instance of these types of particles
+    public GameObject hoverTargetObject;
+    ParticleSystem hoverTargetParticle;
+    public GameObject selectTarget1Object;
+    ParticleSystem selectTarget1Particle;
+    public GameObject selectTarget2Object;
+    ParticleSystem selectTarget2Particle;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -107,6 +120,19 @@ public class PlayerScript : MonoBehaviour
         initiativeSpeed = baseInitiativeSpeed;
 
         isDead = false; // This is setting the bool isDead to false
+
+        if (hoverTargetObject != null)
+        {
+            hoverTargetParticle = hoverTargetObject.GetComponent<ParticleSystem>();
+        }
+        if (selectTarget1Object != null)
+        {
+            selectTarget1Particle = selectTarget1Object.GetComponent<ParticleSystem>();
+        }
+        if (selectTarget2Object != null)
+        {
+            selectTarget2Particle = selectTarget2Object.GetComponent<ParticleSystem>();
+        }
     }
 
     void Awake()
@@ -159,7 +185,7 @@ public class PlayerScript : MonoBehaviour
                 CheckDamage();
             }
         }
-    
+        anim.SetBool("isDead", isDead);
     }
 
     // Update is called once per frame
@@ -273,8 +299,6 @@ public class PlayerScript : MonoBehaviour
 
     void Death()
     {
-        //anim.SetTrigger ("Die");
-
         //playerAudio.clip = deathClip;
         //playerAudio.Play ();
 
@@ -332,7 +356,7 @@ public class PlayerScript : MonoBehaviour
         else
         {
             //navmeshAgent.enabled = true;
-            timeSpentDoingAction += Time.fixedDeltaTime;
+            timeSpentDoingAction += Time.deltaTime;
 
             // Set player to attack animate
 
@@ -346,6 +370,10 @@ public class PlayerScript : MonoBehaviour
             }
             else if (selectedAbility == rangedBeamAbility)
             {
+                float animSpeed = rangedAnimClip.length;
+                anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+                anim.SetBool("rangedAttack", true);
+
                 rangedBeamAbility.DrawCastTimeRangeIndicator(timeSpentDoingAction);
             }
         }
@@ -361,11 +389,21 @@ public class PlayerScript : MonoBehaviour
                 {
                     Debug.Log("DAMAGED ENEMIES HERE.");
                     enemies[i].TakeDamage(Mathf.RoundToInt(attackAbility.magnitude), enemies[i].transform.position);
+
+                    if (selectedAbility == attackAbility)
+                    {
+                        meleeParticles.Play();
+                    }
+                    else if (selectedAbility == rangedBeamAbility)
+                    {
+                        
+                    }
                 }
             }
 
             // Stop player attack animation
             anim.SetBool("meleeAttack", false);
+            anim.SetBool("rangedAttack", false);
             EndAction();
         }
     }
@@ -433,10 +471,16 @@ public class PlayerScript : MonoBehaviour
         navmeshAgent.enabled = false;
 
         // Cast time anim
+        float animSpeed = castAnimClip.length;
+        anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+        anim.SetBool("castingAbility", true);
+
         running = false;
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            anim.SetBool("castingAbility", false);
+
             selectedAbility.isBuffActive = true;
 
             initiativeSpeed = baseInitiativeSpeed * selectedAbility.magnitude;
@@ -474,13 +518,20 @@ public class PlayerScript : MonoBehaviour
 
             if (selectedAbility != null)
             {
-                if (Input.GetMouseButtonDown(0))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit, 500))
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out RaycastHit hit, 500))
+                    if (IsValidSlowTarget(hit.collider.gameObject))
                     {
-                        if (IsValidSlowTarget(hit.collider.gameObject))
+                        hoverTargetObject.transform.position = hit.collider.gameObject.transform.position;
+
+                        hoverTargetObject.SetActive(true);
+
+                        if (Input.GetMouseButtonDown(0))
                         {
+                    
+                    
+                        
                             // Player used to be targettable. However, because of how the enemy and players are built, both are not inheriting from a common class
                             // making it unviable to slow down both types of objects initiativeSpeeds.
                             // Implementing this would require enemies and players to inherit from a common class containing the base initiativeSpeed variables
@@ -503,6 +554,10 @@ public class PlayerScript : MonoBehaviour
                         }
 
                     }
+                    else
+                    {
+                        hoverTargetObject.SetActive(false);
+                    }
                 }
 
                 abilityRangeCircle.DrawIndicator(180.0f, selectedAbility.range, selectedAbility.range + 0.1f);
@@ -511,12 +566,20 @@ public class PlayerScript : MonoBehaviour
         // We have a target
         else
         {
+            hoverTargetObject.SetActive(false);
+
             timeSpentDoingAction += Time.fixedDeltaTime;
             running = false;
+
+            float animSpeed = castAnimClip.length;
+            anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+            anim.SetBool("castingAbility", true);
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            anim.SetBool("castingAbility", false);
+
             slowAbility.targettedEnemy.enemyCooldown = slowAbility.targettedEnemy.enemyCooldown / selectedAbility.magnitude;
             selectedAbility.isDebuffActive = true;
 
@@ -560,13 +623,17 @@ public class PlayerScript : MonoBehaviour
 
             // Animate cast-time
             running = false;
+
+            float animSpeed = castAnimClip.length;
+            anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+            anim.SetBool("castingAbility", true);
         }
         
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
             // Stop animate cast-time
-            // Animate spell cast
+            anim.SetBool("castingAbility", false);
             transform.position = blinkAbility.blinkLocation;
 
             EndAction();
@@ -676,10 +743,15 @@ public class PlayerScript : MonoBehaviour
         {
             timeSpentDoingAction += Time.fixedDeltaTime;
             running = false;
+            float animSpeed = castAnimClip.length;
+            anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+            anim.SetBool("castingAbility", true);
         }
 
         if (timeSpentDoingAction >= selectedAbility.actionSpeed)
         {
+            anim.SetBool("castingAbility", false);
+
             float tempF = initiativeSwapAbility.target1.enemyCooldown;
             initiativeSwapAbility.target1.enemyCooldown = initiativeSwapAbility.target2.enemyCooldown;
             initiativeSwapAbility.target2.enemyCooldown = tempF;
@@ -805,11 +877,14 @@ public class PlayerScript : MonoBehaviour
 
                 // Animate cast time
                 running = false;
+                float animSpeed = castAnimClip.length;
+                anim.SetFloat("attackPlaybackMultiplier", (animSpeed / selectedAbility.actionSpeed));
+                anim.SetBool("castingAbility", true);
 
                 if (timeSpentDoingAction >= netherSwapAbility.actionSpeed)
                 {
                     // Stop cast time animate
-                    // Animate spell cast?
+                    anim.SetBool("castingAbility", false);
 
                     Vector3 tempT = netherSwapAbility.target1.position;
 
