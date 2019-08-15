@@ -43,7 +43,10 @@ public class MeleeEnemyScript : EnemyScript
         {
             if (turnManger.state == turnManageScript.BattleState.BATTLE || turnManger.state == turnManageScript.BattleState.ACTION)
             {
-                Movement();
+                if(isAttacking == false)
+                {
+                    Movement();
+                }
                 MeleeAttack();
                 Turn();
             }
@@ -103,7 +106,7 @@ public class MeleeEnemyScript : EnemyScript
         //We are ready to make our attack, and we are in range. ATTACK!
         if (distance <= meleeAttackRange && enemyCooldown <= 0.0f)
         {
-            
+            isAttacking = true;
         }
         if (isAttacking == true)
         {
@@ -123,6 +126,7 @@ public class MeleeEnemyScript : EnemyScript
                 enemyCooldown = 6.0f;
                 timeSpentDoingAction = 0.0f;
                 anim.SetBool("isAttacking", false);
+                isAttacking = false;
                 //anim.SetBool("isAttacking", false);
             }
         }
