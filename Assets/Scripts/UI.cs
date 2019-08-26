@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
-    public Slider Healthbar;
-	public Slider Healthbar2;
+    public Image Healthbar;
+	//public Image Healthbar2;
 	public Slider Inititivebar;
    // public Button testbutton;
     PlayerScript player;
@@ -40,8 +40,8 @@ public class UI : MonoBehaviour
 			doOnce = true;
 		}
 
-		Healthbar.value = CalculateHealth();
-			Healthbar2.value = CalculateHealth();
+		Healthbar.fillAmount = CalculateHealth();
+		//	Healthbar2.value = CalculateHealth();
 
 			if (playerInititiveSlider.activeSelf)
 			{
